@@ -1,4 +1,13 @@
 #pragma once
+#include "Services/Service.h"
+
+#include <vector>
+
+using namespace Services;
+
+/**
+ * Application class orchestrates the arduino pipeline by delegating to services
+ */
 class Application {
   public:
     /**
@@ -11,6 +20,17 @@ class Application {
       return *instance;
     }
 
+    /**
+     * Add a service to the arduino setup() and loop() pipeline
+     */
+    void addService(Service* service);
+    /**
+     * Get a service by the name
+     */
+    const Service* getServiceByName(const char *name);
+    /**
+     * Called from main.cpp setup()
+     */
     void setup();
     /**
      * Called from main.cpp loop()
@@ -20,4 +40,5 @@ class Application {
   private:
     Application() {}
     static Application *instance;
+    std::vector<Service*> services;
 };
