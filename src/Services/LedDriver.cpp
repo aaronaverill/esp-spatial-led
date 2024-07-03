@@ -16,6 +16,14 @@ namespace Services {
     FastLED.setBrightness(brightness);
   }
 
+  void LedDriver::hsv(const CHSV& hsv) {
+    leds[currentLed] = hsv;
+  }
+
+  void LedDriver::rgb(const CRGB& rgb) {
+    leds[currentLed] = rgb;
+  }
+
   void LedDriver::setup() {
     FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, ledCount);
     FastLED.setBrightness(brightness);
@@ -23,8 +31,12 @@ namespace Services {
   }
 
   void LedDriver::loop() {
-    fill_solid(leds, ledCount, CRGB::Red);
-    FastLED.show();
+    if (currentAnimation) {
+      currentAnimation->render();
+    } else {
+      FastLED.clear();
+      FastLED.show();
+    }
   }
 
 }
