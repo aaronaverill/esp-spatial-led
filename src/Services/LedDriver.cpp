@@ -7,7 +7,7 @@
 namespace Services {
   const char *LedDriver::Name = "led";
 
-  LedDriver::LedDriver(uint ledCount) : ledCount(ledCount) {
+  LedDriver::LedDriver(uint ledCount) : Service(Name), ledCount(ledCount) {
     leds = new CRGB[ledCount];
   }
 
@@ -28,6 +28,7 @@ namespace Services {
     animations.push_back(animation);
     if (!currentAnimation) {
       currentAnimation = animation;
+      currentAnimationIndex = animations.size() - 1;
     }
   }
 

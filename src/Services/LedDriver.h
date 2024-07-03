@@ -26,6 +26,7 @@ namespace Services {
 
       void addAnimation(Animations::Animation* animation);
       Animations::Animation* getCurrentAnimation() { return currentAnimation; }
+      const uint getCurrentAnimationIndex() { return currentAnimationIndex; }
 
       void setup();
       void loop();
@@ -37,6 +38,7 @@ namespace Services {
 
       std::vector<Animations::Animation*> animations;
       Animations::Animation* currentAnimation = nullptr;
+      uint currentAnimationIndex = 0;
 
       uint currentLed = 0;
   };
