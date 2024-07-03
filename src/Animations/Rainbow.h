@@ -6,12 +6,13 @@
 #include <FastLED.h>
 
 namespace Animations {
-  class Colorloop: public Animation {
+  class Rainbow: public Animation {
     public:
-      Colorloop(Services::ILedDriverAnimationContext& context): Animation(context, "Colorloop") {}
+      Rainbow(Services::ILedDriverAnimationContext& context): Animation(context, "Rainbow") {}
       void render(int index);
     private:
       uint16_t bpm = 10;
+      uint8_t size = 5;
       byte hue;
   };
 }
