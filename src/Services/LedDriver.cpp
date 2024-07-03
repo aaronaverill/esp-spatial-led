@@ -24,6 +24,13 @@ namespace Services {
     leds[currentLed] = rgb;
   }
 
+  void LedDriver::addAnimation(Animations::Animation* animation) {
+    animations.push_back(animation);
+    if (!currentAnimation) {
+      currentAnimation = animation;
+    }
+  }
+
   void LedDriver::setup() {
     FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, ledCount);
     FastLED.setBrightness(brightness);

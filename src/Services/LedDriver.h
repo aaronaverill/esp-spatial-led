@@ -24,6 +24,7 @@ namespace Services {
       void hsv(const CHSV& hsv);
       void rgb(const CRGB& rgb);
 
+      void addAnimation(Animations::Animation* animation);
       Animations::Animation* getCurrentAnimation() { return currentAnimation; }
 
       void setup();

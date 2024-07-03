@@ -2,11 +2,18 @@
 
 #include "Application.h"
 #include "Services/LedDriver.h"
+#include "Animations/Solid.h"
+
+void addAdminations(LedDriver* ledDriver) {
+  ledDriver->addAnimation(new Animations::Solid(*ledDriver));
+}
 
 void setup() {
   Serial.begin(115200);
   Application& app = Application::getInstance();
-  app.addService(new LedDriver(50));
+  LedDriver* ledDriver = new LedDriver(50);
+  addAdminations(ledDriver);
+  app.addService(ledDriver);
   app.setup();
 }
 
