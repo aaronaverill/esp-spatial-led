@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "ESPAsyncWebServer.h"
 
 #include "Application.h"
 #include "Services/LedDriver.h"
@@ -6,6 +7,8 @@
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
 #include "Services/WebServer.h"
+#include "Web/Api/LedAnimationsController.h"
+#include "Web/UI/HomePage.h"
 
 void addAdminations(LedDriver& ledDriver) {
   ledDriver.addAnimation(new Animations::Colorloop(ledDriver));
@@ -16,10 +19,15 @@ void addAdminations(LedDriver& ledDriver) {
 void setup() {
   Serial.begin(115200);
   Application& app = Application::getInstance();
+
   LedDriver* ledDriver = new LedDriver(50);
   addAdminations(*ledDriver);
   app.addService(ledDriver);
-  app.addService(new WebServer());
+
+  WebServer* webServer = new WebServer();
+  webServer->addRequestHandler("/api/led/animations", HTTP_GET, &Web::Api::LedAnimationsController::getAnimationsList);
+  webServer->addRequestHandler("/", HTTP_GET, &Web::UI::HomePage::get);
+  app.addService(webServer);
   app.setup();
 }
 
