@@ -5,6 +5,7 @@
 #include "Animations/Colorloop.h"
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
+#include "Services/WebServer.h"
 
 void addAdminations(LedDriver& ledDriver) {
   ledDriver.addAnimation(new Animations::Colorloop(ledDriver));
@@ -18,6 +19,7 @@ void setup() {
   LedDriver* ledDriver = new LedDriver(50);
   addAdminations(*ledDriver);
   app.addService(ledDriver);
+  app.addService(new WebServer());
   app.setup();
 }
 
