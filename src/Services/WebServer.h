@@ -23,8 +23,6 @@ namespace Services {
        */
       void addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction handler);
 
-      //AsyncWebServer* getWebServer() { return server; }
-
       /**
        * Methods for the arduino processing loop
        */
