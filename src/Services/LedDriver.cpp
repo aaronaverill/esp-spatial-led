@@ -7,7 +7,7 @@
 namespace Services {
   const char *LedDriver::Name = "led";
 
-  LedDriver::LedDriver(uint ledCount) : Service(Name), ledCount(ledCount) {
+  LedDriver::LedDriver(uint ledCount): Service(Name), ledCount(ledCount) {
     leds = new CRGB[ledCount];
   }
 
@@ -29,7 +29,13 @@ namespace Services {
   }
 
   Coordinate& LedDriver::getLedCoordinate(uint index) {
-    if (index < ledCount && index < ledCoordinates.size()) {
+    if (!ledCoordinates.size()) {
+      if (ledCount) {
+        float percent = (0.5+index)/ledCount;
+        Coordinate coordinate = Coordinate(percent, percent, percent);
+        return coordinate;
+      }
+    } else if (index < ledCount && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     }
   }

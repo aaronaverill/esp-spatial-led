@@ -4,7 +4,6 @@
 #include "Service.h"
 #include "Animations/Animation.h"
 
-#include <FastLED.h>
 #include <vector>
 
 namespace Services {
