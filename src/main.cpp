@@ -64,11 +64,11 @@ void setup() {
   addAdminations(*ledDriver);
   app.addService(ledDriver);
 
-  WebServer* webServer = new WebServer();
-  webServer->addRequestHandler("/api/leds/current", HTTP_POST, &Web::Api::LedsController::setCurrent);
-  webServer->addRequestHandler("/api/leds", HTTP_GET, &Web::Api::LedsController::get);
-  webServer->addRequestHandler("/", HTTP_GET, &Web::UI::HomePage::get);
-  app.addService(webServer);
+  WebServer& webServer = WebServer::getInstance();
+  webServer.addRequestHandler("/api/leds/current", HTTP_POST, &Web::Api::LedsController::setCurrent);
+  webServer.addRequestHandler("/api/leds", HTTP_GET, &Web::Api::LedsController::get);
+  webServer.addRequestHandler("/", HTTP_GET, &Web::UI::HomePage::get);
+  app.addService(&webServer);
 
   app.setup();
 }

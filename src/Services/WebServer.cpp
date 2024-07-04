@@ -12,20 +12,22 @@
 #endif
 #include "ESPAsyncWebServer.h"
 
+class CaptiveRequestHandler : public AsyncWebHandler {
+  public:
+    CaptiveRequestHandler() {}
+    virtual ~CaptiveRequestHandler() {}
+
+    bool canHandle(AsyncWebServerRequest *request){
+      return true;
+    }
+
+    void handleRequest(AsyncWebServerRequest *request) {
+      request->redirect("http://" + WiFi.softAPIP().toString());
+    }
+};
+
 namespace Services {
-  class CaptiveRequestHandler : public AsyncWebHandler {
-    public:
-      CaptiveRequestHandler() {}
-      virtual ~CaptiveRequestHandler() {}
-
-      bool canHandle(AsyncWebServerRequest *request){
-        return true;
-      }
-
-      void handleRequest(AsyncWebServerRequest *request) {
-        request->redirect("http://" + WiFi.softAPIP().toString());
-      }
-  };
+  WebServer *WebServer::instance = nullptr;
 
   void WebServer::addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction handler) {
     requestHandlers.push_back(Services::WebRequestHandler(route, method, handler));

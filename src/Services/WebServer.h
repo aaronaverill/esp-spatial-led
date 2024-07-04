@@ -8,17 +8,37 @@
 namespace Services {
   class WebServer: public Service {
     public:
-      WebServer() {}
-      void addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction handler);
-      AsyncWebServer* getWebServer() { return server; }
+      /**
+       * Singleton accessor
+       */
+      static WebServer& getInstance() {
+        if (instance == NULL) {
+          instance = new WebServer();
+        }
+        return *instance;
+      }
 
+      /**
+       * Add a request handler
+       */
+      void addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction handler);
+
+      //AsyncWebServer* getWebServer() { return server; }
+
+      /**
+       * Methods for the arduino processing loop
+       */
       void setup();
       void loop();
+      
     private:
+      WebServer() {}
+      static WebServer *instance;
+
       String ssid = "SPATIAL-LED";
+
       DNSServer *dnsServer;
       AsyncWebServer *server;
-
       std::vector<Services::WebRequestHandler> requestHandlers;
   };
 }
