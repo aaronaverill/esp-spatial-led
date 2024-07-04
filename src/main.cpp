@@ -3,6 +3,8 @@
 
 #include "Application.h"
 
+#include "Services/FileSystem.h"
+
 #include "Services/LedDriver.h"
 #include "Animations/Colorloop.h"
 #include "Animations/Rainbow.h"
@@ -25,6 +27,8 @@ void addAdminations(LedDriver& ledDriver) {
 void setup() {
   Serial.begin(115200);
   Application& app = Application::getInstance();
+
+  app.addService(&FileSystem::getInstance());
 
   /*
   3D coordinates for a pentagonal icositetrahedron
