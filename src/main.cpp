@@ -2,10 +2,13 @@
 #include "ESPAsyncWebServer.h"
 
 #include "Application.h"
+
 #include "Services/LedDriver.h"
 #include "Animations/Colorloop.h"
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
+#include "Animations/Spatial/Rainbowfall.h"
+
 #include "Services/WebServer.h"
 #include "Web/Api/LedsController.h"
 #include "Web/UI/HomePage.h"
@@ -14,6 +17,7 @@ void addAdminations(LedDriver& ledDriver) {
   ledDriver.addAnimation(new Animations::Colorloop(ledDriver));
   ledDriver.addAnimation(new Animations::Rainbow(ledDriver));
   ledDriver.addAnimation(new Animations::Solid(ledDriver));
+  ledDriver.addAnimation(new Animations::Spatial::Rainbowfall(ledDriver));
 }
 
 void setup() {
