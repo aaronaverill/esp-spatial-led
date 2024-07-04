@@ -1,13 +1,13 @@
 #pragma once
 #include <Arduino.h>
 #include <FastLED.h>
-#include "Service.h"
+#include "IService.h"
 #include "Animations/Animation.h"
 
 #include <vector>
 
 namespace Services {
-  class LedDriver: public Service, public ILedDriverAnimationContext {
+  class LedDriver: public IService, public ILedDriverAnimationContext {
     public:
       /**
        * Singleton accessor
@@ -24,25 +24,73 @@ namespace Services {
        */
       void configure(uint ledCount);
 
+      /**
+       * Get the total number of leds
+       */
       const uint getLedCount() { return ledCount; }
+      /**
+       * Get the led array
+       */
       CRGB* getLeds() { return leds; }
-      void setLedCoordinates(char *coordinates);
+      /**
+       * Get the coordinate of an led by index
+       */
       Coordinate& getLedCoordinate(uint index);
-
+      /**
+       * Within a rendering context, the current led which is being rendered
+       */
+      const uint getCurrentLed() { return currentLed; }
+      /**
+       * Set the current led which is being rendered
+       */
+      void setCurrentLed(uint index) { currentLed = index; }
+      /**
+       * Set the current led's color by HSV
+       */
+      void hsv(const CHSV& hsv);
+      /**
+       * Set the current led's color by RGB
+       */
+      void rgb(const CRGB& rgb);
+      
+      /**
+       * Set the led coordinate map
+       * @param coordinates A comma separated list of x,y,z tuples for each led
+       */
+      void setLedCoordinates(char *coordinates);
+      /**
+       * Get the overall led strip brightness
+       */
       const uint8_t getBrightness() { return brightness; }
+      /**
+       * Set the overall led strip brightness
+       */
       void setBrightness(uint8_t brightness);
 
-      const uint getCurrentLed() { return currentLed; }
-      void setCurrentLed(uint index) { currentLed = index; }
-      void hsv(const CHSV& hsv);
-      void rgb(const CRGB& rgb);
-
+      /**
+       * Add an animation to the sequencer
+       */
       void addAnimation(Animations::Animation* animation);
+      /**
+       * Get a list of all the animations
+       */
       std::vector<Animations::Animation*>& getAnimations() { return animations; }
+      /**
+       * Return the currently playing animation
+       */
       Animations::Animation* getCurrentAnimation() { return currentAnimation; }
+      /**
+       * Get the index of the currently playing animation
+       */
       const uint getCurrentAnimationIndex() { return currentAnimationIndex; }
+      /**
+       * Set the index of the currently playing animation
+       */
       void setCurrentAnimationIndex(uint index);
 
+      /**
+       * Methods for the arduino processing loop
+       */
       void setup();
       void loop();
 

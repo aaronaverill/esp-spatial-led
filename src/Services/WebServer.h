@@ -1,12 +1,12 @@
 #pragma once
-#include "Service.h"
+#include "IService.h"
 
 #include <DNSServer.h>
 #include "ESPAsyncWebServer.h"
 #include "WebRequestHandler.h"
 
 namespace Services {
-  class WebServer: public Service {
+  class WebServer: public IService {
     public:
       /**
        * Singleton accessor

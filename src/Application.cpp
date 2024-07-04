@@ -3,18 +3,18 @@
 
 Application *Application::instance = nullptr;
 
-void Application::addService(Service* service) {
+void Application::addService(IService* service) {
   services.push_back(service);
 }
 
 void Application::setup() {
-  for (Service *service:services) {
+  for (IService *service:services) {
     service->setup();
   }
 }
 
 void Application::loop() {
-  for (Service *service:services) {
+  for (IService *service:services) {
     service->loop();
   }
 }

@@ -3,13 +3,11 @@
 
 namespace Services {
   /**
-   * Base class for all services
+   * Interface class for all services
    */
-  class Service {
+  class IService {
     public:
-      Service(const char *name = "") : name(name) {}
       virtual void setup() {}
       virtual void loop() {}
-      const char *name;
   };
 }

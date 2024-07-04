@@ -1,5 +1,5 @@
 #pragma once
-#include "Services/Service.h"
+#include "Services/IService.h"
 
 #include <vector>
 
@@ -23,7 +23,7 @@ class Application {
     /**
      * Add a service to the arduino setup() and loop() pipeline
      */
-    void addService(Service* service);
+    void addService(IService* service);
 
     /**
      * Called from main.cpp setup()
@@ -37,5 +37,5 @@ class Application {
   private:
     Application() {}
     static Application *instance;
-    std::vector<Service*> services;
+    std::vector<IService*> services;
 };
