@@ -24,10 +24,7 @@ class Application {
      * Add a service to the arduino setup() and loop() pipeline
      */
     void addService(Service* service);
-    /**
-     * Get a service by the name
-     */
-    const Service* getServiceByName(const char *name);
+
     /**
      * Called from main.cpp setup()
      */
