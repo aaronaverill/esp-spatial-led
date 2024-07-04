@@ -2,9 +2,9 @@
 
 namespace Animations { namespace Spatial {
   void CubeFire::beforeRender() {
-      t1 = ((float)beat16(9.15/speed))/65535;
-      t2 = ((float)beat16(7.04/speed))/65535;
-      t3 = ((float)beat16(10.77/speed))/65535;
+      t1 = ((float)beat16(9.15*speed))/65535;
+      t2 = ((float)beat16(7.04*speed))/65535;
+      t3 = ((float)beat16(10.77*speed))/65535;
 
       // Oscillate the scale coefficient of space between 0.25 and 0.75
       scale = (.5 + ((float)beatsin16(9.15))/65535) / 2;
