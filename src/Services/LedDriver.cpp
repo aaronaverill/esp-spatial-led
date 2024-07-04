@@ -5,9 +5,10 @@
 #define DATA_PIN D4
 
 namespace Services {
-  const char *LedDriver::Name = "led";
+  LedDriver *LedDriver::instance = nullptr;
 
-  LedDriver::LedDriver(uint ledCount): Service(Name), ledCount(ledCount) {
+  void LedDriver::configure(uint ledCount) {
+    this->ledCount = ledCount;
     leds = new CRGB[ledCount];
   }
 

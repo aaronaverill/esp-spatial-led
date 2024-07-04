@@ -9,9 +9,20 @@
 namespace Services {
   class LedDriver: public Service, public ILedDriverAnimationContext {
     public:
-      static const char *Name;
+      /**
+       * Singleton accessor
+       */
+      static LedDriver& getInstance() {
+        if (instance == NULL) {
+          instance = new LedDriver();
+        }
+        return *instance;
+      }
 
-      LedDriver(uint ledCount);
+      /**
+       * Configure the LED strip
+       */
+      void configure(uint ledCount);
 
       const uint getLedCount() { return ledCount; }
       CRGB* getLeds() { return leds; }
@@ -36,11 +47,14 @@ namespace Services {
       void loop();
 
     private:
-      uint ledCount = 0;
-      CRGB *leds;
+      LedDriver() {}
+      static LedDriver *instance;
+
       std::vector<Coordinate> ledCoordinates;
       uint8_t brightness = 128;
 
+      uint ledCount = 0;
+      CRGB *leds = nullptr;
       std::vector<Animations::Animation*> animations;
       Animations::Animation* currentAnimation = nullptr;
       uint currentAnimationIndex = 0;
