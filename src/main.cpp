@@ -7,7 +7,7 @@
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
 #include "Services/WebServer.h"
-#include "Web/Api/LedAnimationsController.h"
+#include "Web/Api/LedsController.h"
 #include "Web/UI/HomePage.h"
 
 void addAdminations(LedDriver& ledDriver) {
@@ -25,9 +25,11 @@ void setup() {
   app.addService(ledDriver);
 
   WebServer* webServer = new WebServer();
-  webServer->addRequestHandler("/api/led/animations", HTTP_GET, &Web::Api::LedAnimationsController::getAnimationsList);
+  webServer->addRequestHandler("/api/leds/current", HTTP_POST, &Web::Api::LedsController::setCurrent);
+  webServer->addRequestHandler("/api/leds", HTTP_GET, &Web::Api::LedsController::get);
   webServer->addRequestHandler("/", HTTP_GET, &Web::UI::HomePage::get);
   app.addService(webServer);
+
   app.setup();
 }
 

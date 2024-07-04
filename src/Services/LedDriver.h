@@ -25,8 +25,10 @@ namespace Services {
       void rgb(const CRGB& rgb);
 
       void addAnimation(Animations::Animation* animation);
+      std::vector<Animations::Animation*>& getAnimations() { return animations; }
       Animations::Animation* getCurrentAnimation() { return currentAnimation; }
       const uint getCurrentAnimationIndex() { return currentAnimationIndex; }
+      void setCurrentAnimationIndex(uint index);
 
       void setup();
       void loop();
