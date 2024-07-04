@@ -16,6 +16,9 @@ namespace Services {
 
       const uint getLedCount() { return ledCount; }
       CRGB* getLeds() { return leds; }
+      void setLedCoordinates(char *coordinates);
+      Coordinate& getLedCoordinate(uint index);
+
       const uint8_t getBrightness() { return brightness; }
       void setBrightness(uint8_t brightness);
 
@@ -36,6 +39,7 @@ namespace Services {
     private:
       uint ledCount = 0;
       CRGB *leds;
+      std::vector<Coordinate> ledCoordinates;
       uint8_t brightness = 128;
 
       std::vector<Animations::Animation*> animations;

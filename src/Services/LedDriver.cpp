@@ -11,6 +11,29 @@ namespace Services {
     leds = new CRGB[ledCount];
   }
 
+  void LedDriver::setLedCoordinates(char *coordinates) {
+    ledCoordinates = std::vector<Coordinate>();
+    byte pos = 0;
+    char *parts[3];
+    char *ptr = strtok(coordinates, ",");  // delimiter
+    while (ptr != NULL) {
+      parts[pos] = ptr;
+      if (pos == 2) {
+        ledCoordinates.push_back(Coordinate(atof(parts[0]), atof(parts[1]), atof(parts[2])));
+        pos = 0;
+      } else {
+        pos++;
+      }
+      ptr = strtok(NULL, ",");
+    }
+  }
+
+  Coordinate& LedDriver::getLedCoordinate(uint index) {
+    if (index < ledCount && index < ledCoordinates.size()) {
+      return ledCoordinates[index];
+    }
+  }
+
   void LedDriver::setBrightness(uint8_t brightness) {
     this->brightness = brightness;
     FastLED.setBrightness(brightness);

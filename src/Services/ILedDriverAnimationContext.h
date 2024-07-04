@@ -1,5 +1,6 @@
 #pragma once
 #include <FastLED.h>
+#include "Coordinate.h"
 
 namespace Services {
   /**
@@ -16,7 +17,11 @@ namespace Services {
        */
       virtual CRGB* getLeds();
       /**
-       * Within a rending context, the current led which is being rendered
+       * Get the coordinate of an led by index
+       */
+      virtual Coordinate& getLedCoordinate(uint index);
+      /**
+       * Within a rendering context, the current led which is being rendered
        */
       virtual const uint getCurrentLed();
       /**
