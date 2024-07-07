@@ -47,10 +47,10 @@ namespace Web { namespace UI {
 	.nav>div.selected {opacity:1}
 	.img {width:18px;height:18px}
 	.img.lg {width:24px;height:24px}
-	.chevron-left {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3E%3C/svg%3E")}
-	.chevron-right {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3E%3C/svg%3E")}
-	.collection {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5z'/%3E%3C/svg%3E")}
-	.gear {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0'/%3E%3Cpath d='M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z'/%3E%3C/svg%3E")}
+	.chevron-left {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white'%3E%3Cpath d='M8,2 4,6 8,10'/%3E%3C/svg%3E")}
+	.chevron-right {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white'%3E%3Cpath d='M4,2 8,6 4,10'/%3E%3C/svg%3E")}
+	.gear {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' stroke-width='.75' fill='none'%3E%3Cpath d='M9.9,6.88 11.34,8 10.41,9.62 8.66,8.99 C8.23,9.37 7.73,9.65 7.19,9.82 L6.94,11.62 H5.06 L4.74,9.8 C4.2,9.62 3.7,9.33 3.29,8.94 L1.59,9.62 0.66,8 2.08,6.8 C1.96,6.25 1.97,5.68 2.09,5.12 L0.66,4 1.59,2.38 3.34,3.01 C3.77,2.63 4.27,2.35 4.81,2.18 L5.06,0.37 H6.94 L7.26,2.2 C7.8,2.38 8.3,2.67 8.71,3.06 L10.41,2.38 11.34,4 9.92,5.2 c0.11,0.56 0.11,1.13 -0.02,1.68z'/%3E%3Ccircle cx='6' cy='6' r='1.925'/%3E %3C/svg%3E")}
+	.library {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='m2.5,1 h7 m-8,2 h9'/%3E%3Crect x='0.5' y='5' width='11' height='6.5' rx='1' ry='1'/%3E%3C/svg%3E")}
 </style>
 </head>
 <body class="ma-0" onload="onload()">
@@ -79,7 +79,7 @@ namespace Web { namespace UI {
 		</div>
 		<div class="play"><div id="play-name" class="pa-3">&nbsp;</div></div>
 		<div class="nav d-flex selectable w-100">
-			<div onclick="navClick(this)" data-page="1" class="selected"><div class="img lg collection mb-2"></div><div>Library</div></div>
+			<div onclick="navClick(this)" data-page="1" class="selected"><div class="img lg library mb-2"></div><div>Library</div></div>
 			<div onclick="navClick(this)" data-page="2"><div class="img lg gear mb-2"></div><div>Settings</div></div>
 		</div>
 	</div>
@@ -90,6 +90,7 @@ namespace Web { namespace UI {
 			}
 		}
 		let refreshTimer=0
+
 		async function onload() {
 			let response = await fetch('/api/info')
 			if (response.ok) {
@@ -151,6 +152,7 @@ namespace Web { namespace UI {
 				document.getElementById('fps').innerText=`${fps} fps`
 				refreshTimer=setTimeout(updateFps,2000)
 			} else {
+				clearTimeout(refreshTimer)
 				refreshTimer=0
 			}
 		}
