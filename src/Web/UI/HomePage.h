@@ -178,7 +178,7 @@ namespace Web { namespace UI {
 		function showOptions() {
 			let list=document.querySelector('.page.options .list')
 			let html=''
-			var fields=['brightness']
+			var fields=[].concat(Object.keys(globalFields))
 			for(let f of fields){
 				html+=optionHtml(optionsField(f))
 			}
@@ -234,9 +234,16 @@ namespace Web { namespace UI {
 		function onInputChange(id,e) {
 			let field=optionsField(id)
 			let val=e.value
-			info.leds[id]=Math.round(modelValue(val,field))
+			if(isGlobalField(id)) {
+				info.leds.play.settings[id]=Math.round(modelValue(val,field))
+			}
 			refreshOptionValue(e,val,field)
-			fetch(`/api/leds/play/settings?${id}=${val}`,{method:'POST'})
+			if(isGlobalField(id)) {
+				fetch(`/api/leds/play/settings?${id}=${val}`,{method:'POST'})
+			}
+		}
+		function isGlobalField(id) {
+			return globalFields.hasOwnProperty(id)
 		}
 		function optionsField(id) {
 			return globalFields[id]||info.leds.animations[info.leds.play.index].fields
@@ -247,7 +254,10 @@ namespace Web { namespace UI {
 		}
 		function refreshOptionControls(field) {
 			let input=document.querySelector(`.page.options [data-field="${field.id}"] input`)
-			let val=info.leds.play.settings[field.id]
+			let val
+			if (isGlobalField(field.id)) {
+				val=info.leds.play.settings[field.id]
+			}
 			if(field.factor) val/=field.factor
 			input.value=val
 			val=Math.round(val)
