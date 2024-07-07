@@ -13,6 +13,7 @@
 #include "Animations/Spatial/Rainbowfall.h"
 
 #include "Services/WebServer.h"
+#include "Web/Api/InfoController.h"
 #include "Web/Api/LedsController.h"
 #include "Web/UI/HomePage.h"
 
@@ -70,8 +71,8 @@ void setup() {
   app.addService(&ledDriver);
 
   WebServer& webServer = WebServer::getInstance();
-  webServer.addRequestHandler("/api/leds/current", HTTP_POST, &Web::Api::LedsController::setCurrent);
-  webServer.addRequestHandler("/api/leds", HTTP_GET, &Web::Api::LedsController::get);
+  webServer.addRequestHandler("/api/info", HTTP_GET, &Web::Api::InfoController::get);
+  webServer.addRequestHandler("/api/leds/play", HTTP_POST, &Web::Api::LedsController::setCurrent);
   webServer.addRequestHandler("/", HTTP_GET, &Web::UI::HomePage::get);
   app.addService(&webServer);
 

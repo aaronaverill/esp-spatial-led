@@ -9,7 +9,6 @@ namespace Services {
 
   void LedDriver::configure(uint ledCount) {
     this->ledCount = ledCount;
-    leds = new CRGB[ledCount];
   }
 
   void LedDriver::setLedCoordinates(char *coordinates) {
@@ -70,6 +69,7 @@ namespace Services {
   }
 
   void LedDriver::setup() {
+    leds = new CRGB[ledCount];
     FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, ledCount);
     FastLED.setBrightness(brightness);
     FastLED.clear();

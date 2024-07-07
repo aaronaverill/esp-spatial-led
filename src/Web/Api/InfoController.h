@@ -3,11 +3,11 @@
 #include "ESPAsyncWebServer.h"
 
 namespace Web { namespace Api {
-  class LedsController {
+  class InfoController {
     public:
       /**
-       * Set the current LED animation
+       * Get info about system
        */
-      static void setCurrent(AsyncWebServerRequest *request);
+      static void get(AsyncWebServerRequest *request);
   };
 }}
