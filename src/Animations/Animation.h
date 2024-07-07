@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ArduinoJson.h>
+#include "KeyValuePair.h"
 #include "Services/ILedDriverAnimationContext.h"
 
 namespace Animations {
@@ -12,6 +14,18 @@ namespace Animations {
        * Construct the animation with a context and name
        */
       Animation(Services::ILedDriverAnimationContext& context, const char *name) : context(context), name(name) {}
+      /**
+       * Construct custom fields information
+       */
+      virtual void getFields(JsonArray& fields) {}
+      /**
+       * Construct custom settings
+       */
+      virtual void getSettings(JsonObject& settings) {}
+      /**
+       * Set animation settings
+       */
+      virtual void setSettings(std::vector<KeyValuePair> values) {}
       /**
        * Render the animation frame
        */

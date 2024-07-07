@@ -53,6 +53,7 @@ namespace Web { namespace UI {
 	.nav>div:hover {opacity:.9}
 	.nav>div.selected {opacity:1}
 	.options .value {width:4em;text-align:right}
+	.rainbow {background-image:linear-gradient(90deg,#F00,#FF0,#0F0,#0FF,#00F,#F0F,#F00)}
 	.img {width:18px;height:18px}
 	.img.img-lg {width:24px;height:24px}
 	.img-chevron-left {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='M8,2 4,6 8,10'/%3E%3C/svg%3E")}
@@ -117,8 +118,8 @@ namespace Web { namespace UI {
 		</div>
 	</div>
 	<script>
-		let globalFields={
-			brightness:{
+		let globalFields=[
+			{
 				id:'brightness',
 				type:'slider',
 				label:'Brightness',
@@ -127,7 +128,7 @@ namespace Web { namespace UI {
 				factor:2.55,
 				template:'${val}%'
 			}
-		}
+		]
 		let info={
 			leds:{
 				play:{
@@ -176,14 +177,19 @@ namespace Web { namespace UI {
 			updateFps()
 		}
 		function showOptions() {
+			let a=info.leds.animations[info.leds.play.index]
 			let list=document.querySelector('.page.options .list')
 			let html=''
-			var fields=[].concat(Object.keys(globalFields))
-			for(let f of fields){
+			let fields=[]
+			for(let f of globalFields) fields.push(f.id)
+			if (a.fields) {
+				for(let f of a.fields) fields.push(f.id)
+			}
+			for(let f of fields) {
 				html+=optionHtml(optionsField(f))
 			}
 			list.innerHTML=html
-			for(let f of fields){
+			for(let f of fields) {
 				refreshOptionControls(optionsField(f))
 			}
 			showPage('1.1')
@@ -208,45 +214,50 @@ namespace Web { namespace UI {
 			})
 		}
 		function optionHtml(field) {
+			var html=`<div data-field="${field.id}" class="item pa-2"><div>${field.label}</div><div class="d-flex w-100"><div class="flex-grow-1 pr-3">`;
+
 			switch(field.type) {
 				case'slider':
 					let val=field.min
-					let minLabel=eval(`\`${field.template}\``)
+					let minLabel=field.template?eval(`\`${field.template}\``):val
 					val=field.max
-					let maxLabel=eval(`\`${field.template}\``)
-					return `
-<div data-field="${field.id}" class="item pa-2">
-	<div>${field.label}</div>
-	<div class="d-flex w-100">
-		<div class="flex-grow-1 pr-3">
-			<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>
-			<div class="d-flex justify-between font-micro">
-				<div>${minLabel}</div>
-				<div>${maxLabel}</div>
-			</div>
-		</div>
-		<div class="value flex-shrink-0"></div>
-	</div>
-</div>`
+					let maxLabel=field.template?eval(`\`${field.template}\``):val
+					html+=`
+<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>
+<div class="d-flex justify-between font-micro">
+	<div>${minLabel}</div>
+	<div>${maxLabel}</div>
+</div>`;
+					break
+				case'hue-slider':
+					html+=`<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div><div class="rainbow" style="height:10px;margin:0 5px 0 9px"></div>`;
 					break
 			}
+			html+='</div><div class="value flex-shrink-0"></div></div></div>';
+		
+			return html
 		}
 		function onInputChange(id,e) {
 			let field=optionsField(id)
 			let val=e.value
+			let modelVal=Math.round(modelValue(val,field))
 			if(isGlobalField(id)) {
-				info.leds.play.settings[id]=Math.round(modelValue(val,field))
+				info.leds.play.settings[id]=modelVal
+			} else {
+				info.leds.animations[info.leds.play.index].settings[id]=modelVal
 			}
 			refreshOptionValue(e,val,field)
 			if(isGlobalField(id)) {
 				fetch(`/api/leds/play/settings?${id}=${val}`,{method:'POST'})
+			} else {
+				fetch(`/api/leds/animations/settings?index=${info.leds.play.index}&${id}=${val}`,{method:'POST'})
 			}
 		}
 		function isGlobalField(id) {
-			return globalFields.hasOwnProperty(id)
+			return globalFields.some(f=>f.id==id)
 		}
 		function optionsField(id) {
-			return globalFields[id]||info.leds.animations[info.leds.play.index].fields
+			return globalFields.find(f=>f.id==id)|| info.leds.animations[info.leds.play.index].fields?.find(f=>f.id==id)
 		}
 		function modelValue(val,field) {
 			if(field.factor) val*=field.factor
@@ -254,18 +265,23 @@ namespace Web { namespace UI {
 		}
 		function refreshOptionControls(field) {
 			let input=document.querySelector(`.page.options [data-field="${field.id}"] input`)
-			let val
-			if (isGlobalField(field.id)) {
-				val=info.leds.play.settings[field.id]
-			}
+			let val=info.leds.play.settings[field.id]||info.leds.animations[info.leds.play.index].settings[field.id]
 			if(field.factor) val/=field.factor
 			input.value=val
 			val=Math.round(val)
 			refreshOptionValue(input,val,field)
 		}
 		function refreshOptionValue(e,val,field) {
-			if(field.template) val=eval(`\`${field.template}\``)
-			e.closest('.item').querySelector('.value').innerText=val
+			switch(field.type) {
+				case'slider':
+					if(field.template) val=eval(`\`${field.template}\``)
+					e.closest('.item').querySelector('.value').innerText=val
+					break
+				case'hue-slider':
+					val*=(360/255)
+					e.closest('.item').querySelector('.value').style.backgroundColor=`hsl(${val},100%,50%)`
+					break
+			}
 		}
 		async function updateFps() {
 			let response = await fetch('/api/leds/play/fps')

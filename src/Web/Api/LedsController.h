@@ -10,12 +10,16 @@ namespace Web { namespace Api {
        */
       static void setPlayIndex(AsyncWebServerRequest *request);
       /**
-       * Set a setting
+       * Set a play setting
        */
       static void setPlaySetting(AsyncWebServerRequest *request);
       /**
+       * Set an animation setting
+       */
+      static void setAnimationSetting(AsyncWebServerRequest *request);
+      /**
        * Get the current playing frames per second
        */
-      static float getFps(AsyncWebServerRequest *request);
+      static void getFps(AsyncWebServerRequest *request);
   };
 }}

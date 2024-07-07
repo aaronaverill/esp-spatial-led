@@ -22,6 +22,10 @@ namespace Web { namespace Api {
       for (Animations::Animation *animation:animations) {
         JsonObject jsonAnimation = jsonAnimations.add<JsonObject>();
         jsonAnimation["name"] = animation->name;
+        JsonArray jsonAnimationFields = jsonAnimation["fields"].to<JsonArray>();
+        animation->getFields(jsonAnimationFields);
+        JsonObject jsonAnimationSettings = jsonAnimation["settings"].to<JsonObject>();
+        animation->getSettings(jsonAnimationSettings);
       }
     }
 
