@@ -10,6 +10,10 @@ namespace Web { namespace Api {
        */
       static void setPlayIndex(AsyncWebServerRequest *request);
       /**
+       * Set a setting
+       */
+      static void setPlaySetting(AsyncWebServerRequest *request);
+      /**
        * Get the current playing frames per second
        */
       static float getFps(AsyncWebServerRequest *request);

@@ -13,6 +13,15 @@ namespace Web { namespace Api {
     request->send(200, "text/plain", "OK");
   }
 
+  void LedsController::setPlaySetting(AsyncWebServerRequest *request) {
+    LedDriver& leds = LedDriver::getInstance();
+    if (request->hasParam("brightness")) {
+      uint value = request->getParam("brightness")->value().toInt();
+      leds.setBrightness(value);
+    }
+    request->send(200, "text/plain", "OK");
+  }
+
   float LedsController::getFps(AsyncWebServerRequest *request) {
     LedDriver& leds = LedDriver::getInstance();
     request->send(200, "text/plain", String(leds.getFramesPerSecond()));

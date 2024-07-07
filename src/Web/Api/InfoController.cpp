@@ -13,6 +13,8 @@ namespace Web { namespace Api {
     JsonDocument doc;
     JsonObject jsonLeds = doc["leds"].to<JsonObject>();
     JsonObject jsonPlay = jsonLeds["play"].to<JsonObject>();
+    JsonObject jsonSettings = jsonPlay["settings"].to<JsonObject>();
+    jsonSettings["brightness"] = leds.getBrightness();
     jsonPlay["index"] = nullptr;
     JsonArray jsonAnimations = jsonLeds["animations"].to<JsonArray>();
     if (animations.size()) {
