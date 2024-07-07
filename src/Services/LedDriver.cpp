@@ -29,14 +29,11 @@ namespace Services {
   }
 
   Coordinate& LedDriver::getLedCoordinate(uint index) {
-    if (!ledCoordinates.size()) {
-      if (ledCount) {
-        float percent = (0.5+index)/ledCount;
-        Coordinate coordinate = Coordinate(percent, percent, percent);
-        return coordinate;
-      }
-    } else if (index < ledCount && index < ledCoordinates.size()) {
+    if (index < ledCount && index < ledCoordinates.size()) {
       return ledCoordinates[index];
+    } else {
+      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = (index+0.5)/ledCount;
+      return autoCoordinate;
     }
   }
 
@@ -77,7 +74,18 @@ namespace Services {
 
   void LedDriver::loop() {
     if (currentAnimation) {
+      if (fps == -1) {
+        fps = 0;
+        fpsSampleStartMillis = millis();
+      }
       currentAnimation->render();
+      fpsFrames++;
+      uint now = millis();
+      if (now > fpsSampleStartMillis && (now - fpsSampleStartMillis) > 2000) {
+        fps = (float)(1000 * fpsFrames) / (now - fpsSampleStartMillis);
+        fpsSampleStartMillis = now;
+        fpsFrames = 0;
+      }
     } else {
       FastLED.clear();
       FastLED.show();

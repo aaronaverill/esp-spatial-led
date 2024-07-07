@@ -8,6 +8,10 @@ namespace Web { namespace Api {
       /**
        * Set the current LED animation
        */
-      static void setCurrent(AsyncWebServerRequest *request);
+      static void setPlayIndex(AsyncWebServerRequest *request);
+      /**
+       * Get the current playing frames per second
+       */
+      static float getFps(AsyncWebServerRequest *request);
   };
 }}

@@ -29,6 +29,7 @@ namespace Web { namespace UI {
 	.ml-3 {margin-left:12px}
 	.mr-3 {margin-right:12px}
 	.mb-2 {margin-bottom:8px}
+	.text-center {text-align:center}
 	.text-overflow {overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 	.selectable>div:hover {background-color:#BBF2}
 	.btn:hover {background-color:#FFF2}
@@ -65,13 +66,14 @@ namespace Web { namespace UI {
 				<div class="title"><div class="pa-3">Settings</div></div>
 				<div class="page">
 					<div class="list selectable">
-						<div onclick="showPage('2.1')" class="item"><div class="text">About</div><div class="img chevron-right ml-3"></div></div>
+						<div onclick="showAbout()" class="item"><div class="text">About</div><div class="img chevron-right ml-3"></div></div>
 					</div>
 				</div>
 			</div>
 			<div id="p2.1" class="d-none flex-column h-100">
 				<div class="title"><div onclick="showPage('2')" class="btn pa-4"><div class="img chevron-left"></div></div><div class="pa-3">About</div></div>
 				<div class="page">
+					<div id="fps" class="text-center pa-3">- fps</div>
 				</div>
 			</div>
 		</div>
@@ -87,7 +89,7 @@ namespace Web { namespace UI {
 				animations:[]
 			}
 		}
-
+		let refreshTimer=0
 		async function onload() {
 			let response = await fetch('/api/info')
 			if (response.ok) {
@@ -99,19 +101,19 @@ namespace Web { namespace UI {
 		}
 		function onAnimationClick(i) {
 			fetch(`/api/leds/play?index=${i}`,{method:'POST'})
-			info.leds.play.index = i
+			info.leds.play.index=i
 			refreshPage()
 		}
 		function refreshPage() {
 			if (info.leds.animations.length) {
-				document.getElementById('play-name').innerText = info.leds.animations[info.leds.play.index].name
+				document.getElementById('play-name').innerText=info.leds.animations[info.leds.play.index].name
 			}
-			var html = ''
-			for(let i = 0; i < info.leds.animations.length; i++) {
-				const selected = i == info.leds.play.index ? ' selected' : ''
-				html += '<div class="item'+selected+'" onclick="onAnimationClick('+i+')"><div class="text">'+info.leds.animations[i].name+'</div></div>'
+			let html=''
+			for(let i=0;i<info.leds.animations.length;i++) {
+				const selected=i==info.leds.play.index?' selected':''
+				html+='<div class="item'+selected+'" onclick="onAnimationClick('+i+')"><div class="text">'+info.leds.animations[i].name+'</div></div>'
 			}
-			document.getElementById('animations').innerHTML = html
+			document.getElementById('animations').innerHTML=html
 		}
 		function byClass(cls) {
 			return document.querySelectorAll(cls)
@@ -119,7 +121,15 @@ namespace Web { namespace UI {
 		function navClick(el) {
 			showPage(el.dataset.page)
 		}
+		function showAbout() {
+			showPage('2.1')
+			updateFps()
+		}
 		function showPage(id) {
+			if (refreshTimer) {
+				clearTimeout(refreshTimer)
+				refreshTimer=0
+			}
 			byClass('.nav>div').forEach(e=>{
 				e.classList.remove('selected')
 				if(e.dataset.page==id) e.classList.add('selected')
@@ -133,6 +143,16 @@ namespace Web { namespace UI {
 					e.classList.add('d-none')
 				}
 			})
+		}
+		async function updateFps() {
+			let response = await fetch('/api/leds/play/fps')
+			if (response.ok) {
+				let fps = await response.text();
+				document.getElementById('fps').innerText=`${fps} fps`
+				refreshTimer=setTimeout(updateFps,2000)
+			} else {
+				refreshTimer=0
+			}
 		}
 	</script>
 </body>

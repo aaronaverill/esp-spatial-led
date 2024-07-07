@@ -87,6 +87,10 @@ namespace Services {
        * Set the index of the currently playing animation
        */
       void setCurrentAnimationIndex(uint index);
+      /**
+       * Get the current frames per second playback speed
+       */
+      float getFramesPerSecond() { return fps; }
 
       /**
        * Methods for the arduino processing loop
@@ -104,9 +108,14 @@ namespace Services {
       uint ledCount = 0;
       CRGB *leds = nullptr;
       std::vector<Animations::Animation*> animations;
+
       Animations::Animation* currentAnimation = nullptr;
       uint currentAnimationIndex = 0;
+      uint fpsSampleStartMillis = 0;
+      uint fpsFrames = 0;
+      float fps = -1;
 
       uint currentLed = 0;
+      Coordinate autoCoordinate;
   };
 }
