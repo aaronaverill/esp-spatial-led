@@ -1,4 +1,5 @@
 #pragma once
+#include "LittleFS.h"
 #include "IService.h"
 
 namespace Services {
@@ -18,6 +19,15 @@ namespace Services {
        * Return true if the file system was mounted
        */
       const bool isMounted() { return mounted; }
+
+      /**
+       * Return true if the file exists
+       */
+      bool exists(const char *path) { return LittleFS.exists(path); }
+      /**
+       * Open a file
+       */
+      File open(const char *path, const char* mode) { return LittleFS.open(path, mode); }
 
       /**
        * Methods for the arduino processing loop

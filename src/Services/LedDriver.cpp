@@ -1,6 +1,7 @@
 #include "LedDriver.h"
 
 #include <FastLED.h>
+#include "Store/LedSettings.h"
 
 #define DATA_PIN D4
 
@@ -70,6 +71,8 @@ namespace Services {
     FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, ledCount);
     FastLED.setBrightness(brightness);
     FastLED.clear();
+
+    Store::LedSettings::read();
   }
 
   void LedDriver::loop() {

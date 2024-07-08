@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Services/LedDriver.h"
 #include "Animations/Animation.h"
+#include "Store/LedSettings.h"
 
 using namespace Services;
 
@@ -19,6 +20,7 @@ namespace Web { namespace Api {
     if (request->hasParam("brightness")) {
       uint value = request->getParam("brightness")->value().toInt();
       leds.setBrightness(value);
+      Store::LedSettings::write();
     }
     request->send(200, "text/plain", "OK");
   }
@@ -37,6 +39,7 @@ namespace Web { namespace Api {
       if (index < animations.size()) {
         animations[index]->setSettings(values);
       }
+      Store::LedSettings::write();
     }
     request->send(200, "text/plain", "OK");
   }
