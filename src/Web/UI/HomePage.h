@@ -25,14 +25,16 @@ namespace Web { namespace UI {
 	.h-100 {height:100%}
 	.ma-0 {margin:0}
 	.mr-auto {margin-right:auto}
+	.ma-2 {margin:8px}
+	.ml-3 {margin-left:12px}
+	.mr-3 {margin-right:12px}
+	.mb-2 {margin-bottom:8px}
 	.pa-2 {padding:8px}
 	.pa-3 {padding:12px}
 	.pa-4 {padding:16px}
 	.py-3 {padding-top:12px;padding-bottom:12px}
 	.pr-3 {padding-right:12px}
-	.ml-3 {margin-left:12px}
-	.mr-3 {margin-right:12px}
-	.mb-2 {margin-bottom:8px}
+	.rounded {border-radius:6px}
 	.text-center {text-align:center}
 	.text-truncate {overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 	.align-center {align-items:center}
@@ -56,6 +58,8 @@ namespace Web { namespace UI {
 	.rainbow {background-image:linear-gradient(90deg,#F00,#FF0,#0F0,#0FF,#00F,#F0F,#F00)}
 	.img {width:18px;height:18px}
 	.img.img-lg {width:24px;height:24px}
+	.img.img-vlg {width:34px;height:34px}
+	.img-led {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='white' fill='none' stroke-linecap='round'%3E%3Cpath stroke-linejoin='round' d='m10,21.28 v-4.18 m0,-3 V9.63 h1.04 l0.53,0.85 1.06,-0.85 h1.26 v4.47 m0,3 V23.46 M6.75,14.1 H17.25 c0.55,0 1,0.45 1,1 v1 c0,0.55 -0.44,1 -1,1 H6.75 c-0.55,0 -1,-0.45 -1,-1 v-1 c0,-0.55 0.45,-1 1,-1 zM16.75,13.8 V5.25 C16.75,2.63 14.62,0.5 12,0.5 c-2.62,0 -4.75,2.13 -4.75,4.75 v 8.55'/%3E%3Cpath d='M8.82,5.25 A3.18,3.18 0 0 1 12,2.09'/%3E%3C/svg%3E")}
 	.img-chevron-left {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='M8,2 4,6 8,10'/%3E%3C/svg%3E")}
 	.img-chevron-right {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='M4,2 8,6 4,10'/%3E%3C/svg%3E")}
 	.img-close {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='m2,10 8,-8 m-8,0 8,8'/%3E%3C/svg%3E")}
@@ -68,13 +72,13 @@ namespace Web { namespace UI {
 	<div class="d-flex flex-column h-100" class="h-100">
 		<div class="main">
 			<div id="p1" class="d-flex flex-column h-100">
-				<div class="title"><div class="pa-3">Library</div></div>
+				<div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Library</div></div>
 				<div class="page">
 					<div id="animations" class="list selectable"></div>
 				</div>
 			</div>
 			<div id="p2" class="d-none flex-column h-100">
-				<div class="title"><div class="pa-3">Settings</div></div>
+				<div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Settings</div></div>
 				<div class="page">
 					<div class="list selectable">
 						<div onclick="showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
@@ -227,13 +231,16 @@ namespace Web { namespace UI {
 <div class="d-flex justify-between font-micro">
 	<div>${minLabel}</div>
 	<div>${maxLabel}</div>
-</div>`;
+</div>
+</div><div class="value flex-shrink-0"></div>`;
 					break
 				case'hue-slider':
-					html+=`<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div><div class="rainbow" style="height:10px;margin:0 5px 0 9px"></div>`;
+					html+=`<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>`
+					html+='<div class="rainbow" style="height:10px;margin:0 5px 0 9px"></div>';
+					html+='</div><div class="value flex-shrink-0 rounded"></div>'
 					break
 			}
-			html+='</div><div class="value flex-shrink-0"></div></div></div>';
+			html+='</div></div>';
 		
 			return html
 		}

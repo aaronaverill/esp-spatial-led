@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="led.svg"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#222222"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="17.854446"
+     inkscape:cx="18.398779"
+     inkscape:cy="13.077975"
+     inkscape:window-width="1920"
+     inkscape:window-height="1121"
+     inkscape:window-x="-7"
+     inkscape:window-y="-7"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" /><defs
+     id="defs1" /><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"><path
+       style="opacity:1;fill:none;stroke:#ffffff;stroke-width:0.999997;stroke-linecap:round"
+       id="path1-4"
+       sodipodi:type="arc"
+       sodipodi:cx="12"
+       sodipodi:cy="5.2497311"
+       sodipodi:rx="3.1816847"
+       sodipodi:ry="3.1814964"
+       sodipodi:start="3.1415927"
+       sodipodi:end="4.712389"
+       sodipodi:arc-type="arc"
+       d="M 8.8183153,5.2497311 A 3.1816847,3.1814964 0 0 1 12,2.0682347"
+       sodipodi:open="true" /><path
+       id="path2"
+       style="opacity:1;fill:none;stroke:#ffffff;stroke-width:1.00157;stroke-linecap:square;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 9.9975099,21.283214 v -4.183211 m 0,-3.000004 V 9.6334549 h 1.0361561 l 0.532081,0.8541291 1.06416,-0.8541291 h 1.260191 v 4.4665441 m 0,3.000004 V 23.46376 M 6.7499995,14.099999 H 17.25 c 0.554,0 1,0.446 1,1 v 1.000004 c 0,0.554 -0.446,1 -1,1 H 6.7499995 c -0.554,0 -1,-0.446 -1,-1 v -1.000004 c 0,-0.554 0.446,-1 1,-1 z M 16.750002,13.795276 V 5.2497311 C 16.750002,2.626526 14.623354,0.49999803 12,0.49999809 c -2.6233536,0 -4.7500019,2.12652791 -4.7500019,4.74973301 v 8.5455449" /></g></svg>
