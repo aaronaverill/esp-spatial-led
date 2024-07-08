@@ -255,9 +255,9 @@ namespace Web { namespace UI {
 			}
 			refreshOptionValue(e,val,field)
 			if(isGlobalField(id)) {
-				fetch(`/api/leds/play/settings?${id}=${val}`,{method:'POST'})
+				fetch(`/api/leds/play/settings?${id}=${modelVal}`,{method:'POST'})
 			} else {
-				fetch(`/api/leds/animations/settings?index=${info.leds.play.index}&${id}=${val}`,{method:'POST'})
+				fetch(`/api/leds/animations/settings?index=${info.leds.play.index}&${id}=${modelVal}`,{method:'POST'})
 			}
 		}
 		function isGlobalField(id) {
