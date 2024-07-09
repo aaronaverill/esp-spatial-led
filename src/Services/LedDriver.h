@@ -20,14 +20,13 @@ namespace Services {
       }
 
       /**
-       * Configure the LED strip
-       */
-      void configure(uint ledCount);
-
-      /**
        * Get the total number of leds
        */
       const uint getLedCount() { return ledCount; }
+      /**
+       * Set the number of leds
+       */
+      void setLedCount(uint ledCount);
       /**
        * Get the led array
        */
@@ -102,11 +101,14 @@ namespace Services {
       LedDriver() {}
       static LedDriver *instance;
 
+      CLEDController* controller;
+      uint ledCount;
+      uint updateLedCount = 100;
+      CRGB *leds = nullptr;
+
       std::vector<Coordinate> ledCoordinates;
       uint8_t brightness = 128;
 
-      uint ledCount = 0;
-      CRGB *leds = nullptr;
       std::vector<Animations::Animation*> animations;
 
       Animations::Animation* currentAnimation = nullptr;

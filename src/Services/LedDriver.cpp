@@ -8,8 +8,8 @@
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
 
-  void LedDriver::configure(uint ledCount) {
-    this->ledCount = ledCount;
+  void LedDriver::setLedCount(uint ledCount) {
+    updateLedCount = ledCount;
   }
 
   void LedDriver::setLedCoordinates(char *coordinates) {
@@ -67,15 +67,22 @@ namespace Services {
   }
 
   void LedDriver::setup() {
-    leds = new CRGB[ledCount];
-    FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, ledCount);
-    FastLED.setBrightness(brightness);
-    FastLED.clear();
-
     Store::LedSettings::read();
+    
+    controller = new WS2812B<DATA_PIN, RGB>();
+    ledCount = updateLedCount;
+    leds = new CRGB[ledCount];
+    FastLED.addLeds(controller, leds, ledCount, 0);
+    FastLED.setBrightness(brightness);
   }
 
   void LedDriver::loop() {
+    if (updateLedCount != ledCount) {
+      ledCount = updateLedCount;
+      delete leds;
+      leds = new CRGB[ledCount];
+      controller->setLeds(leds, ledCount);
+    }
     if (currentAnimation) {
       if (fps == -1) {
         fps = 0;
