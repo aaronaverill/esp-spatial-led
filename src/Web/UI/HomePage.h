@@ -44,10 +44,10 @@ namespace Web { namespace UI {
 	.align-center {align-items:center}
 	.justify-between {justify-content:space-between}
 	.selectable,.btn {cursor:pointer}
-	.selectable>div:hover {background-color:#BBF2}
+	.selectable>div:hover {background-color:#BBF3}
 	.btn:hover {background-color:#FFF2}
 	.list .item {font-size:18px}
-	.list .item.selected {background-color:#88F2}
+	.list .item.selected {background-color:#88F4}
 	.list .item .text {overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-right:auto}
 	.main {min-height:10px;flex-grow:1}
 	.title {display:flex;font-size:24px;align-items:center;background-color:indigo}
