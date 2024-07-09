@@ -11,7 +11,7 @@ namespace Services {
       /**
        * Get the total number of leds
        */
-      virtual const uint getLedCount();
+      virtual const uint getRenderLedCount();
       /**
        * Get the led array
        */

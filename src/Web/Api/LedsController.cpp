@@ -8,6 +8,27 @@
 using namespace Services;
 
 namespace Web { namespace Api {
+  void LedsController::setSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, data);
+    if (!error) {
+      //String json = doc.as<String>();
+      //Serial.println(json);
+
+      LedDriver& leds = LedDriver::getInstance();
+      bool writeSettings = false;
+      JsonVariant ledCount = doc["ledCount"];
+      if (ledCount) {
+        leds.setLedCount(ledCount);
+        writeSettings = true;
+      }
+      if (writeSettings) {
+        Store::LedSettings::write();
+      }
+      request->send(200, "text/plain", "OK");
+    }
+  }
+
   void LedsController::setPlayIndex(AsyncWebServerRequest *request) {
     LedDriver& leds = LedDriver::getInstance();
     uint index = request->getParam("index")->value().toInt();

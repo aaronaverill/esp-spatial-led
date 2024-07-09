@@ -8,8 +8,8 @@
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
 
-  void LedDriver::setLedCount(uint ledCount) {
-    updateLedCount = ledCount;
+  void LedDriver::setLedCount(uint count) {
+    ledCount = count;
   }
 
   void LedDriver::setLedCoordinates(const char *coordinates) {
@@ -41,10 +41,10 @@ namespace Services {
   }
 
   const Coordinate& LedDriver::getLedCoordinate(uint index) {
-    if (index < ledCount && index < ledCoordinates.size()) {
+    if (index < renderLedCount && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {
-      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = (index+0.5)/ledCount;
+      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = (index+0.5)/renderLedCount;
       return autoCoordinate;
     }
   }
@@ -81,18 +81,18 @@ namespace Services {
     Store::LedSettings::read();
     
     controller = new WS2812B<DATA_PIN, RGB>();
-    ledCount = updateLedCount;
-    leds = new CRGB[ledCount];
-    FastLED.addLeds(controller, leds, ledCount, 0);
+    renderLedCount = ledCount;
+    leds = new CRGB[renderLedCount];
+    FastLED.addLeds(controller, leds, renderLedCount, 0);
     FastLED.setBrightness(brightness);
   }
 
   void LedDriver::loop() {
-    if (updateLedCount != ledCount) {
-      ledCount = updateLedCount;
+    if (ledCount != renderLedCount) {
+      renderLedCount = ledCount;
       delete leds;
-      leds = new CRGB[ledCount];
-      controller->setLeds(leds, ledCount);
+      leds = new CRGB[renderLedCount];
+      controller->setLeds(leds, renderLedCount);
     }
     if (currentAnimation) {
       if (fps == -1) {

@@ -27,13 +27,18 @@ namespace Services {
       static LedDriver& getInstance() { return *instance; }
 
       /**
-       * Get the total number of leds
+       * Get the total number of leds being rendered
        */
-      const uint getLedCount() { return ledCount; }
+      const uint getRenderLedCount() { return renderLedCount; }
       /**
        * Set the number of leds
        */
-      void setLedCount(uint ledCount);
+      void setLedCount(uint count);
+      /**
+       * Get the total number of leds
+       * This can differ from renderLedCount if loop() hasn't been called yet to update the strip.
+       */
+      const uint getLedCount() { return ledCount; }
       /**
        * Get the led array
        */
@@ -109,8 +114,8 @@ namespace Services {
       static LedDriver *instance;
 
       CLEDController* controller;
-      uint ledCount;
-      uint updateLedCount = 100;
+      uint renderLedCount;
+      uint ledCount = 1;
       CRGB *leds = nullptr;
 
       std::vector<Coordinate> ledCoordinates;

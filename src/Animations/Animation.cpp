@@ -6,7 +6,7 @@ namespace Animations {
    */
   void Animation::render() {
     int currentLed = 0;
-    int ledCount = context.getLedCount();
+    int ledCount = context.getRenderLedCount();
     while (currentLed < ledCount) {
       context.setCurrentLed(currentLed);
       render(currentLed);

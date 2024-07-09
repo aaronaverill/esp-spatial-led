@@ -23,6 +23,10 @@ namespace Store {
 
     LedDriver& leds = LedDriver::getInstance();
 
+    JsonVariant ledCount = doc["ledCount"];
+    if (ledCount) {
+      leds.setLedCount(ledCount);
+    }
     JsonVariant brightness = doc["play"]["brightness"];
     if (brightness) {
       leds.setBrightness(brightness);
@@ -54,6 +58,7 @@ namespace Store {
     std::vector<Animations::Animation*> animations = leds.getAnimations();
 
     JsonDocument doc;
+    doc["ledCount"] = leds.getLedCount();
     doc["play"]["brightness"] = leds.getBrightness();
 
     JsonArray jsonAnimations = doc["animations"].to<JsonArray>();
