@@ -7,6 +7,9 @@
 #include <vector>
 
 namespace Services {
+  /**
+   * A service that manages LED hardware, LED mapping and the animation library and playback
+   */
   class LedDriver: public IService, public ILedDriverAnimationContext {
     public:
       /**

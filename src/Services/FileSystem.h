@@ -3,6 +3,9 @@
 #include "IService.h"
 
 namespace Services {
+  /**
+   * A service that manages the file system on the microcontroller
+   */
   class FileSystem: public IService {
     public:
       /**

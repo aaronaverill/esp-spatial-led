@@ -6,6 +6,9 @@
 #include "WebRequestHandler.h"
 
 namespace Services {
+  /**
+   * A service that handles HTTP requests.
+   */
   class WebServer: public IService {
     public:
       /**
