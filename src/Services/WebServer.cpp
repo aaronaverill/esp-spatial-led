@@ -50,7 +50,8 @@ namespace Services {
       callbackHandler->onRequest(handler.requestHandler);
       if (handler.hasBodyHandler) {
         callbackHandler->onBody([handler](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-          if (total > 0 && request->_tempObject == NULL /* && total < 10240 */) { // Option to limit HTTP body size to 10240 bytes
+          // size_t maxLength = 10240; // Option to limit HTTP body size to 10240 bytes
+          if (total > 0 && request->_tempObject == NULL /* && total < maxLength */) { 
             request->_tempObject = malloc(total);
           }
           if (request->_tempObject != NULL) {
