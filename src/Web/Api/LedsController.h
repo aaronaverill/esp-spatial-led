@@ -3,6 +3,9 @@
 #include "ESPAsyncWebServer.h"
 
 namespace Web { namespace Api {
+  /**
+   * HTTP Request handler class for API requests related to the led service.
+   */
   class LedsController {
     public:
       /**
