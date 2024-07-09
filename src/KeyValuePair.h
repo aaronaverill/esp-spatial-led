@@ -1,8 +1,11 @@
 #pragma once
 #include <Arduino.h>
 
-struct KeyValuePair {
-  KeyValuePair(String key, String value): key(key), value(value) {}
-  String key;
-  String value;
+/**
+ * Represents a key, value pair of the types specified
+ */
+template <typename KeyType, typename ValueType> struct KeyValuePair {
+  KeyValuePair(const KeyType& key, const ValueType& value): key(key), value(value) {}
+  KeyType key;
+  ValueType value;
 };

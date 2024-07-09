@@ -25,7 +25,7 @@ namespace Animations {
       /**
        * Set animation settings
        */
-      virtual void setSettings(std::vector<KeyValuePair> values) {}
+      virtual void setSettings(std::vector<KeyValuePair<String, String>> values) {}
       /**
        * Render the animation frame
        */

@@ -29,10 +29,10 @@ namespace Web { namespace Api {
     LedDriver& leds = LedDriver::getInstance();
     if (request->hasParam("index")) {
       uint index = request->getParam("index")->value().toInt();
-      std::vector<KeyValuePair> values;
+      std::vector<KeyValuePair<String, String>> values;
       for(uint i = 0; i < request->params(); i++) {
         if (request->getParam(i)->name() != "index") {
-          values.push_back(KeyValuePair(request->getParam(i)->name(), request->getParam(i)->value()));
+          values.push_back(KeyValuePair<String, String>(request->getParam(i)->name(), request->getParam(i)->value()));
         }
       }
       std::vector<Animations::Animation*> animations = leds.getAnimations();

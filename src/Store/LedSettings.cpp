@@ -35,9 +35,9 @@ namespace Store {
         if (index >= animations.size()) {
           break;
         }
-        std::vector<KeyValuePair> values;
+        std::vector<KeyValuePair<String, String>> values;
         for (JsonPair kv:settings) {
-          values.push_back(KeyValuePair(kv.key().c_str(), kv.value()));
+          values.push_back(KeyValuePair<String, String>(kv.key().c_str(), kv.value()));
         }
         if(values.size()) {
           animations[index]->setSettings(values);

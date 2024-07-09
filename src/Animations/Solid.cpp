@@ -2,7 +2,7 @@
 
 namespace Animations {
   void Solid::getFields(JsonArray& fields) {
-    JsonObject field = fields.add().to<JsonObject>();
+    JsonObject field = fields.add<JsonObject>();
     field["id"] = "hue";
     field["type"] = "hue-slider";
     field["label"] = "Hue";
@@ -14,8 +14,8 @@ namespace Animations {
     settings["hue"] = hsv.hue;
   }
 
-  void Solid::setSettings(std::vector<KeyValuePair> values) {
-    for(KeyValuePair& pair:values) {
+  void Solid::setSettings(std::vector<KeyValuePair<String, String>> values) {
+    for(KeyValuePair<String, String>& pair:values) {
       if(pair.key == "hue") {
         hsv.hue = pair.value.toInt();
       }
