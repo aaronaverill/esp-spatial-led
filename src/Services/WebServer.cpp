@@ -29,8 +29,12 @@ class CaptiveRequestHandler : public AsyncWebHandler {
 namespace Services {
   WebServer *WebServer::instance = nullptr;
 
-  void WebServer::addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction handler) {
-    requestHandlers.push_back(Services::WebRequestHandler(route, method, handler));
+  void WebServer::addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction requestHandler) {
+    requestHandlers.push_back(Services::WebRequestHandler(route, method, requestHandler));
+  }
+
+  void WebServer::addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction requestHandler, ArBodyHandlerFunction bodyHandler) {
+    requestHandlers.push_back(Services::WebRequestHandler(route, method, requestHandler, bodyHandler));
   }
 
   void WebServer::setup() {
@@ -40,7 +44,15 @@ namespace Services {
     dnsServer->start(53, "*", WiFi.softAPIP());
 
     for (Services::WebRequestHandler& handler:requestHandlers) {
-      server->on(handler.route, handler.method, handler.handler);
+      AsyncCallbackWebHandler* callbackHandler = new AsyncCallbackWebHandler();
+      callbackHandler->setUri(handler.route);
+      callbackHandler->setMethod(handler.method);
+      callbackHandler->onRequest(handler.requestHandler);
+      if (handler.hasBodyHandler) {
+        Serial.println("set body handler");
+        callbackHandler->onBody(handler.bodyHandler);
+      }
+      server->addHandler(callbackHandler);
     }
     requestHandlers.clear();
     

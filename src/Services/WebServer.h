@@ -28,7 +28,8 @@ namespace Services {
       /**
        * Add a request handler
        */
-      void addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction handler);
+      void addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction requestHandler);
+      void addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction requestHandler, ArBodyHandlerFunction bodyHandler);
 
       /**
        * Methods for the arduino processing loop
