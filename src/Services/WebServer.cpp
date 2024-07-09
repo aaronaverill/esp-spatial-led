@@ -49,8 +49,17 @@ namespace Services {
       callbackHandler->setMethod(handler.method);
       callbackHandler->onRequest(handler.requestHandler);
       if (handler.hasBodyHandler) {
-        Serial.println("set body handler");
-        callbackHandler->onBody(handler.bodyHandler);
+        callbackHandler->onBody([handler](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+          if (total > 0 && request->_tempObject == NULL /* && total < 10240 */) { // Option to limit HTTP body size to 10240 bytes
+            request->_tempObject = malloc(total);
+          }
+          if (request->_tempObject != NULL) {
+            memcpy((uint8_t*)(request->_tempObject) + index, data, len);
+          }
+          if(index + len == total) {
+            handler.bodyHandler(request, (uint8_t*)request->_tempObject, total, 0, total);
+          }
+        });
       }
       server->addHandler(callbackHandler);
     }
