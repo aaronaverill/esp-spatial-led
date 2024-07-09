@@ -6,14 +6,18 @@ namespace Services {
   class FileSystem: public IService {
     public:
       /**
-       * Singleton accessor
+       * Create singleton
        */
-      static FileSystem& getInstance() {
+      static FileSystem& create() {
         if (instance == NULL) {
           instance = new FileSystem();
         }
         return *instance;
       }
+      /**
+       * Singleton accessor
+       */
+      static FileSystem& getInstance() { return *instance; }
 
       /**
        * Return true if the file system was mounted

@@ -10,14 +10,18 @@ namespace Services {
   class LedDriver: public IService, public ILedDriverAnimationContext {
     public:
       /**
-       * Singleton accessor
+       * Create singleton
        */
-      static LedDriver& getInstance() {
+      static LedDriver& create() {
         if (instance == NULL) {
           instance = new LedDriver();
         }
         return *instance;
       }
+      /**
+       * Singleton accessor
+       */
+      static LedDriver& getInstance() { return *instance; }
 
       /**
        * Get the total number of leds

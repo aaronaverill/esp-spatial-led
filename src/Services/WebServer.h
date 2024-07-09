@@ -9,14 +9,18 @@ namespace Services {
   class WebServer: public IService {
     public:
       /**
-       * Singleton accessor
+       * Create singleton
        */
-      static WebServer& getInstance() {
+      static WebServer& create() {
         if (instance == NULL) {
           instance = new WebServer();
         }
         return *instance;
       }
+      /**
+       * Singleton accessor
+       */
+      static WebServer& getInstance() { return *instance; }
 
       /**
        * Add a request handler
