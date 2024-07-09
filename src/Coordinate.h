@@ -2,6 +2,9 @@
 
 #define CoordinateType float
 
+/**
+ * Represents a 3 dimensional coordinate
+ */
 class Coordinate {
   public:
     Coordinate(): x(0), y(0), z(0) {}

@@ -17,6 +17,10 @@
 
 Application Application::instance = Application();
 
+/**
+ * The application constructor adds and configures all necessary services.
+ * Modify this function as needed.
+ */
 Application::Application() {
   // Add the file system service first so other services can load setings
   addService(&FileSystem::create());
