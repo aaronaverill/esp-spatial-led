@@ -14,10 +14,7 @@ class Application {
      * Singleton accessor
      */
     static Application& getInstance() {
-      if (instance == nullptr) {
-        instance = new Application();
-      }
-      return *instance;
+      return instance;
     }
 
     /**
@@ -35,7 +32,7 @@ class Application {
     void loop();
 
   private:
-    Application() {}
-    static Application *instance;
+    Application();
+    static Application instance;
     std::vector<IService*> services;
 };
