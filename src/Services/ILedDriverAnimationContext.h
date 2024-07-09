@@ -15,11 +15,11 @@ namespace Services {
       /**
        * Get the led array
        */
-      virtual CRGB* getLeds();
+      virtual const CRGB* getLeds();
       /**
        * Get the coordinate of an led by index
        */
-      virtual Coordinate& getLedCoordinate(uint index);
+      virtual const Coordinate& getLedCoordinate(uint index);
       /**
        * Within a rendering context, the current led which is being rendered
        */

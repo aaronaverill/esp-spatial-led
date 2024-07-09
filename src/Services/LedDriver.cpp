@@ -12,24 +12,35 @@ namespace Services {
     updateLedCount = ledCount;
   }
 
-  void LedDriver::setLedCoordinates(char *coordinates) {
+  void LedDriver::setLedCoordinates(const char *coordinates) {
+    // TODO: Get rid of the use of strtok which modifies the input string and change the coordinates parameter to const char*
     ledCoordinates = std::vector<Coordinate>();
     byte pos = 0;
-    char *parts[3];
-    char *ptr = strtok(coordinates, ",");  // delimiter
-    while (ptr != NULL) {
-      parts[pos] = ptr;
-      if (pos == 2) {
-        ledCoordinates.push_back(Coordinate(atof(parts[0]), atof(parts[1]), atof(parts[2])));
-        pos = 0;
+    char *err, *p =(char *)coordinates;
+    float parts[3];
+    while (*p) {
+      parts[pos] = strtod(p, &err);
+      if (p == err) {
+        p++;
       } else {
-        pos++;
+        if (pos == 2) {
+          ledCoordinates.push_back(Coordinate(parts[0], parts[1], parts[2]));
+          Serial.println("Add coordinate (" + String(parts[0]) + "," + String(parts[1]) + "," + String(parts[2]) + ")");
+          pos = 0;
+        } else {
+          pos++;
+        }
+
+        if ((err != NULL) && (*err == 0)) {
+          break;
+        } else {
+          p = err + 1;
+        }
       }
-      ptr = strtok(NULL, ",");
     }
   }
 
-  Coordinate& LedDriver::getLedCoordinate(uint index) {
+  const Coordinate& LedDriver::getLedCoordinate(uint index) {
     if (index < ledCount && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {

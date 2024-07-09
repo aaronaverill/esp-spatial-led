@@ -37,11 +37,11 @@ namespace Services {
       /**
        * Get the led array
        */
-      CRGB* getLeds() { return leds; }
+      const CRGB* getLeds() { return leds; }
       /**
        * Get the coordinate of an led by index
        */
-      Coordinate& getLedCoordinate(uint index);
+      const Coordinate& getLedCoordinate(uint index);
       /**
        * Within a rendering context, the current led which is being rendered
        */
@@ -63,7 +63,7 @@ namespace Services {
        * Set the led coordinate map
        * @param coordinates A comma separated list of x,y,z tuples for each led
        */
-      void setLedCoordinates(char *coordinates);
+      void setLedCoordinates(const char *coordinates);
       /**
        * Get the overall led strip brightness
        */
@@ -80,11 +80,11 @@ namespace Services {
       /**
        * Get a list of all the animations
        */
-      std::vector<Animations::Animation*>& getAnimations() { return animations; }
+      const std::vector<Animations::Animation*>& getAnimations() { return animations; }
       /**
        * Return the currently playing animation
        */
-      Animations::Animation* getCurrentAnimation() { return currentAnimation; }
+      const Animations::Animation* getCurrentAnimation() { return currentAnimation; }
       /**
        * Get the index of the currently playing animation
        */
@@ -96,7 +96,7 @@ namespace Services {
       /**
        * Get the current frames per second playback speed
        */
-      float getFramesPerSecond() { return fps; }
+      const float getFramesPerSecond() { return fps; }
 
       /**
        * Methods for the arduino processing loop
@@ -125,6 +125,6 @@ namespace Services {
       float fps = -1;
 
       uint currentLed = 0;
-      Coordinate autoCoordinate;
+      mutable Coordinate autoCoordinate;
   };
 }

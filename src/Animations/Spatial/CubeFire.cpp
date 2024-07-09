@@ -18,7 +18,7 @@ namespace Animations { namespace Spatial {
     if (index == 0) {
       beforeRender();
     }
-    Coordinate& coordinate = context.getLedCoordinate(index);
+    const Coordinate& coordinate = context.getLedCoordinate(index);
 
     // Color is 20% dependent on each axis and cycling every 6.5 seconds
     float h = coordinate.x / 5 + coordinate.y / 5 + coordinate.z / 5 + t1;
