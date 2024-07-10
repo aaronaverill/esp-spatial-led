@@ -139,6 +139,8 @@ namespace Web { namespace UI {
 		]
 		let info={
 			leds:{
+				count:1,
+				coordinates:{config:'{}',values:''},
 				play:{
 					settings:{
 						brightness:128
