@@ -2,15 +2,7 @@
 #include <Arduino.h>
 #include "ESPAsyncWebServer.h"
 
-namespace Web { namespace UI {
-  /**
-   * HTTP Request handler class for website requests.
-   * Returns an HTML page that is a single page application (SPA) which controls the software.
-   */
-  class HomePage {
-    public:
-      static void get(AsyncWebServerRequest *request) {
-        String html = R"rawstring(
+const char index_html[] PROGMEM = R"rawstring(
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,6 +10,8 @@ namespace Web { namespace UI {
 <style>
 	html,body {height:100%}
 	body {background:#000;color:#fff;font-family:sans-serif}
+	select, input {color:white;background-color:#222;padding:8px;box-sizing:border-box;border:1px solid #444;border-radius:3px}
+	input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance:none}
 	.font-micro {font-size:70%}
 	.d-block {display:block}
 	.d-flex {display:flex}
@@ -30,6 +24,7 @@ namespace Web { namespace UI {
 	.ma-0 {margin:0}
 	.mr-auto {margin-right:auto}
 	.ma-2 {margin:8px}
+	.my-2 {margin-top:8px;margin-bottom:8px}
 	.ml-3 {margin-left:12px}
 	.mr-3 {margin-right:12px}
 	.mb-2 {margin-bottom:8px}
@@ -44,17 +39,20 @@ namespace Web { namespace UI {
 	.align-center {align-items:center}
 	.justify-between {justify-content:space-between}
 	.selectable,.btn {cursor:pointer}
-	.selectable>div:hover {background-color:#BBF3}
+	.selectable>div:hover {background-color:#BBF2}
+	.btn.tonal {font-size:16px;padding:5px 12px 8px;font-variant:all-small-caps;border-radius:4px;letter-spacing:.7px}
 	.btn:hover {background-color:#FFF2}
+	.btn.primary {background-color:#04AA6D}
+	.btn.primary:hover {background-color:#05B571}
 	.list .item {font-size:18px}
-	.list .item.selected {background-color:#88F4}
+	.list .item.selected {background-color:#88F2}
 	.list .item .text {overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-right:auto}
 	.main {min-height:10px;flex-grow:1}
-	.title {display:flex;font-size:24px;align-items:center;background-color:indigo}
+	.title {display:flex;font-size:24px;align-items:center;background-color:#282A35}
 	.title>div {overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 	.page {flex-grow:1;overflow-y:auto;background-color:#111}
 	.play {flex-shrink:0;display:flex;align-items:center}
-	.nav {flex-shrink:0;background-color:indigo;text-align:center;cursor:pointer}
+	.nav {flex-shrink:0;background-color:#282A35;text-align:center;cursor:pointer}
 	.nav>div {display:flex;flex-direction:column;align-items:center;flex-grow:1;flex-basis:0;padding:12px;opacity:.6}
 	.nav>div:hover {opacity:.9}
 	.nav>div.selected {opacity:1}
@@ -85,6 +83,7 @@ namespace Web { namespace UI {
 				<div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Settings</div></div>
 				<div class="page">
 					<div class="list selectable">
+						<div onclick="showPage('2.1')" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
 						<div onclick="showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
 					</div>
 				</div>
@@ -110,6 +109,21 @@ namespace Web { namespace UI {
 				</div>
 			</div>
 			<div id="p2.1" class="d-none flex-column h-100">
+				<div class="title">
+					<div onclick="showPage('2')" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+					<div class="pa-3 mr-auto">LED Layout</div>
+					<div class="mr-3"><div onclick="onSaveLedLayout()" class="btn tonal primary">Save</div></div>
+				</div>
+				<div class="page pa-3">
+					<div>Layout</div>
+					<select id="ledLayoutType" class="w-100 my-2">
+						<option value="strip">Strip</option>
+					</select>
+					<div>Number of LEDs</div>
+					<input id="ledCount" type="number" onkeypress="posIntKey(event)" class="w-100 my-2" />
+				</div>
+			</div>
+			<div id="p2.2" class="d-none flex-column h-100">
 				<div class="title"><div onclick="showPage('2')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
 				<div class="page">
 					<div id="fps" class="text-center pa-3"></div>
@@ -126,30 +140,30 @@ namespace Web { namespace UI {
 		</div>
 	</div>
 	<script>
-		let globalFields=[
+		let globalFields = [
 			{
-				id:'brightness',
-				type:'slider',
-				label:'Brightness',
-				min:0,
-				max:100,
-				factor:2.55,
-				template:'${val}%'
+				id: 'brightness',
+				type: 'slider',
+				label: 'Brightness',
+				min: 0,
+				max: 100,
+				factor: 2.55,
+				template: '${val}%'
 			}
 		]
-		let info={
-			leds:{
-				count:1,
-				coordinates:{config:'{}',values:''},
-				play:{
-					settings:{
-						brightness:128
+		let info = {
+			leds: {
+				count: 1,
+				coordinates: {config:'{}',values:''},
+				play: {
+					settings: {
+						brightness: 128
 					}
 				},
-				animations:[]
+				animations: []
 			}
 		}
-		let refreshTimer=0
+		let refreshTimer = 0
 
 		async function onload() {
 			let response = await fetch('/api/info')
@@ -161,45 +175,46 @@ namespace Web { namespace UI {
 			}
 		}
 		function onAnimationClick(i) {
-			fetch(`/api/leds/play?index=${i}`,{method:'POST'})
-			info.leds.play.index=i
+			fetch(`/api/leds/play?index=${i}`, {method:'POST'})
+			info.leds.play.index = i
 			refreshPage()
 		}
 		function refreshPage() {
 			if (info.leds.animations.length) {
-				document.getElementById('play-name').innerText=info.leds.animations[info.leds.play.index].name
+				byId('play-name').innerText = info.leds.animations[info.leds.play.index].name
 			}
 			let html=''
-			for(let i=0;i<info.leds.animations.length;i++) {
-				const selected=i==info.leds.play.index?' selected':''
-				html+='<div class="item pa-3'+selected+'" onclick="onAnimationClick('+i+')"><div class="text">'+info.leds.animations[i].name+'</div></div>'
+			for(let i = 0; i < info.leds.animations.length; i++) {
+				let selected = i == info.leds.play.index ? ' selected' : ''
+				html += '<div class="item pa-3' + selected + '" onclick="onAnimationClick(' + i + ')"><div class="text">' + info.leds.animations[i].name + '</div></div>'
 			}
-			document.getElementById('animations').innerHTML=html
+			byId('animations').innerHTML=html
+			refreshLedLayout()
 		}
-		function byClass(cls) {
-			return document.querySelectorAll(cls)
+		function refreshLedLayout() {
+			byId('ledCount').value=info.leds.count
 		}
 		function navClick(el) {
 			showPage(el.dataset.page)
 		}
 		function showAbout() {
-			showPage('2.1')
+			showPage('2.2')
 			updateFps()
 		}
 		function showOptions() {
-			let a=info.leds.animations[info.leds.play.index]
-			let list=document.querySelector('.page.options .list')
-			let html=''
-			let fields=[]
-			for(let f of globalFields) fields.push(f.id)
+			let a = info.leds.animations[info.leds.play.index]
+			let list = document.querySelector('.page.options .list')
+			let html = ''
+			let fields = []
+			for (let f of globalFields) fields.push(f.id)
 			if (a.fields) {
 				for(let f of a.fields) fields.push(f.id)
 			}
-			for(let f of fields) {
+			for (let f of fields) {
 				html+=optionHtml(optionsField(f))
 			}
 			list.innerHTML=html
-			for(let f of fields) {
+			for (let f of fields) {
 				refreshOptionControls(optionsField(f))
 			}
 			showPage('1.1')
@@ -207,32 +222,28 @@ namespace Web { namespace UI {
 		function showPage(id) {
 			if (refreshTimer) {
 				clearTimeout(refreshTimer)
-				refreshTimer=0
+				refreshTimer = 0
 			}
-			byClass('.nav>div').forEach(e=>{
+			queryAll('.nav>div').forEach(e => {
 				e.classList.remove('selected')
-				if(e.dataset.page==id) e.classList.add('selected')
+				if (e.dataset.page==id) e.classList.add('selected')
 			})
 			id='p'+id
-			byClass('.main>div').forEach(e=>{
+			queryAll('.main>div').forEach(e => {
 				e.classList.remove('d-flex','d-none')
-				if(e.id==id) {
-					e.classList.add('d-flex')
-				} else {
-					e.classList.add('d-none')
-				}
+				e.classList.add(e.id == id ? 'd-flex' : 'd-none')
 			})
 		}
 		function optionHtml(field) {
-			var html=`<div data-field="${field.id}" class="item pa-2"><div>${field.label}</div><div class="d-flex w-100"><div class="flex-grow-1 pr-3">`;
+			var html = `<div data-field="${field.id}" class="item pa-2"><div>${field.label}</div><div class="d-flex w-100"><div class="flex-grow-1 pr-3">`
 
-			switch(field.type) {
+			switch (field.type) {
 				case'slider':
-					let val=field.min
-					let minLabel=field.template?eval(`\`${field.template}\``):val
-					val=field.max
-					let maxLabel=field.template?eval(`\`${field.template}\``):val
-					html+=`
+					let val = field.min
+					let minLabel = field.template ? eval(`\`${field.template}\``) : val
+					val = field.max
+					let maxLabel = field.template ? eval(`\`${field.template}\``) : val
+					html += `
 <div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>
 <div class="d-flex justify-between font-micro">
 	<div>${minLabel}</div>
@@ -241,9 +252,9 @@ namespace Web { namespace UI {
 </div><div class="value flex-shrink-0"></div>`;
 					break
 				case'hue-slider':
-					html+=`<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>`
-					html+='<div class="rainbow" style="height:10px;margin:0 5px 0 9px"></div>';
-					html+='</div><div class="value flex-shrink-0 rounded"></div>'
+					html += `<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>`
+					html += '<div class="rainbow" style="height:10px;margin:0 5px 0 9px"></div>'
+					html += '</div><div class="value flex-shrink-0 rounded"></div>'
 					break
 			}
 			html+='</div></div>';
@@ -251,47 +262,47 @@ namespace Web { namespace UI {
 			return html
 		}
 		function onInputChange(id,e) {
-			let field=optionsField(id)
-			let val=e.value
-			let modelVal=Math.round(modelValue(val,field))
-			if(isGlobalField(id)) {
-				info.leds.play.settings[id]=modelVal
+			let field = optionsField(id)
+			let val = e.value
+			let modelVal = Math.round(modelValue(val,field))
+			if (isGlobalField(id)) {
+				info.leds.play.settings[id] = modelVal
 			} else {
-				info.leds.animations[info.leds.play.index].settings[id]=modelVal
+				info.leds.animations[info.leds.play.index].settings[id] = modelVal
 			}
 			refreshOptionValue(e,val,field)
-			if(isGlobalField(id)) {
+			if (isGlobalField(id)) {
 				fetch(`/api/leds/play/settings?${id}=${modelVal}`,{method:'POST'})
 			} else {
 				fetch(`/api/leds/animations/settings?index=${info.leds.play.index}&${id}=${modelVal}`,{method:'POST'})
 			}
 		}
 		function isGlobalField(id) {
-			return globalFields.some(f=>f.id==id)
+			return globalFields.some(f => f.id == id)
 		}
 		function optionsField(id) {
-			return globalFields.find(f=>f.id==id)|| info.leds.animations[info.leds.play.index].fields?.find(f=>f.id==id)
+			return globalFields.find(f => f.id == id)|| info.leds.animations[info.leds.play.index].fields?.find( f=> f.id == id)
 		}
 		function modelValue(val,field) {
-			if(field.factor) val*=field.factor
+			if (field.factor) val *= field.factor
 			return val
 		}
 		function refreshOptionControls(field) {
-			let input=document.querySelector(`.page.options [data-field="${field.id}"] input`)
-			let val=info.leds.play.settings[field.id]||info.leds.animations[info.leds.play.index].settings[field.id]
-			if(field.factor) val/=field.factor
-			input.value=val
-			val=Math.round(val)
+			let input = document.querySelector(`.page.options [data-field="${field.id}"] input`)
+			let val = info.leds.play.settings[field.id] || info.leds.animations[info.leds.play.index].settings[field.id]
+			if (field.factor) val /= field.factor
+			input.value = val
+			val = Math.round(val)
 			refreshOptionValue(input,val,field)
 		}
 		function refreshOptionValue(e,val,field) {
-			switch(field.type) {
-				case'slider':
-					if(field.template) val=eval(`\`${field.template}\``)
-					e.closest('.item').querySelector('.value').innerText=val
+			switch (field.type) {
+				case 'slider':
+					if (field.template) val = eval(`\`${field.template}\``)
+					e.closest('.item').querySelector('.value').innerText = val
 					break
-				case'hue-slider':
-					val*=(360/255)
+				case 'hue-slider':
+					val *= (360/255)
 					e.closest('.item').querySelector('.value').style.backgroundColor=`hsl(${val},100%,50%)`
 					break
 			}
@@ -300,19 +311,58 @@ namespace Web { namespace UI {
 			let response = await fetch('/api/leds/play/fps')
 			if (response.ok) {
 				let fps = await response.text()
-				document.getElementById('fps').innerText=`${fps} fps`
-				refreshTimer=setTimeout(updateFps,2000)
+				byId('fps').innerText = `${fps} fps`
+				refreshTimer = setTimeout(updateFps,2000)
 			} else {
 				clearTimeout(refreshTimer)
-				refreshTimer=0
+				refreshTimer = 0
 			}
 		}
+		async function onSaveLedLayout() {
+			// TODO: Check if valid
+			var settings = null
+			switch (byId('ledLayoutType').value) {
+				case 'strip':
+					let ledCount = byId('ledCount').value
+					let values = ''
+					for (let i = 0; i < ledCount; i++) {
+						if (i > 0) values += ','
+						values += Math.round(10000*(i+.5)/ledCount)/10000 + ',0,0'
+					}
+					settings = {
+						ledCount: ledCount,
+						coordinates: {
+							config: '{"layout":"strip"}',
+							values: values
+						}
+					}
+					break
+			}
+			if (settings) {
+				await fetch('/api/leds/settings',{
+					method:'PATCH',
+					body:JSON.stringify(settings)
+				})
+			}
+		}
+		function queryAll(cls) { return document.querySelectorAll(cls) }
+		function byId(id) { return document.getElementById(id) }
+		function posIntKey(e) { if(e.key === "." || e.key === "-") e.preventDefault() }
 	</script>
 </body>
 </html>
 )rawstring";
-        AsyncResponseStream *response = request->beginResponseStream("text/html");
-        response->print(html);
+
+namespace Web { namespace UI {
+  /**
+   * HTTP Request handler class for website requests.
+   * Returns an HTML page that is a single page application (SPA) which controls the software.
+   */
+  class HomePage {
+    public:
+      static void get(AsyncWebServerRequest *request) {
+        AsyncWebServerResponse *response;
+        response = request->beginResponse_P(200, "text/html", index_html);
         request->send(response);
       } 
   };
