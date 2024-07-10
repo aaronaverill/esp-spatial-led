@@ -43,10 +43,6 @@ namespace Services {
     WiFi.softAP(ssid);
     dnsServer->start(53, "*", WiFi.softAPIP());
 
-    server->on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest* request) {
-      request->send(404);
-    });
-
     for (Services::WebRequestHandler& handler:requestHandlers) {
       AsyncCallbackWebHandler* callbackHandler = new AsyncCallbackWebHandler();
       callbackHandler->setUri(handler.route);
@@ -68,6 +64,9 @@ namespace Services {
       }
       server->addHandler(callbackHandler);
     }
+    server->onNotFound([](AsyncWebServerRequest *request) {
+      request->send(404);
+    });
     requestHandlers.clear();
     
     //server->addHandler(new CaptiveRequestHandler()).setFilter(ON_AP_FILTER);//only when requested from AP
