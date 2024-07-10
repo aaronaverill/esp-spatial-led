@@ -64,7 +64,7 @@ namespace Web { namespace UI {
 	.img.img-lg {width:24px;height:24px}
 	.img.img-vlg {width:34px;height:34px}
 	.img-led {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='white' fill='none' stroke-linecap='round'%3E%3Cpath stroke-linejoin='round' d='m10,21.28 v-4.18 m0,-3 V9.63 h1.04 l0.53,0.85 1.06,-0.85 h1.26 v4.47 m0,3 V23.46 M6.75,14.1 H17.25 c0.55,0 1,0.45 1,1 v1 c0,0.55 -0.44,1 -1,1 H6.75 c-0.55,0 -1,-0.45 -1,-1 v-1 c0,-0.55 0.45,-1 1,-1 zM16.75,13.8 V5.25 C16.75,2.63 14.62,0.5 12,0.5 c-2.62,0 -4.75,2.13 -4.75,4.75 v 8.55'/%3E%3Cpath d='M8.82,5.25 A3.18,3.18 0 0 1 12,2.09'/%3E%3C/svg%3E")}
-	.img-chevron-left {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='M8,2 4,6 8,10'/%3E%3C/svg%3E")}
+	.img-arrow-back {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='M2,6 H 9.5 M5.5,2.5 2,6 5.5,9.5'/%3E%3C/svg%3E")}
 	.img-chevron-right {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='M4,2 8,6 4,10'/%3E%3C/svg%3E")}
 	.img-close {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' fill='none'%3E%3Cpath d='m2,10 8,-8 m-8,0 8,8'/%3E%3C/svg%3E")}
 	.img-gear {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='white' stroke-width='.75' fill='none'%3E%3Cpath d='M9.9,6.88 11.34,8 10.41,9.62 8.66,8.99 C8.23,9.37 7.73,9.65 7.19,9.82 L6.94,11.62 H5.06 L4.74,9.8 C4.2,9.62 3.7,9.33 3.29,8.94 L1.59,9.62 0.66,8 2.08,6.8 C1.96,6.25 1.97,5.68 2.09,5.12 L0.66,4 1.59,2.38 3.34,3.01 C3.77,2.63 4.27,2.35 4.81,2.18 L5.06,0.37 H6.94 L7.26,2.2 C7.8,2.38 8.3,2.67 8.71,3.06 L10.41,2.38 11.34,4 9.92,5.2 c0.11,0.56 0.11,1.13 -0.02,1.68z'/%3E%3Ccircle cx='6' cy='6' r='1.925'/%3E %3C/svg%3E")}
@@ -110,7 +110,7 @@ namespace Web { namespace UI {
 				</div>
 			</div>
 			<div id="p2.1" class="d-none flex-column h-100">
-				<div class="title"><div onclick="showPage('2')" class="btn pa-4"><div class="img img-chevron-left"></div></div><div class="pa-3">About</div></div>
+				<div class="title"><div onclick="showPage('2')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
 				<div class="page">
 					<div id="fps" class="text-center pa-3"></div>
 				</div>
