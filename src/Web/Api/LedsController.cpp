@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Services/LedDriver.h"
 #include "Animations/Animation.h"
+#include "Store/LedCoordinates.h"
 #include "Store/LedSettings.h"
 
 using namespace Services;
@@ -21,6 +22,11 @@ namespace Web { namespace Api {
       if (ledCount) {
         leds.setLedCount(ledCount);
         writeSettings = true;
+      }
+      JsonVariant coordinateValues = doc["coordinates"]["values"];
+      if (coordinateValues) {
+        leds.setLedCoordinates(coordinateValues);
+        Store::LedCoordinates::write(doc["coordinates"]["config"], doc["coordinates"]["values"]);
       }
       if (writeSettings) {
         Store::LedSettings::write();
