@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "clean-css": "^5.3.3"
+    "clean-css": "^5.3.3",
+    "zlib": "^1.0.5"
   }
 }
