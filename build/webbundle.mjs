@@ -1,5 +1,6 @@
 import fs from 'fs'
 import CleanCSS from 'clean-css'
+import { minify } from 'terser'
 import zlib from 'zlib'
 
 const assetsFolder = 'assets'
@@ -13,9 +14,7 @@ if (!fs.existsSync(contentFolder)){
 
 bundleHtml(`${assetsFolder}/html/index.html`, `${contentFolder}/index_html.h`, 'index_html')
 bundleCss(`${assetsFolder}/css/app.css`, `${contentFolder}/app_css.h`, 'app_css')
-bundleJs(`${assetsFolder}/js/app.js`, `${contentFolder}/app_js.h`, 'app_js')
-
-process.exitCode = 1
+await bundleJs(`${assetsFolder}/js/app.js`, `${contentFolder}/app_js.h`, 'app_js')
 
 function bundleHtml(source, destination, variableName) {
   console.info(`Processing file ${source}`)
@@ -52,10 +51,16 @@ function bundleCss(source, destination, variableName) {
   bundleGzippedArray(source, output.styles, destination, variableName)
 }
 
-function bundleJs(source, destination, variableName) {
+async function bundleJs(source, destination, variableName) {
   console.info(`Processing ${source}`)
-  const content = fs.readFileSync(source)
-  bundleGzippedArray(source, content, destination, variableName)
+  const content = fs.readFileSync(source).toString()
+  const originalSize = content.length
+
+  console.info(' - Minifying JS')
+  const minifyOptions = {}
+  const result = await minify(content, minifyOptions)
+  console.info(` - Resized ${resizeText(originalSize, result.code.length)}`)
+  bundleGzippedArray(source, result.code, destination, variableName)
 }
 
 function bundleRawString(source, data, destination, variableName) {
