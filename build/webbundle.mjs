@@ -82,13 +82,8 @@ function bundleGzippedArray(source, data, destination, variableName) {
   const zipOptions = { 
     level: zlib.constants.Z_BEST_COMPRESSION 
   }
-  zlib.gzip(data, zipOptions, (error, result) => {
-    if (error) {
-      console.info(' - GZip Error: ${error}')
-      process.exitCode = 1
-      process.exit()
-    }
-
+  try {
+    const result = zlib.gzipSync(data, zipOptions)
     console.info(` - Compressed ${resizeText(originalSize, result.length)}`)
     data = hexdump(result)
 
@@ -104,8 +99,13 @@ ${data}
 };
 `
     writeFile(content, destination)
-  })
 
+  } catch (ex) {
+    console.info(' - GZip Error:')
+    console.info(ex)
+    process.exitCode = 1
+    process.exit()
+  }
 }
 
 function writeFile(content, destination) {
