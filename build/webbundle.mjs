@@ -15,6 +15,7 @@ if (!fs.existsSync(contentFolder)){
   fs.mkdirSync(contentFolder);
 }
 
+// This is the list of assets that wil be bundled
 bundleHtml(`${assetsFolder}/html/index.html`, `${contentFolder}/index_html.h`, 'index_html')
 bundleCss(`${assetsFolder}/css/app.css`, `${contentFolder}/app_css.h`, 'app_css')
 await bundleJs(`${assetsFolder}/js/app.js`, `${contentFolder}/app_js.h`, 'app_js')
@@ -146,7 +147,7 @@ function resizeText(from, to) {
 
 // Convert the data into lines of hexidecimal codes
 function toHexBlock(data) {
-  const lineLength = 32
+  const lineLength = 16
   let lines = []
   for (let i = 0; i < data.length; i += lineLength) {
     let hexArray = []
