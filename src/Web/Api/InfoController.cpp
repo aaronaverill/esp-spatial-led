@@ -2,7 +2,7 @@
 #include <ArduinoJson.h>
 #include "Application.h"
 #include "Services/LedDriver.h"
-#include "Store/LedCoordinates.h"
+#include "Store/LedLayout.h"
 
 using namespace Services;
 
@@ -14,8 +14,8 @@ namespace Web { namespace Api {
     JsonDocument doc;
     JsonObject jsonLeds = doc["leds"].to<JsonObject>();
     jsonLeds["count"] = leds.getLedCount();
-    jsonLeds["coordinates"]["config"] = Store::LedCoordinates::readConfig();
-    jsonLeds["coordinates"]["values"] = Store::LedCoordinates::readValues();
+    jsonLeds["layout"]["config"] = Store::LedLayout::readLayout();
+    jsonLeds["layout"]["coords"] = Store::LedLayout::readCoordinates();
     JsonObject jsonPlay = jsonLeds["play"].to<JsonObject>();
     JsonObject jsonSettings = jsonPlay["settings"].to<JsonObject>();
     jsonSettings["brightness"] = leds.getBrightness();

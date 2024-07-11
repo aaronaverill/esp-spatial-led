@@ -5,9 +5,10 @@
 const char app_css[] PROGMEM = R"rawstring(
 html,body {height:100%}
 body {background:#000;color:#fff;font-family:sans-serif}
-select, input {color:white;background-color:#222;padding:8px;box-sizing:border-box;border:1px solid #444;border-radius:3px}
+select, input, textarea {color:white;background-color:#222;padding:8px;box-sizing:border-box;border:1px solid #444;border-radius:3px}
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance:none}
 .font-micro {font-size:70%}
+.font-small {font-size:85%}
 .d-block {display:block}
 .d-flex {display:flex}
 .d-none {display:none}
@@ -121,11 +122,23 @@ const char index_html[] PROGMEM = R"rawstring(
 				</div>
 				<div class="page pa-3">
 					<div>Layout</div>
-					<select id="ledLayoutType" class="w-100 my-2">
+					<select id="ledLayoutType" onchange="layoutChange()" class="w-100 my-2">
 						<option value="strip">Strip</option>
+            <option value="code">Javascript</option>
 					</select>
-					<div>Number of LEDs</div>
-					<input id="ledCount" type="number" onkeypress="posIntKey(event)" class="w-100 my-2" />
+          <div id="layoutpages">
+            <div class="d-block" data-page="strip">
+              <div>Number of LEDs</div>
+              <input id="ledCount" type="number" onkeypress="posIntKey(event)" class="w-100 my-2" />    
+            </div>
+            <div class="d-none" data-page="code">
+              <div class="d-flex my-2">
+                <div class="mr-auto">Number of LEDs</div>
+                <div id="codeLeds">?</div>
+              </div>
+              <textarea id="code" type="text" rows="10" oninput="codeChange()" class="font-small w-100" style="min-width:100%;max-width:100%"></textarea>
+            </div>
+          </div>
 				</div>
 			</div>
 			<div id="p2.2" class="d-none flex-column h-100">
@@ -161,18 +174,7 @@ let globalFields = [
     template: '${val}%'
   }
 ]
-let info = {
-  leds: {
-    count: 1,
-    coordinates: {config:'{}',values:''},
-    play: {
-      settings: {
-        brightness: 128
-      }
-    },
-    animations: []
-  }
-}
+let info
 let refreshTimer = 0
 
 async function onload() {
@@ -328,29 +330,47 @@ async function updateFps() {
     refreshTimer = 0
   }
 }
+function layoutChange() {
+  var type = byId('ledLayoutType').value
+  queryAll('#layoutpages>div').forEach(e => {
+    e.classList.remove("d-none", "d-block")
+    e.classList.add(e.dataset.page == type ? "d-block" : "d-none")
+  })
+}
+function codeChange() {
+  var code = byId('code').value
+  try {
+    var pts = eval(`var x=${code};if(typeof x==='function'){x()}else{x}`)
+    if (!Array.isArray(pts)) throw ""
+    byId("codeLeds").innerText = pts.length
+    console.log(pts)
+  } catch (ex) {
+    console.log("Error: " + ex)
+  }
+}
 async function onSaveLedLayout() {
   // TODO: Check if valid
   var settings = null
   switch (byId('ledLayoutType').value) {
     case 'strip':
       let ledCount = byId('ledCount').value
-      let values = ''
+      let coords = ''
       for (let i = 0; i < ledCount; i++) {
-        if (i > 0) values += ','
-        values += Math.round(10000*(i+.5)/ledCount)/10000 + ',0,0'
+        if (i > 0) coords += ','
+        coords += Math.round(10000*(i+.5)/ledCount)/10000 + ',0,0'
       }
       settings = {
         ledCount: ledCount,
-        coordinates: {
+        ledLayout: {
           config: '{"layout":"strip"}',
-          values: values
+          coords: coords
         }
       }
       break
   }
   if (settings) {
     info.leds.count = settings.ledCount
-    info.leds.coordinates = settings.coordinates
+    info.leds.layout = settings.ledLayout
     await fetch('/api/leds/settings',{
       method:'PATCH',
       body:JSON.stringify(settings)
@@ -358,7 +378,7 @@ async function onSaveLedLayout() {
   }
   showPage('2')
 }
-function queryAll(cls) { return document.querySelectorAll(cls) }
+function queryAll(sel) { return document.querySelectorAll(sel) }
 function byId(id) { return document.getElementById(id) }
 function posIntKey(e) { if(e.key === "." || e.key === "-") e.preventDefault() }
 )rawstring";

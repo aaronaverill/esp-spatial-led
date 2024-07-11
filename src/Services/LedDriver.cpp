@@ -2,7 +2,7 @@
 
 #include <FastLED.h>
 #include "Store/LedSettings.h"
-#include "Store/LedCoordinates.h"
+#include "Store/LedLayout.h"
 
 #define DATA_PIN D4
 
@@ -78,7 +78,7 @@ namespace Services {
 
   void LedDriver::setup() {
     Store::LedSettings::read();
-    setLedCoordinates(Store::LedCoordinates::readValues().c_str());
+    setLedCoordinates(Store::LedLayout::readCoordinates().c_str());
     
     controller = new WS2812B<DATA_PIN, RGB>();
     renderLedCount = ledCount;
