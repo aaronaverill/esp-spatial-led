@@ -1,9 +1,10 @@
 const fs = require('fs')
+const CleanCSS = require('clean-css')
 
 const assetsFolder = 'assets'
 const contentFolder = 'src/Web/UI/Content'
 
-console.log('Bundling web assets...')
+console.info('Bundling web assets...')
 
 if (!fs.existsSync(contentFolder)){
   fs.mkdirSync(contentFolder);
@@ -20,9 +21,32 @@ function bundleHtml(source, destination, variableName) {
 }
 
 function bundleCss(source, destination, variableName) {
-  console.info(`Processing ${source}`)
+  console.info(`Processing file ${source}`)
   let content = fs.readFileSync(source)
-  bundleRawString(source, content, destination, variableName)
+
+  console.info(' - Minifying CSS')
+  const minifyOptions = {
+    /* options */ 
+  }
+  const output = new CleanCSS(minifyOptions).minify(content)
+  //console.info(output)
+  if (output.errors.length) {
+    console.info(' - Errors:')
+    for(let i = 0; i < output.errors.length; i++) {
+      console.info('    ' + output.errors[i])
+    }
+    process.exitCode = 1
+    process.exit()
+  }
+  console.info(` - Resized from ${output.stats.originalSize.toLocaleString()} to ${output.stats.minifiedSize.toLocaleString()} bytes`)
+  if (output.warnings.length) {
+    console.info(' - Warnings:')
+    for(let i = 0; i < output.warnings.length; i++) {
+      console.info('    ' + output.warnings[i])
+    }
+  }
+
+  bundleRawString(source, output.styles, destination, variableName)
 }
 
 function bundleJs(source, destination, variableName) {
