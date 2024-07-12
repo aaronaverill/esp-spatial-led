@@ -194,6 +194,7 @@ async function onOptionChange(element) {
   } else {
     info.leds.animations[info.leds.play.index].settings[id] = modelVal
   }
+  refreshOptionValue(itemElement, val, field)
   let patch = {}
   patch[id] = modelVal
   if (isGlobal) {
