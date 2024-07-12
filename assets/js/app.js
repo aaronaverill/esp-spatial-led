@@ -1,3 +1,6 @@
+/**
+ * Global fields are available on the options page for every animation
+ */
 let globalFields = [
   {
     id: 'brightness',
@@ -9,25 +12,30 @@ let globalFields = [
     template: '${val}%'
   }
 ]
+/**
+ * Model object with all the information returned from the MCU about the system
+ */
 let info
+/**
+ * Model object for the LED Layout page while it's being edited
+ */
 let ledLayout
+/**
+ * A javascript timer id for periodically freshing a UI element from the server (such as fps)
+ */
 let refreshTimer
 
-// Utility functions
-function query(s) { 
-  return document.querySelector(s)
-}
-function queryAll(s) { 
-  return document.querySelectorAll(s) 
-}
-function byId(i) {
-  return document.getElementById(i) 
-}
-function posIntKey(e) { 
-  if(e.key === "." || e.key === "-") e.preventDefault() 
+/**
+ * Handler for <input type="number" /> that can only be a positive integer value
+ * @param {KeyboardEvent} event
+ */ 
+function posIntKey(event) { 
+  if(event.key === "." || event.key === "-") e.preventDefault() 
 }
 
-// App load
+/**
+ * App UI initialization. Fetch global data from the server and refresh the UI
+ */
 async function onload() {
   try {
     let response = await fetch('/api/info')
@@ -40,36 +48,55 @@ async function onload() {
   refreshLibrary()
 }
 
-// App
+/**
+ * Refresh the currently playing animation info
+ */
 function refreshPlay() {
   if (info.leds.animations.length) {
-    byId('play-name').innerText = info.leds.animations[info.leds.play.index].name
+    document.getElementById('play-name').innerText = info.leds.animations[info.leds.play.index].name
   }
 }
 
+/**
+ * Set a page to visible
+ * @param {string} id - Element id
+ */
 function showPage(id) {
   if (refreshTimer) {
     clearTimeout(refreshTimer)
     refreshTimer = 0
   }
-  queryAll('.nav>div').forEach(e => {
+  document.querySelectorAll('.nav > div').forEach(e => {
     e.classList.remove('selected')
-    if (e.dataset.page == id) e.classList.add('selected')
+    if (e.dataset.page == id) {
+      e.classList.add('selected')
+    }
   })
-  queryAll('.main>div').forEach(e => {
+  document.querySelectorAll('.main > div').forEach(e => {
     e.classList.remove('d-flex','d-none')
     e.classList.add(e.id == id ? 'd-flex' : 'd-none')
   })
 }
 
+// -----------------------------------------------------------------------------
+// Play options page
+// -----------------------------------------------------------------------------
+
+/**
+ * Get the field information for the specified id from either the global fields or the animation's fields
+ * @param {string} id - The field id
+ */
 // Play options page
 function optionsField(id) {
   return globalFields.find(f => f.id == id)|| info.leds.animations[info.leds.play.index].fields?.find( f=> f.id == id)
 }
 
+/**
+ * Create the controls for the options page from the currently running animation and make the page visible
+ */
 function showOptions() {
   let a = info.leds.animations[info.leds.play.index]
-  let list = query('.page.options .list')
+  let list = document.querySelector('.page.options .list')
   let html = ''
   let fields = []
   for (let f of globalFields) fields.push(f.id)
@@ -86,6 +113,10 @@ function showOptions() {
   showPage('pPlayOptions')
 }
 
+/**
+ * Get the HTML for the specified field using the control templates in HTML scripts
+ * @param field - Field information
+ */
 function optionHtml(field) {
   let id = field.id
   let label = field.label
@@ -96,50 +127,74 @@ function optionHtml(field) {
   })
 
   switch (field.type) {
-    case'slider':
-      return eval('`' + byId('tSlider').innerHTML + '`')
-    case'hue-slider':
-      return eval('`' + byId('tColor').innerHTML + '`')
+    case 'slider':
+      return eval('`' + document.getElementById('tSlider').innerHTML + '`')
+    case 'hue-slider':
+      return eval('`' + document.getElementById('tColor').innerHTML + '`')
     default:
       return ''
   }
 }
 
+/**
+ * Refresh the controls for the specified field using the play or animation model settings
+ * @param field - Field information
+ */
 function refreshOptionControls(field) {
-  let input = query(`.page.options [data-field="${field.id}"] input`)
   let val = info.leds.play.settings[field.id] || info.leds.animations[info.leds.play.index].settings[field.id]
   if (field.factor) val /= field.factor
-  input.value = val
-  val = Math.round(val)
-  refreshOptionValue(input,val,field)
+
+  let itemElement = document.querySelector(`.page.options [data-field="${field.id}"]`)
+  switch (field.type) {
+    case 'slider':
+    case 'hue-slider':
+      let input = itemElement.querySelector('input')
+      input.value = val
+      break
+  }
+  refreshOptionValue(itemElement, Math.round(val), field)
 }
 
-function refreshOptionValue(e,val,field) {
+/**
+ * Refresh the controls for a specific item with the value
+ * @param {HTMLElement} element - Top level item option div element
+ * @param val - The value
+ * @param field - Field information
+ */
+function refreshOptionValue(element, val, field) {
   switch (field.type) {
     case 'slider':
       if (field.template) val = eval(`\`${field.template}\``)
-      e.closest('.item').querySelector('.value').innerText = val
+        element.querySelector('.value').innerText = val
       break
     case 'hue-slider':
       val *= (360/255)
-      e.closest('.item').querySelector('.value').style.backgroundColor=`hsl(${val},100%,50%)`
+      element.querySelector('.value').style.backgroundColor=`hsl(${val},100%,50%)`
       break
   }
 }
 
-function onInputChange(id,e) {
+/**
+ * Handle the event when an option value changes
+ * @param {HTMLElement} element - The element that is changing
+ */
+function onOptionChange(element) {
+  let itemElement = element.closest('.item')
+  let id = itemElement.dataset.field
   let field = optionsField(id)
   let isGlobal = globalFields.some(f => f.id == id)
-  let val = e.value
+  let val = element.value
   let modelVal = val
-  if (field.factor) modelVal *= field.factor
+  if (field.factor) {
+    modelVal *= field.factor
+  }
   modelVal = Math.round(modelVal)
   if (isGlobal) {
     info.leds.play.settings[id] = modelVal
   } else {
     info.leds.animations[info.leds.play.index].settings[id] = modelVal
   }
-  refreshOptionValue(e,val,field)
+  refreshOptionValue(itemElement, val, field)
   if (isGlobal) {
     fetch(`/api/leds/play/settings?${id}=${modelVal}`,{method:'POST'})
   } else {
@@ -147,23 +202,39 @@ function onInputChange(id,e) {
   }
 }
 
+// -----------------------------------------------------------------------------
 // Library page
+// -----------------------------------------------------------------------------
+
+/**
+ * Refresh the library page from the animations collection
+ */
 function refreshLibrary() {
   let html = ''
   for(let i = 0; i < info.leds.animations.length; i++) {
     let selected = i == info.leds.play.index ? ' selected' : ''
     html += '<div class="item pa-3' + selected + '" onclick="onAnimationClick(' + i + ')"><div class="text">' + info.leds.animations[i].name + '</div></div>'
   }
-  byId('animations').innerHTML = html
+  document.getElementById('animations').innerHTML = html
 }
 
-function onAnimationClick(i) {
-  fetch('/api/leds/play?index=' + i, {method:'POST'})
-  info.leds.play.index = i
+/**
+ * Handle the click event on the animation list to make it actively playing
+ * @param {number} index - The animation index clicked
+ */
+function onAnimationClick(index) {
+  fetch('/api/leds/play?index=' + index, {method:'POST'})
+  info.leds.play.index = index
   refreshPlay()
 }
 
+// -----------------------------------------------------------------------------
 // Led Layout page
+// -----------------------------------------------------------------------------
+
+/**
+ * Clone the LED layout information from the global settings so it can be modified by controls prior to saving
+ */
 function copyLedLayout() {
   ledLayout = structuredClone(info.leds.layout)
   try {
@@ -173,6 +244,9 @@ function copyLedLayout() {
   }
 }
 
+/**
+ * Refresh the controls from the model and make the page visible
+ */
 function showLedLayout() {
   copyLedLayout()
   showPage('pLedLayout')
@@ -181,16 +255,23 @@ function showLedLayout() {
   refreshLayoutSave()
 }
 
+/**
+ * Refresh the controls from the model
+ */
 function refreshLedLayout() {
-  byId('ledCount').value = info.leds.count
+  document.getElementById('ledCount').value = info.leds.count
   let type = ledLayout.config.type||'strip'
-  byId('ledLayoutType').value = type
-  queryAll('#pLedLayout .page-layout').forEach(e => {
+  document.getElementById('ledLayoutType').value = type
+  document.querySelectorAll('#pLedLayout .page-layout').forEach(e => {
     e.style.display = e.dataset.page == type ? 'block' : 'none'
   })
-  byId('code').value = ledLayout.config.code||''
+  document.getElementById('code').value = ledLayout.config.code||''
 }
 
+/**
+ * Attempt to parse the text in the code input into an array of 3d coordinates.
+ * If successful update the model with the coordinate info and led count
+ */
 function refreshCodeInfo() {
   let coords
   if (ledLayout.config.code?.trim().length) {
@@ -217,9 +298,13 @@ function refreshCodeInfo() {
     }
   }
   ledLayout.coords = coords ? coords.join(',') : ''
-  byId('codeLeds').innerHTML = coords === undefined ? '&#9888;' : coords.length/3
+  document.getElementById('codeLeds').innerHTML = coords === undefined ? '&#9888;' : coords.length/3
 }
 
+/**
+ * Refresh the save button enabled state based on whether a valid LED layout has been specified.
+ * For now all that is required is the total number of leds is > 0
+ */
 function refreshLayoutSave() {
   let canSave = false
   switch (ledLayout.config.type) {
@@ -227,24 +312,33 @@ function refreshLayoutSave() {
       canSave = ledLayout.coords?.length
       break
     default: // 'strip'
-      canSave = parseInt(byId('ledCount').value) > 0
+      canSave = parseInt(document.getElementById('ledCount').value) > 0
       break
     }
-  byId('saveLayout').disabled = !canSave
+  document.getElementById('saveLayout').disabled = !canSave
 }
 
-function onLayoutChange() {
-  ledLayout.config.type = byId('ledLayoutType').value
+/**
+ * Handle a layout type change by showing the relevant options page for that LED layout
+ */
+function onLayoutTypeChange() {
+  ledLayout.config.type = document.getElementById('ledLayoutType').value
   refreshLedLayout()
   refreshLayoutSave()
 }
 
+/**
+ * Handle a change to the text in the code input
+ */
 function onLayoutCodeChange() {
-  ledLayout.config.code = byId('code').value
+  ledLayout.config.code = document.getElementById('code').value
   refreshCodeInfo()
   refreshLayoutSave()
 }
 
+/**
+ * Handle the save button click by saving the LED Layout to the server
+ */
 async function onLayoutSave() {
   let count
   let layout
@@ -257,7 +351,7 @@ async function onLayoutSave() {
       }
       break
     default: // 'strip'
-      count = parseInt(byId('ledCount').value)
+      count = parseInt(document.getElementById('ledCount').value)
       let coords = []
       for (let i = 0; i < count; i++) {
         let coord = Math.round(10000*(i+.5)/count)/10000
@@ -269,7 +363,7 @@ async function onLayoutSave() {
         coords: coords.join(',')
       }
       break
-}
+  }
   if (layout) {
     info.leds.count = count
     info.leds.layout = layout
@@ -284,17 +378,26 @@ async function onLayoutSave() {
   showPage('pSettings')
 }
 
+// -----------------------------------------------------------------------------
 // About page
+// -----------------------------------------------------------------------------
+
+/**
+ * Show the about page and start a timer to update the frames per second periodically from the server
+ */
 function showAbout() {
   showPage('pAbout')
   updateFps()
 }
 
+/**
+ * Query the server for the current frames per second, update the UI, and set a timer to check again in 2 seconds
+ */
 async function updateFps() {
   let response = await fetch('/api/leds/play/fps')
   if (response.ok) {
     let fps = await response.text()
-    byId('fps').innerText = `${fps} fps`
+    document.getElementById('fps').innerText = `${fps} fps`
     refreshTimer = setTimeout(updateFps,2000)
   } else {
     refreshTimer = 0

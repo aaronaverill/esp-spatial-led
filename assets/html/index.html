@@ -44,7 +44,7 @@
         </div>
         <div class="page d-flex flex-column pa-3">
           <div>Layout</div>
-          <select id="ledLayoutType" onchange="onLayoutChange()" class="w-100 my-2">
+          <select id="ledLayoutType" onchange="onLayoutTypeChange()" class="w-100 my-2">
             <option value="strip">Strip</option>
             <option value="code">Javascript</option>
           </select>
@@ -94,13 +94,13 @@
   <!-- This could be futher storage optimized by removing whitespace but we are opting for easier maintainance by keeping the formatting. -->
   <!-- Gzip will compress most of this -->
 
-  <!-- Temlate for option controls for field type 'slider' -->
+  <!-- Template for option controls for field type 'slider' -->
   <script type="text/x-template" id="tSlider">
 <div data-field="${id}" class="item pa-2">
   <div>${label}</div>
   <div class="d-flex w-100">
     <div class="flex-grow-1 pr-3">
-      <div><input type="range" oninput="onInputChange('${id}',this)" min="${range[0]}" max="${range[1]}" class="w-100" /></div>
+      <div><input type="range" oninput="onOptionChange(this)" min="${range[0]}" max="${range[1]}" class="w-100" /></div>
       <div class="d-flex justify-between font-micro"><div>${rangeLabels[0]}</div><div>${rangeLabels[1]}</div></div>
     </div>
     <div class="value flex-shrink-0"></div>
@@ -114,7 +114,7 @@
   <div>${label}</div>
   <div class="d-flex w-100">
     <div class="flex-grow-1 pr-3">
-      <div><input type="range" oninput="onInputChange('${id}',this)" min="${range[0]}" max="${range[1]}" class="w-100" /></div>
+      <div><input type="range" oninput="onOptionChange(this)" min="${range[0]}" max="${range[1]}" class="w-100" /></div>
       <div class="rainbow" style="height:10px; margin:0 5px 0 9px"></div>
     </div>
     <div class="value flex-shrink-0 rounded"></div>
