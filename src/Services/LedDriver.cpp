@@ -5,6 +5,8 @@
 #include "Store/LedLayout.h"
 
 #define DATA_PIN D4
+#define CHIPSET WS2812B
+#define RGB_ORDER GRB
 
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
@@ -80,7 +82,7 @@ namespace Services {
     Store::LedSettings::read();
     setLedCoordinates(Store::LedLayout::readCoordinates().c_str());
     
-    controller = new WS2812B<DATA_PIN, RGB>();
+    controller = new CHIPSET<DATA_PIN, RGB_ORDER>();
     renderLedCount = ledCount;
     leds = new CRGB[renderLedCount];
     FastLED.addLeds(controller, leds, renderLedCount, 0);
