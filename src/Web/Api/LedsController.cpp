@@ -75,7 +75,7 @@ namespace Web { namespace Api {
       LedDriver& leds = LedDriver::getInstance();
       std::vector<Animations::Animation*> animations = leds.getAnimations();
       if (animationIndex < animations.size()) {
-        animations[animationIndex]->setSettings(doc.to<JsonObject>());
+        animations[animationIndex]->setSettings(doc.as<JsonObject>());
       }
       Store::LedSettings::write();
     }
