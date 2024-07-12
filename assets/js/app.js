@@ -198,12 +198,16 @@ async function onOptionChange(element) {
   let patch = {}
   patch[id] = modelVal
   if (isGlobal) {
-    await fetch('/api/leds/play/settings',{
+    await fetch('/api/leds/play/settings', {
       method:'PATCH',
       body:JSON.stringify(patch)
     })
   } else {
-    fetch(`/api/leds/animations/settings?index=${info.leds.play.index}&${id}=${modelVal}`,{method:'POST'})
+    patch.index = info.leds.play.index
+    await fetch('/api/leds/animations/settings', {
+      method:'PATCH',
+      body:JSON.stringify(patch)
+    })
   }
 }
 
