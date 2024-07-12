@@ -14,9 +14,9 @@ namespace Web { namespace UI {
        */
       void addSlider(const char *id, const char *label, int min, int max);
       /**
-       * Add a color chooser field.
+       * Add a hue chooser field. Displays a slider on the UI whose value is a byte [0..255]
        */
-      void addColorChooser(const char *id, const char *label);
+      void addHueChooser(const char *id, const char *label);
 
     private:
       JsonArray& fields;

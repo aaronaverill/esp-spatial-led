@@ -2,7 +2,7 @@
 
 namespace Animations {
   void Solid::getFields(Web::UI::FieldsInfo& fields) {
-    fields.addColorChooser("hue", "Hue");
+    fields.addHueChooser("hue", "Hue");
   }
 
   void Solid::getSettings(JsonObject& settings) {
