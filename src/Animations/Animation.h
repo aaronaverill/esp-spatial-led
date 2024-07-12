@@ -26,7 +26,7 @@ namespace Animations {
       /**
        * Set animation settings
        */
-      virtual void setSettings(std::vector<KeyValuePair<String, String>> values) {}
+      virtual void setSettings(const JsonObject& settings) {}
       /**
        * Render the animation frame
        */

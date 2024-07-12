@@ -9,7 +9,7 @@ namespace Animations {
       Solid(Services::ILedDriverAnimationContext& context): Animation(context, "Solid") {}
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings);
-      void setSettings(std::vector<KeyValuePair<String, String>> values);
+      void setSettings(const JsonObject& settings);
       void renderFrame();
       void renderLed(int index);
     private:

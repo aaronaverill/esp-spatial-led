@@ -9,11 +9,9 @@ namespace Animations {
     settings["hue"] = hsv.hue;
   }
 
-  void Solid::setSettings(std::vector<KeyValuePair<String, String>> values) {
-    for(KeyValuePair<String, String>& pair:values) {
-      if(pair.key == "hue") {
-        setHue = pair.value.toInt();
-      }
+  void Solid::setSettings(const JsonObject& settings) {
+    if (settings["hue"]) {
+      setHue = settings["hue"];
     }
   }
 

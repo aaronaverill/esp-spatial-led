@@ -75,7 +75,7 @@ Application::Application() {
 
   WebServer& webServer = WebServer::create();
   webServer.addRequestHandler("/api/info", HTTP_GET, &Web::Api::InfoController::get);
-  webServer.addRequestHandler("/api/leds/animations/settings", HTTP_POST, &Web::Api::LedsController::setAnimationSetting);
+  webServer.addRequestHandler("/api/leds/animations/settings", HTTP_PATCH, [](AsyncWebServerRequest *r){}, &Web::Api::LedsController::setAnimationSetting);
   webServer.addRequestHandler("/api/leds/play/settings", HTTP_PATCH, [](AsyncWebServerRequest *r){}, &Web::Api::LedsController::setPlaySetting);
   webServer.addRequestHandler("/api/leds/play/fps", HTTP_GET, &Web::Api::LedsController::getFps);
   webServer.addRequestHandler("/api/leds/play", HTTP_POST, &Web::Api::LedsController::setPlayIndex);

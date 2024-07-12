@@ -18,9 +18,9 @@ namespace Web { namespace Api {
     //String json = doc.as<String>();
     //Serial.println(json);
 
-    LedDriver& leds = LedDriver::getInstance();
     bool writeSettings = false;
     JsonVariant ledCount = doc["ledCount"];
+    LedDriver& leds = LedDriver::getInstance();
     if (ledCount) {
       leds.setLedCount(ledCount);
       writeSettings = true;
@@ -61,19 +61,21 @@ namespace Web { namespace Api {
     request->send(200, "text/plain", "OK");
   }
 
-  void LedsController::setAnimationSetting(AsyncWebServerRequest *request) {
-    LedDriver& leds = LedDriver::getInstance();
-    if (request->hasParam("index")) {
-      uint index = request->getParam("index")->value().toInt();
-      std::vector<KeyValuePair<String, String>> values;
-      for(uint i = 0; i < request->params(); i++) {
-        if (request->getParam(i)->name() != "index") {
-          values.push_back(KeyValuePair<String, String>(request->getParam(i)->name(), request->getParam(i)->value()));
-        }
-      }
+  void LedsController::setAnimationSetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, data);
+    if (error) {
+      request->send(500);
+    }
+    //String json = doc.as<String>();
+    //Serial.println(json);
+
+    JsonVariant animationIndex = doc["index"];
+    if (animationIndex) {
+      LedDriver& leds = LedDriver::getInstance();
       std::vector<Animations::Animation*> animations = leds.getAnimations();
-      if (index < animations.size()) {
-        animations[index]->setSettings(values);
+      if (animationIndex < animations.size()) {
+        animations[animationIndex]->setSettings(doc.to<JsonObject>());
       }
       Store::LedSettings::write();
     }
