@@ -6,22 +6,26 @@
 </head>
 <body class="ma-0" onload="onload()">
 	<div class="d-flex flex-column h-100" class="h-100">
+    <!-- This container holds all the page content -->
 		<div class="main">
+      <!-- The top level library page-->
 			<div id="pLibrary" class="d-flex flex-column h-100">
 				<div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Library</div></div>
 				<div class="page">
 					<div id="animations" class="list selectable"></div>
 				</div>
 			</div>
+      <!-- The top level settings page -->
 			<div id="pSettings" class="d-none flex-column h-100">
 				<div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Settings</div></div>
 				<div class="page">
 					<div class="list selectable">
-						<div onclick="showPage('pLedLayout')" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+						<div onclick="showLedLayout()" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
 						<div onclick="showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
 					</div>
 				</div>
 			</div>
+      <!-- Play options modal page -->
 			<div id="pPlayOptions" class="d-none flex-column h-100">
 				<div class="title">
           <div onclick="showPage('pLibrary')" class="btn pa-4"><div class="img img-close"></div></div>
@@ -31,11 +35,12 @@
 					<div class="list"></div>
 				</div>
 			</div>
+      <!-- Settings > LED Layout page -->
 			<div id="pLedLayout" class="d-none flex-column h-100">
 				<div class="title">
 					<div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-close"></div></div>
 					<div class="pa-3 mr-auto">LED Layout</div>
-					<div class="mr-3"><div onclick="onLayoutSave()" class="btn tonal primary">Save</div></div>
+					<div class="mr-3"><button id="saveLayout" onclick="onLayoutSave()" class="btn tonal primary">Save</button></div>
 				</div>
 				<div class="page d-flex flex-column pa-3">
 					<div>Layout</div>
@@ -43,24 +48,25 @@
 						<option value="strip">Strip</option>
             <option value="code">Javascript</option>
 					</select>
-          <div class="page-layout d-block" data-page="strip">
+          <div class="page-layout" data-page="strip">
             <div>Number of LEDs</div>
-            <input id="ledCount" type="number" onkeypress="posIntKey(event)" class="w-100 my-2" />    
+            <input id="ledCount" type="number" onkeypress="posIntKey(event)" oninput="refreshLayoutSave()" class="w-100 my-2" />    
           </div>
-          <div class="page-layout d-none flex-grow-1" data-page="code" style="overflow-y:auto">
+          <div class="page-layout flex-grow-1" data-page="code" style="display:none;overflow-y:auto">
             <div class="d-flex flex-column h-100">
               <div class="d-flex align-center">
                 <div class="mr-3 my-2">Number of LEDs:</div>
                 <div id="codeLeds"></div>
               </div>
               <div class="d-flex flex-grow-1">
-                <textarea id="code" type="text" rows="10" oninput="onLayoutCodeChange()" class="font-small" style="flex-basis:50%;resize:none;margin:1px"></textarea>
+                <textarea id="code" type="text" spellcheck="false" rows="10" oninput="onLayoutCodeChange()" class="font-small" style="flex-basis:50%;resize:none;margin:1px"></textarea>
                 <div id="layoutPreview" style="flex-basis:50%"></div>
               </div>  
             </div>
           </div>
 				</div>
 			</div>
+      <!-- Settings > About page -->
 			<div id="pAbout" class="d-none flex-column h-100">
 				<div class="title"><div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
 				<div class="page">
@@ -68,10 +74,12 @@
 				</div>
 			</div>
 		</div>
+    <!-- Current animation playback -->
 		<div class="play">
 			<div id="play-name" class="text-truncate pa-3 mr-auto">&nbsp;</div>
 			<div onclick="showOptions()" class="btn pa-3"><div class="img img-options"></div></div>
 		</div>
+    <!-- Primary navigation -->
 		<div class="nav d-flex selectable w-100">
 			<div onclick="showPage(this.dataset.page)" data-page="pLibrary" class="selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
 			<div onclick="showPage(this.dataset.page)" data-page="pSettings"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>

@@ -23,10 +23,10 @@ namespace Web { namespace Api {
         leds.setLedCount(ledCount);
         writeSettings = true;
       }
-      JsonVariant coordinateValues = doc["coordinates"]["values"];
+      JsonVariant coordinateValues = doc["ledLayout"]["coords"];
       if (coordinateValues) {
         leds.setLedCoordinates(coordinateValues);
-        Store::LedLayout::write(doc["coordinates"]["config"], doc["coordinates"]["values"]);
+        Store::LedLayout::write(doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
       }
       if (writeSettings) {
         Store::LedSettings::write();

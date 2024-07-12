@@ -10,13 +10,22 @@ let globalFields = [
   }
 ]
 let info
+let ledLayout
 let refreshTimer
 
 // Utility functions
-function query(s) { return document.querySelector(s) }
-function queryAll(s) { return document.querySelectorAll(s) }
-function byId(i) { return document.getElementById(i) }
-function posIntKey(e) { if(e.key === "." || e.key === "-") e.preventDefault() }
+function query(s) { 
+  return document.querySelector(s)
+}
+function queryAll(s) { 
+  return document.querySelectorAll(s) 
+}
+function byId(i) {
+  return document.getElementById(i) 
+}
+function posIntKey(e) { 
+  if(e.key === "." || e.key === "-") e.preventDefault() 
+}
 
 // App load
 async function onload() {
@@ -27,16 +36,15 @@ async function onload() {
   } catch (e) {
     console.log(e)
   }
-  refreshUI()
+  refreshPlay()
+  refreshLibrary()
 }
 
 // App
-function refreshUI() {
+function refreshPlay() {
   if (info.leds.animations.length) {
     byId('play-name').innerText = info.leds.animations[info.leds.play.index].name
   }
-  refreshLibrary()
-  refreshLedLayout()
 }
 
 function showPage(id) {
@@ -159,68 +167,127 @@ function refreshLibrary() {
 }
 
 function onAnimationClick(i) {
-  fetch(`/api/leds/play?index=${i}`, {method:'POST'})
+  fetch('/api/leds/play?index=' + i, {method:'POST'})
   info.leds.play.index = i
-  refreshUI()
+  refreshPlay()
 }
 
 // Led Layout page
+function copyLedLayout() {
+  ledLayout = structuredClone(info.leds.layout)
+  try {
+    ledLayout.config = JSON.parse(ledLayout.config)
+  } catch {
+    ledLayout.config = {}
+  }
+}
+
+function showLedLayout() {
+  copyLedLayout()
+  showPage('pLedLayout')
+  refreshLedLayout()
+  refreshCodeInfo()
+  refreshLayoutSave()
+}
+
 function refreshLedLayout() {
-  byId('ledCount').value=info.leds.count
+  byId('ledCount').value = info.leds.count
+  let type = ledLayout.config.type||'strip'
+  byId('ledLayoutType').value = type
+  queryAll('#pLedLayout .page-layout').forEach(e => {
+    e.style.display = e.dataset.page == type ? 'block' : 'none'
+  })
+  byId('code').value = ledLayout.config.code||''
+}
+
+function refreshCodeInfo() {
+  let coords
+  if (ledLayout.config.code?.trim().length) {
+    try {
+      let pts = eval(`var x=${ledLayout.config.code};if(typeof x==='function'){x()}else{x}`)
+      if (!Array.isArray(pts)) {
+        throw ''
+      }
+      coords = []
+      pts.forEach(pt => {
+        if (Array.isArray(pt)) {
+          for(let i = 0; i < 3; i++) {
+            if (i < pt.length && typeof pt[i] === 'number') {
+              coords.push(Math.round(10000*pt[i])/10000)
+            } else {
+              coords.push(0)
+            }
+          }
+        }
+      })
+    } catch (ex) {
+      coords = undefined
+      console.log('Error: ' + ex)
+    }
+  }
+  ledLayout.coords = coords ? coords.join(',') : ''
+  byId('codeLeds').innerHTML = coords === undefined ? '&#9888;' : coords.length/3
+}
+
+function refreshLayoutSave() {
+  let canSave = false
+  switch (ledLayout.config.type) {
+    case 'code':
+      canSave = ledLayout.coords?.length
+      break
+    default: // 'strip'
+      canSave = parseInt(byId('ledCount').value) > 0
+      break
+    }
+  byId('saveLayout').disabled = !canSave
 }
 
 function onLayoutChange() {
-  var type = byId('ledLayoutType').value
-  queryAll('#pLedLayout .page-layout').forEach(e => {
-    e.classList.remove("d-none", "d-block")
-    e.classList.add(e.dataset.page == type ? "d-block" : "d-none")
-  })
+  ledLayout.config.type = byId('ledLayoutType').value
+  refreshLedLayout()
+  refreshLayoutSave()
 }
 
 function onLayoutCodeChange() {
-  var leds
-  var code = byId('code').value
-  try {
-    var pts = eval(`var x=${code};if(typeof x==='function'){x()}else{x}`)
-    if (!Array.isArray(pts)) throw ""
-    leds = pts.length
-    console.log(pts)
-  } catch (ex) {
-    console.log("Error: " + ex)
-  }
-  setCodeLeds(leds)
-}
-
-function setCodeLeds(count) {
-  byId("codeLeds").innerHTML = count === undefined ? '&#9888;' : count
+  ledLayout.config.code = byId('code').value
+  refreshCodeInfo()
+  refreshLayoutSave()
 }
 
 async function onLayoutSave() {
-  // TODO: Check if valid
-  var settings = null
-  switch (byId('ledLayoutType').value) {
-    case 'strip':
-      let ledCount = byId('ledCount').value
-      let coords = ''
-      for (let i = 0; i < ledCount; i++) {
-        if (i > 0) coords += ','
-        coords += Math.round(10000*(i+.5)/ledCount)/10000 + ',0,0'
-      }
-      settings = {
-        ledCount: ledCount,
-        ledLayout: {
-          config: '{"layout":"strip"}',
-          coords: coords
-        }
+  let count
+  let layout
+  switch (ledLayout.config.type) {
+    case 'code':
+      count = ledLayout.coords.split(',').length/3
+      layout = {
+        config: JSON.stringify(ledLayout.config),
+        coords: ledLayout.coords
       }
       break
-  }
-  if (settings) {
-    info.leds.count = settings.ledCount
-    info.leds.layout = settings.ledLayout
+    default: // 'strip'
+      count = parseInt(byId('ledCount').value)
+      let coords = []
+      for (let i = 0; i < count; i++) {
+        let coord = Math.round(10000*(i+.5)/count)/10000
+        console.log(coord)
+        coords.push(coord + ',' + coord + ',' + coord)
+      }
+      layout = {
+        config: '{"layout":"strip"}',
+        coords: coords.join(',')
+      }
+      break
+}
+  if (layout) {
+    info.leds.count = count
+    info.leds.layout = layout
     await fetch('/api/leds/settings',{
       method:'PATCH',
-      body:JSON.stringify(settings)
+      body:JSON.stringify({
+        ledCount: count,
+        ledLayout: layout
+      })
     })
   }
   showPage('pSettings')
