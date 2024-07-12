@@ -12,12 +12,17 @@ namespace Animations {
   void Solid::setSettings(std::vector<KeyValuePair<String, String>> values) {
     for(KeyValuePair<String, String>& pair:values) {
       if(pair.key == "hue") {
-        hsv.hue = pair.value.toInt();
+        setHue = pair.value.toInt();
       }
     }
   }
 
-  void Solid::render(int index) {
+  void Solid::renderFrame() {
+    hsv.hue = setHue;
+    Animation::renderFrame();
+  }
+
+  void Solid::renderLed(int index) {
     context.hsv(hsv);
   }
 }

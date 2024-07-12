@@ -7,7 +7,8 @@ namespace Animations { namespace Spatial {
   class Rainbowfall: public Animation {
     public:
       Rainbowfall(Services::ILedDriverAnimationContext& context): Animation(context, "Rainbowfall") {}
-      void render(int index);
+      void renderFrame();
+      void renderLed(int index);
     private:
       uint16_t bpm = 10;
       float spread = 0.3;

@@ -30,11 +30,11 @@ namespace Animations {
       /**
        * Render the animation frame
        */
-      virtual void render();
+      virtual void renderFrame();
       /**
        * Render a specific led by index
        */
-      virtual void render(int index) {}
+      virtual void renderLed(int index) {}
 
     protected:
       Services::ILedDriverAnimationContext& context;

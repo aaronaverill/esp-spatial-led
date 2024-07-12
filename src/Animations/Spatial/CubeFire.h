@@ -21,9 +21,9 @@ namespace Animations { namespace Spatial {
   class CubeFire: public Animation {
     public:
       CubeFire(Services::ILedDriverAnimationContext& context): Animation(context, "Cube Fire") {}
-      void render(int index);
+      void renderFrame();
+      void renderLed(int index);
     private:
-      void beforeRender();
       float speed = 1; // How fast the spheres travel through 3D space
       float t1; // x offset
       float t2; // y offset

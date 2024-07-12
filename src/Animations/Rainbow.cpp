@@ -3,7 +3,7 @@
 #include <FastLED.h>
 
 namespace Animations {
-  void Rainbow::render(int index) {
+  void Rainbow::renderLed(int index) {
     if (index == 0) {
       hue = beat8(bpm);
     }    

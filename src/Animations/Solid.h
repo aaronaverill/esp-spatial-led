@@ -10,8 +10,10 @@ namespace Animations {
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings);
       void setSettings(std::vector<KeyValuePair<String, String>> values);
-      void render(int index);
+      void renderFrame();
+      void renderLed(int index);
     private:
+      byte setHue = 196;
       CHSV hsv = CHSV(196, 255, 255);
   };
 }

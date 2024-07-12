@@ -103,7 +103,7 @@ namespace Services {
         fps = 0;
         fpsSampleStartMillis = millis();
       }
-      currentAnimation->render();
+      currentAnimation->renderFrame();
       fpsFrames++;
       uint now = millis();
       if (now > fpsSampleStartMillis && (now - fpsSampleStartMillis) > 2000) {

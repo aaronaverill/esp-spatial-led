@@ -9,7 +9,8 @@ namespace Animations {
   class Colorloop: public Animation {
     public:
       Colorloop(Services::ILedDriverAnimationContext& context): Animation(context, "Colorloop") {}
-      void render(int index);
+      void renderFrame();
+      void renderLed(int index);
     private:
       uint16_t bpm = 10;
       byte hue;

@@ -1,7 +1,7 @@
 #include "CubeFire.h"
 
 namespace Animations { namespace Spatial {
-  void CubeFire::beforeRender() {
+  void CubeFire::renderFrame() {
       t1 = ((float)beat16(9.15*speed))/65535;
       t2 = ((float)beat16(7.04*speed))/65535;
       t3 = ((float)beat16(10.77*speed))/65535;
@@ -14,10 +14,7 @@ namespace Animations { namespace Spatial {
     return (1+((float)sin16(v*65535))/65535)/2;
   }
 
-  void CubeFire::render(int index) {
-    if (index == 0) {
-      beforeRender();
-    }
+  void CubeFire::renderLed(int index) {
     const Coordinate& coordinate = context.getLedCoordinate(index);
 
     // Color is 20% dependent on each axis and cycling every 6.5 seconds
