@@ -226,6 +226,7 @@ function onAnimationClick(index) {
   fetch('/api/leds/play?index=' + index, {method:'POST'})
   info.leds.play.index = index
   refreshPlay()
+  refreshLibrary()
 }
 
 // -----------------------------------------------------------------------------
