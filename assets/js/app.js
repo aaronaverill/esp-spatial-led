@@ -178,7 +178,7 @@ function refreshOptionValue(element, val, field) {
  * Handle the event when an option value changes
  * @param {HTMLElement} element - The element that is changing
  */
-function onOptionChange(element) {
+async function onOptionChange(element) {
   let itemElement = element.closest('.item')
   let id = itemElement.dataset.field
   let field = optionsField(id)
@@ -194,9 +194,13 @@ function onOptionChange(element) {
   } else {
     info.leds.animations[info.leds.play.index].settings[id] = modelVal
   }
-  refreshOptionValue(itemElement, val, field)
+  let patch = {}
+  patch[id] = modelVal
   if (isGlobal) {
-    fetch(`/api/leds/play/settings?${id}=${modelVal}`,{method:'POST'})
+    await fetch('/api/leds/play/settings',{
+      method:'PATCH',
+      body:JSON.stringify(patch)
+    })
   } else {
     fetch(`/api/leds/animations/settings?index=${info.leds.play.index}&${id}=${modelVal}`,{method:'POST'})
   }

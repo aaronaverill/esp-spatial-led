@@ -12,27 +12,28 @@ namespace Web { namespace Api {
   void LedsController::setSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, data);
-    if (!error) {
-      //String json = doc.as<String>();
-      //Serial.println(json);
-
-      LedDriver& leds = LedDriver::getInstance();
-      bool writeSettings = false;
-      JsonVariant ledCount = doc["ledCount"];
-      if (ledCount) {
-        leds.setLedCount(ledCount);
-        writeSettings = true;
-      }
-      JsonVariant coordinateValues = doc["ledLayout"]["coords"];
-      if (coordinateValues) {
-        leds.setLedCoordinates(coordinateValues);
-        Store::LedLayout::write(doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
-      }
-      if (writeSettings) {
-        Store::LedSettings::write();
-      }
-      request->send(200, "text/plain", "OK");
+    if (error) {
+      request->send(500);
     }
+    //String json = doc.as<String>();
+    //Serial.println(json);
+
+    LedDriver& leds = LedDriver::getInstance();
+    bool writeSettings = false;
+    JsonVariant ledCount = doc["ledCount"];
+    if (ledCount) {
+      leds.setLedCount(ledCount);
+      writeSettings = true;
+    }
+    JsonVariant coordinateValues = doc["ledLayout"]["coords"];
+    if (coordinateValues) {
+      leds.setLedCoordinates(coordinateValues);
+      Store::LedLayout::write(doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
+    }
+    if (writeSettings) {
+      Store::LedSettings::write();
+    }
+    request->send(200, "text/plain", "OK");
   }
 
   void LedsController::setPlayIndex(AsyncWebServerRequest *request) {
@@ -42,11 +43,19 @@ namespace Web { namespace Api {
     request->send(200, "text/plain", "OK");
   }
 
-  void LedsController::setPlaySetting(AsyncWebServerRequest *request) {
+  void LedsController::setPlaySetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, data);
+    if (error) {
+      request->send(500);
+    }
+    //String json = doc.as<String>();
+    //Serial.println(json);
+
     LedDriver& leds = LedDriver::getInstance();
-    if (request->hasParam("brightness")) {
-      uint value = request->getParam("brightness")->value().toInt();
-      leds.setBrightness(value);
+    JsonVariant brightness = doc["brightness"];
+    if (brightness) {
+      leds.setBrightness(brightness);
       Store::LedSettings::write();
     }
     request->send(200, "text/plain", "OK");

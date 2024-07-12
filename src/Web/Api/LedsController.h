@@ -19,7 +19,7 @@ namespace Web { namespace Api {
       /**
        * Set a play setting
        */
-      static void setPlaySetting(AsyncWebServerRequest *request);
+      static void setPlaySetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
       /**
        * Set an animation setting
        */
