@@ -129,7 +129,7 @@ function optionHtml(field) {
   switch (field.type) {
     case 'slider':
       return eval('`' + document.getElementById('tSlider').innerHTML + '`')
-    case 'hue-slider':
+    case 'hue':
       return eval('`' + document.getElementById('tColor').innerHTML + '`')
     default:
       return ''
@@ -147,7 +147,7 @@ function refreshOptionControls(field) {
   let itemElement = document.querySelector(`.page.options [data-field="${field.id}"]`)
   switch (field.type) {
     case 'slider':
-    case 'hue-slider':
+    case 'hue':
       let input = itemElement.querySelector('input')
       input.value = val
       break
@@ -167,7 +167,7 @@ function refreshOptionValue(element, val, field) {
       if (field.template) val = eval(`\`${field.template}\``)
         element.querySelector('.value').innerText = val
       break
-    case 'hue-slider':
+    case 'hue':
       val *= (360/255)
       element.querySelector('.value').style.backgroundColor=`hsl(${val},100%,50%)`
       break

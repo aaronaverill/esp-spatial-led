@@ -13,7 +13,7 @@ namespace Web { namespace UI {
   void FieldsInfo::addColorChooser(const char *id, const char *label) {
     JsonObject field = fields.add<JsonObject>();
     field["id"] = id;
-    field["type"] = "hue-slider";
+    field["type"] = "hue";
     field["label"] = label;
   }
 }}
