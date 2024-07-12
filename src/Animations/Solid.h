@@ -7,7 +7,7 @@ namespace Animations {
   class Solid: public Animation {
     public:
       Solid(Services::ILedDriverAnimationContext& context): Animation(context, "Solid") {}
-      void getFields(JsonArray& fields);
+      void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings);
       void setSettings(std::vector<KeyValuePair<String, String>> values);
       void render(int index);

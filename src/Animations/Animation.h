@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 #include "KeyValuePair.h"
 #include "Services/ILedDriverAnimationContext.h"
+#include "Web/UI/FieldsInfo.h"
 
 namespace Animations {
   /**
@@ -17,7 +18,7 @@ namespace Animations {
       /**
        * Construct custom fields information
        */
-      virtual void getFields(JsonArray& fields) {}
+      virtual void getFields(Web::UI::FieldsInfo& fields) {}
       /**
        * Construct custom settings
        */

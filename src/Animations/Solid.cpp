@@ -1,13 +1,8 @@
 #include "Solid.h"
 
 namespace Animations {
-  void Solid::getFields(JsonArray& fields) {
-    JsonObject field = fields.add<JsonObject>();
-    field["id"] = "hue";
-    field["type"] = "hue-slider";
-    field["label"] = "Hue";
-    field["min"] = 0;
-    field["max"] = 255;
+  void Solid::getFields(Web::UI::FieldsInfo& fields) {
+    fields.addColorChooser("hue", "Hue");
   }
 
   void Solid::getSettings(JsonObject& settings) {
