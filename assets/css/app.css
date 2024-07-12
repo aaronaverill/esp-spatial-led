@@ -102,7 +102,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   font-size: 18px;
 }
 .list .item.selected {
-  background-color: #88F2;
+  background-color: #99F6;
 }
 .list .item .text {
   overflow: hidden;
