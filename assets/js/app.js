@@ -87,31 +87,22 @@ function showOptions() {
 }
 
 function optionHtml(field) {
-  var html = `<div data-field="${field.id}" class="item pa-2"><div>${field.label}</div><div class="d-flex w-100"><div class="flex-grow-1 pr-3">`
+  let id = field.id
+  let label = field.label
+  let range = [field.min, field.max]
+  let rangeLabels = []
+  range.forEach(val => {
+    rangeLabels.push(field.template ? eval(`\`${field.template}\``) : val)
+  })
 
   switch (field.type) {
     case'slider':
-      let val = field.min
-      let minLabel = field.template ? eval(`\`${field.template}\``) : val
-      val = field.max
-      let maxLabel = field.template ? eval(`\`${field.template}\``) : val
-      html += `
-<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>
-<div class="d-flex justify-between font-micro">
-<div>${minLabel}</div>
-<div>${maxLabel}</div>
-</div>
-</div><div class="value flex-shrink-0"></div>`;
-      break
+      return eval('`' + byId('tSlider').innerHTML + '`')
     case'hue-slider':
-      html += `<div><input type="range" oninput="onInputChange('${field.id}',this)" min="${field.min}" max="${field.max}" class="w-100"></input></div>`
-      html += '<div class="rainbow" style="height:10px;margin:0 5px 0 9px"></div>'
-      html += '</div><div class="value flex-shrink-0 rounded"></div>'
-      break
+      return eval('`' + byId('tColor').innerHTML + '`')
+    default:
+      return ''
   }
-  html+='</div></div>';
-
-  return html
 }
 
 function refreshOptionControls(field) {
