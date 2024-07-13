@@ -1,7 +1,7 @@
 #include "FieldsInfo.h"
 
 namespace Web { namespace UI {
-  void FieldsInfo::addSlider(const char *id, const char *label, float min, float max, const char *valueTemplate, int decimals) {
+  void FieldsInfo::addSlider(const String &id, const String &label, float min, float max, const char *valueTemplate, int decimals) {
     JsonObject field = fields.add<JsonObject>();
     field["id"] = id;
     field["type"] = "slider";
