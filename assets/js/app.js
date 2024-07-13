@@ -208,7 +208,7 @@ function refreshOptionValue(element, val, field) {
   switch (field.type) {
     case 'slider':
       if (field.template) val = eval(field.template)
-        element.querySelector('.value').innerText = val
+        element.querySelector('.value').innerHTML = val
       break
     case 'hue':
       val *= (360/255)
