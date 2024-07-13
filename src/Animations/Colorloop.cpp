@@ -16,7 +16,6 @@ namespace Animations {
   }
 
   void Colorloop::setSettings(const JsonObject& settings) {
-    Serial.println("Colorloop::setSettings");
     if (settings["speed"]) {
       setBpm(settings["speed"]);
     }
