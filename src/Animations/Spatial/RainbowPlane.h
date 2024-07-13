@@ -4,9 +4,9 @@
 #include "Services/ILedDriverAnimationContext.h"
 
 namespace Animations { namespace Spatial {
-  class Rainbowfall: public SpatialAnimation {
+  class RainbowPlane: public SpatialAnimation {
     public:
-      Rainbowfall(Services::ILedDriverAnimationContext& context);
+      RainbowPlane(Services::ILedDriverAnimationContext& context);
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings);
       void setSettings(const JsonObject& settings);
@@ -18,6 +18,6 @@ namespace Animations { namespace Spatial {
       uint32_t everyMillis;
       byte hueIncrement;
       byte hue;
-      byte repeat6 = 18; // Number of times the rainbow repeats in 1/6ths
+      byte repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
   };
 }}

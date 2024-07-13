@@ -8,7 +8,7 @@
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
 #include "Animations/Spatial/CubeFire.h"
-#include "Animations/Spatial/Rainbowfall.h"
+#include "Animations/Spatial/RainbowPlane.h"
 
 #include "Services/WebServer.h"
 #include "Web/Api/InfoController.h"
@@ -30,7 +30,7 @@ Application::Application() {
   ledDriver.addAnimation(new Animations::Rainbow(ledDriver));
   ledDriver.addAnimation(new Animations::Solid(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::CubeFire(ledDriver));
-  ledDriver.addAnimation(new Animations::Spatial::Rainbowfall(ledDriver));
+  ledDriver.addAnimation(new Animations::Spatial::RainbowPlane(ledDriver));
   
   addService(&ledDriver);
 
