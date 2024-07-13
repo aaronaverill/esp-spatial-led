@@ -227,6 +227,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   display:flex; align-items:center;
 }
 .options .value {
-  width: 4em;
+  min-width: 4em;
+  width: 10%;
   text-align: right;
 }
