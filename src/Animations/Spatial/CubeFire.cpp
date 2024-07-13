@@ -37,9 +37,13 @@ namespace Animations { namespace Spatial {
     */
     v = v * v * v;
 
-    byte hb = min((float)255,h*255);
-    byte sb = min((float)255,s*255);
-    byte vb = min((float)255,v*255);
-    context.hsv(CHSV(hb,sb,vb));
+    if (v < 0.05) {
+      context.rgb(CRGB(0,0,0));
+    } else {
+      byte hb = min((float)255,h*255);
+      byte sb = min((float)255,s*255);
+      byte vb = min((float)255,v*255);
+      context.hsv(CHSV(hb,sb,vb));
+    }
   }
 }}
