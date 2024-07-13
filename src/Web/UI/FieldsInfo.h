@@ -12,7 +12,7 @@ namespace Web { namespace UI {
       /**
        * Add a slider field. Displays a slider on the UI whose value is between min, max
        */
-      void addSlider(const char *id, const char *label, int min, int max);
+      void addSlider(const char *id, const char *label, int min, int max, const char *valueTemplate = nullptr);
       /**
        * Add a hue chooser field. Displays a slider on the UI whose value is a byte [0..255]
        */
