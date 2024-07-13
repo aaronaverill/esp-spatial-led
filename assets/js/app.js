@@ -9,7 +9,8 @@ let globalFields = [
     min: 0,
     max: 100,
     factor: 2.55,
-    template: '${val}%'
+    template: '`${val}%`',
+    decimals: 0
   }
 ]
 /**
@@ -161,7 +162,7 @@ function optionHtml(field) {
   let range = [field.min, field.max]
   let rangeLabels = []
   range.forEach(val => {
-    rangeLabels.push(field.template ? eval(`\`${field.template}\``) : val)
+    rangeLabels.push(field.template ? eval(field.template) : val)
   })
 
   switch (field.type) {
@@ -190,7 +191,7 @@ function refreshOptionControls(field) {
       input.value = val
       break
   }
-  refreshOptionValue(itemElement, Math.round(val), field)
+  refreshOptionValue(itemElement, val, field)
 }
 
 /**
@@ -200,9 +201,13 @@ function refreshOptionControls(field) {
  * @param field - Field information
  */
 function refreshOptionValue(element, val, field) {
+  if (field.decimals != undefined) {
+    let multiple = Math.pow(10, field.decimals)
+    val = Math.round(val*multiple)/multiple
+  }
   switch (field.type) {
     case 'slider':
-      if (field.template) val = eval(`\`${field.template}\``)
+      if (field.template) val = eval(field.template)
         element.querySelector('.value').innerText = val
       break
     case 'hue':
@@ -226,7 +231,6 @@ async function onOptionChange(element) {
   if (field.factor) {
     modelVal *= field.factor
   }
-  modelVal = Math.round(modelVal)
   if (isGlobal) {
     info.leds.play.settings[id] = modelVal
   } else {

@@ -9,7 +9,7 @@ namespace Animations {
 
   void Rainbow::getFields(Web::UI::FieldsInfo& fields) {
     fields.addSlider("speed", "Speed", 1, 60, "`${val} bpm`", 0);
-    fields.addSlider("repeat", "Repeat", 1, 20*6, 
+    fields.addSlider("repeat", "Repeat", 1, 5*6,
       "switch(parseInt(val)){case 1:case 5:val+'/6';break;case 2:case 4:(val/2)+'/3';break;case 3:'1/2';break;default:Math.round(val/6);}");
   }
 
