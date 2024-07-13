@@ -1,5 +1,5 @@
 #pragma once
-#include "Animations/Animation.h"
+#include "Animations/Spatial/SpatialAnimation.h"
 
 #include "Services/ILedDriverAnimationContext.h"
 
@@ -18,11 +18,11 @@
 */
 
 namespace Animations { namespace Spatial {
-  class CubeFire: public Animation {
+  class CubeFire: public SpatialAnimation {
     public:
-      CubeFire(Services::ILedDriverAnimationContext& context): Animation(context, "Cube Fire") {}
+      CubeFire(Services::ILedDriverAnimationContext& context): SpatialAnimation(context, "Cube Fire") {}
       void renderFrame();
-      void renderLed(int index);
+      void renderLed(int index, const Coordinate& coordinate);
     private:
       float speed = 1; // How fast the spheres travel through 3D space
       float t1; // x offset

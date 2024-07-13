@@ -2,7 +2,7 @@
 
 namespace Animations { namespace Spatial {
   Rainbowfall::Rainbowfall(Services::ILedDriverAnimationContext& context):
-    Animation(context, "Rainbowfall") {
+    SpatialAnimation(context, "Rainbowfall") {
     setBpm(bpm);
   }
 
@@ -36,8 +36,7 @@ namespace Animations { namespace Spatial {
     Animation::renderFrame();
   }
 
-  void Rainbowfall::renderLed(int index) {
-    const Coordinate& coordinate = context.getLedCoordinate(index);
+  void Rainbowfall::renderLed(int index, const Coordinate& coordinate) {
     byte offset = coordinate.x*256*repeat6/6;
     context.hsv(CHSV(hue+offset, 255, 255));
   }

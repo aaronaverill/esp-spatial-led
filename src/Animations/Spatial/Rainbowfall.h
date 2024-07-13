@@ -1,17 +1,17 @@
 #pragma once
-#include "Animations/Animation.h"
+#include "Animations/Spatial/SpatialAnimation.h"
 
 #include "Services/ILedDriverAnimationContext.h"
 
 namespace Animations { namespace Spatial {
-  class Rainbowfall: public Animation {
+  class Rainbowfall: public SpatialAnimation {
     public:
       Rainbowfall(Services::ILedDriverAnimationContext& context);
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings);
       void setSettings(const JsonObject& settings);
       void renderFrame();
-      void renderLed(int index);
+      void renderLed(int index, const Coordinate& coordinate);
     private:
       void setBpm(byte bpm);
       byte bpm = 10;
