@@ -1,7 +1,7 @@
 #include "FieldsInfo.h"
 
 namespace Web { namespace UI {
-  void FieldsInfo::addSlider(const char *id, const char *label, int min, int max, const char *valueTemplate) {
+  void FieldsInfo::addSlider(const char *id, const char *label, float min, float max, const char *valueTemplate, int decimals) {
     JsonObject field = fields.add<JsonObject>();
     field["id"] = id;
     field["type"] = "slider";
@@ -10,6 +10,9 @@ namespace Web { namespace UI {
     field["max"] = max;
     if (valueTemplate != nullptr) {
       field["template"] = valueTemplate;
+    }
+    if (decimals >= 0) {
+      field["decimals"] = decimals;
     }
   }
 

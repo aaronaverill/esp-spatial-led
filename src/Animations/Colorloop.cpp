@@ -8,7 +8,7 @@ namespace Animations {
   }
 
   void Colorloop::getFields(Web::UI::FieldsInfo& fields) {
-    fields.addSlider("speed", "Speed", 1, 60, "${val} bpm");
+    fields.addSlider("speed", "Speed", 1, 60, "`${val} bpm`", 0);
   }
 
   void Colorloop::getSettings(JsonObject& settings) {
