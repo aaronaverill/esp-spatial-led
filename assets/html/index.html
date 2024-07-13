@@ -32,7 +32,7 @@
           <div onclick="showPage('pLibrary')" class="btn pa-4"><div class="img img-close"></div></div>
           <div class="pa-3">Options</div>
         </div>
-        <div class="page options">
+        <div class="page options pa-4">
           <div class="list"></div>
         </div>
       </div>
@@ -43,7 +43,7 @@
           <div class="pa-3 mr-auto">LED Layout</div>
           <div class="mr-3"><button id="saveLayout" onclick="onLayoutSave()" class="btn tonal primary">Save</button></div>
         </div>
-        <div class="page d-flex flex-column pa-3">
+        <div class="page d-flex flex-column pa-4">
           <div>Layout</div>
           <select id="ledLayoutType" onchange="onLayoutTypeChange()" class="w-100 my-2">
             <option value="strip">Strip</option>
@@ -73,8 +73,8 @@
       <!-- Settings > Colors page -->
       <div id="pColors" class="d-none flex-column h-100">
         <div class="title"><div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">Colors</div></div>
-        <div class="page">
-          <div class="grid pa-4">
+        <div class="page pa-4">
+          <div class="grid">
           </div>
         </div>
       </div>
@@ -120,8 +120,8 @@
       <!-- Settings > About page -->
       <div id="pAbout" class="d-none flex-column h-100">
         <div class="title"><div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
-        <div class="page">
-          <div id="fps" class="text-center pa-3"></div>
+        <div class="page pa-4">
+          <div id="fps" class="text-center"></div>
         </div>
       </div>
     </div>
