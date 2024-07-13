@@ -3,6 +3,7 @@
 #include <FastLED.h>
 #include "IService.h"
 #include "Animations/Animation.h"
+#include "Color.h"
 
 #include <vector>
 
@@ -79,6 +80,19 @@ namespace Services {
       void setBrightness(uint8_t brightness);
 
       /**
+       * Get the list of system colors
+       */
+      const std::vector<CRGB>& getColors() { return colors; }
+      /**
+       * Set the system colors
+       */
+      void setColors(std::vector<CRGB>& colors) { this->colors = colors; }
+      /**
+       * Set the system color
+       */
+      void setColor(int index, byte r, byte g, byte b);
+
+      /**
        * Add an animation to the sequencer
        */
       void addAnimation(Animations::Animation* animation);
@@ -110,7 +124,7 @@ namespace Services {
       void loop();
 
     private:
-      LedDriver() {}
+      LedDriver();
       static LedDriver *instance;
 
       CLEDController* controller;
@@ -120,6 +134,8 @@ namespace Services {
 
       std::vector<Coordinate> ledCoordinates;
       uint8_t brightness = 128;
+
+      std::vector<CRGB> colors;
 
       std::vector<Animations::Animation*> animations;
 

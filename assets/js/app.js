@@ -17,9 +17,9 @@ let globalFields = [
  */
 let info
 /**
- * Model object for the LED Layout page while it's being edited
+ * Model object for data while it's being edited
  */
-let ledLayout
+let editing
 /**
  * A javascript timer id for periodically freshing a UI element from the server (such as fps)
  */
@@ -32,6 +32,43 @@ let refreshTimer
 function posIntKey(event) { 
   if(event.key === "." || event.key === "-") e.preventDefault() 
 }
+
+function textColor(background) {
+  if ((background.r*0.299 + background.g*0.587 + background.b*0.114) > 160) {
+    return {r: 0, g: 0, b: 0}
+  } else {
+    return {r: 255, g: 255, b: 255}
+  }
+}
+
+function toHex(rgb) {
+  let hex = '#';
+  [rgb.r, rgb.g, rgb.b].forEach(v => {
+    hex += v.toString(16).padStart(2,'0')
+  })
+  return hex
+}
+
+function rgb2hsv(rgb) {
+  let r = rgb.r/255, g = rgb.g/255, b = rgb.b/255
+  let v = Math.max(r, g, b), c = v-Math.min(r, g, b)
+  let h = c && ((v == r) ? (g-b)/c : ((v == g) ? 2 + (b-r)/c : 4+(r-g)/c))
+  return {
+    h: Math.round(42.5*(h < 0 ? h+6 : h)),
+    s: Math.round(255*(v&&c/v)),
+    v: Math.round(255*v)
+  }
+}
+
+function hsv2rgb(hsv) {
+  let h = hsv.h*360/255, s = hsv.s/255, v = hsv.v/255
+  let f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0)
+  return {
+    r: Math.round(255*f(5)),
+    g: Math.round(255*f(3)),
+    b: Math.round(255*f(1))
+  }
+} 
 
 /**
  * App UI initialization. Fetch global data from the server and refresh the UI
@@ -46,6 +83,7 @@ async function onload() {
   }
   refreshPlay()
   refreshLibrary()
+  refreshColors()
 }
 
 /**
@@ -246,11 +284,11 @@ function onAnimationClick(index) {
  * Clone the LED layout information from the global settings so it can be modified by controls prior to saving
  */
 function copyLedLayout() {
-  ledLayout = structuredClone(info.leds.layout)
+  editing = structuredClone(info.leds.layout)
   try {
-    ledLayout.config = JSON.parse(ledLayout.config)
+    editing.config = JSON.parse(editing.config)
   } catch {
-    ledLayout.config = {}
+    editing.config = {}
   }
 }
 
@@ -270,12 +308,12 @@ function showLedLayout() {
  */
 function refreshLedLayout() {
   document.getElementById('ledCount').value = info.leds.count
-  let type = ledLayout.config.type||'strip'
+  let type = editing.config.type||'strip'
   document.getElementById('ledLayoutType').value = type
   document.querySelectorAll('#pLedLayout .page-layout').forEach(e => {
     e.style.display = e.dataset.page == type ? 'block' : 'none'
   })
-  document.getElementById('code').value = ledLayout.config.code||''
+  document.getElementById('code').value = editing.config.code||''
 }
 
 /**
@@ -284,9 +322,9 @@ function refreshLedLayout() {
  */
 function refreshCodeInfo() {
   let coords
-  if (ledLayout.config.code?.trim().length) {
+  if (editing.config.code?.trim().length) {
     try {
-      let pts = eval(`var x=${ledLayout.config.code};if(typeof x==='function'){x()}else{x}`)
+      let pts = eval(`var x=${editing.config.code};if(typeof x==='function'){x()}else{x}`)
       if (!Array.isArray(pts)) {
         throw ''
       }
@@ -307,7 +345,7 @@ function refreshCodeInfo() {
       console.log('Error: ' + ex)
     }
   }
-  ledLayout.coords = coords ? coords.join(',') : ''
+  editing.coords = coords ? coords.join(',') : ''
   document.getElementById('codeLeds').innerHTML = coords === undefined ? '&#9888;' : coords.length/3
 }
 
@@ -317,9 +355,9 @@ function refreshCodeInfo() {
  */
 function refreshLayoutSave() {
   let canSave = false
-  switch (ledLayout.config.type) {
+  switch (editing.config.type) {
     case 'code':
-      canSave = ledLayout.coords?.length
+      canSave = editing.coords?.length
       break
     default: // 'strip'
       canSave = parseInt(document.getElementById('ledCount').value) > 0
@@ -332,7 +370,7 @@ function refreshLayoutSave() {
  * Handle a layout type change by showing the relevant options page for that LED layout
  */
 function onLayoutTypeChange() {
-  ledLayout.config.type = document.getElementById('ledLayoutType').value
+  editing.config.type = document.getElementById('ledLayoutType').value
   refreshLedLayout()
   refreshLayoutSave()
 }
@@ -341,7 +379,7 @@ function onLayoutTypeChange() {
  * Handle a change to the text in the code input
  */
 function onLayoutCodeChange() {
-  ledLayout.config.code = document.getElementById('code').value
+  editing.config.code = document.getElementById('code').value
   refreshCodeInfo()
   refreshLayoutSave()
 }
@@ -352,12 +390,12 @@ function onLayoutCodeChange() {
 async function onLayoutSave() {
   let count
   let layout
-  switch (ledLayout.config.type) {
+  switch (editing.config.type) {
     case 'code':
-      count = ledLayout.coords.split(',').length/3
+      count = editing.coords.split(',').length/3
       layout = {
-        config: JSON.stringify(ledLayout.config),
-        coords: ledLayout.coords
+        config: JSON.stringify(editing.config),
+        coords: editing.coords
       }
       break
     default: // 'strip'
@@ -365,7 +403,6 @@ async function onLayoutSave() {
       let coords = []
       for (let i = 0; i < count; i++) {
         let coord = Math.round(10000*(i+.5)/count)/10000
-        console.log(coord)
         coords.push(coord + ',' + coord + ',' + coord)
       }
       layout = {
@@ -387,6 +424,76 @@ async function onLayoutSave() {
   }
   showPage('pSettings')
 }
+
+// -----------------------------------------------------------------------------
+// Settings > Colors page
+// -----------------------------------------------------------------------------
+
+/**
+ * Refresh the page with colors
+ */
+function refreshColors() {
+  let html = ''
+  let index = 0
+  info.leds.colors.forEach(bg => {
+    let text = textColor(bg)
+    html += `<div onclick="onColorClick(${index})" class="color selectable" style="background-color:${toHex(bg)};color:${toHex(text)}">${index+1}</div>`
+    index++
+  });
+  document.querySelector('#pColors .grid').innerHTML = html
+}
+
+/**
+ * Handle click to edit a color
+ * @param index 
+ */
+function onColorClick(index) {
+  editing = index
+  document.querySelector('#pColorEdit .title .text').innerText = `Edit Color ${index+1}`
+  refreshColorEdit()
+  showPage('pColorEdit')
+}
+
+/**
+ * Refresh the details of the edit color page
+ */
+function refreshColorEdit(field) {
+  let rgb = info.leds.colors[editing]
+  var colorElement = document.querySelector('#pColorEdit .color')
+  colorElement.style.backgroundColor = toHex(rgb)
+  colorElement.style.color = toHex(textColor(rgb))
+  let hsv = rgb2hsv(rgb)
+  document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
+    if (element.dataset.field != field) {
+      element.value = hsv[element.dataset.field]
+    }
+  })
+}
+
+/**
+ * Handle a control change
+ * @param {HTMLElement} element - The element whose value is changing
+ */
+async function onColorChange(element) {
+  let hsv = {}
+  document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
+    hsv[element.dataset.field] = element.value
+  })
+  let rgb = info.leds.colors[editing]
+  for (const [key, value] of Object.entries(hsv2rgb(hsv))) {
+    rgb[key] = value
+  }
+  refreshColorEdit(element.dataset.field)
+  refreshColors()
+  await fetch('/api/leds/colors', {
+    method:'PUT',
+    body:JSON.stringify({
+      index: editing,
+      rgb: rgb
+    })
+  })
+}
+
 
 // -----------------------------------------------------------------------------
 // About page

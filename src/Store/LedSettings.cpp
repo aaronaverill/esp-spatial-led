@@ -18,9 +18,6 @@ namespace Store {
     JsonDocument doc;
     if(deserializeJson(doc, file)) return;
 
-    //String json = doc.as<String>();
-    //Serial.println(json);
-
     LedDriver& leds = LedDriver::getInstance();
 
     JsonVariant ledCount = doc["ledCount"];
@@ -31,10 +28,19 @@ namespace Store {
     if (brightness) {
       leds.setBrightness(brightness);
     }
+    std::vector<CRGB> colors;
+    JsonVariant jsonColors = doc["colors"];
+    if (jsonColors) {
+      for(JsonVariant color:jsonColors.as<JsonArray>()) {
+        colors.push_back(CRGB(color["r"], color["g"], color["b"]));
+      }
+    }
+    leds.setColors(colors);
+
     JsonArray jsonAnimations = doc["animations"].as<JsonArray>();
     if (jsonAnimations) {
       uint index = 0;
-      std::vector<Animations::Animation*> animations = leds.getAnimations();
+      const std::vector<Animations::Animation*>& animations = leds.getAnimations();
       for(JsonObject settings:jsonAnimations) {
         if (index >= animations.size()) {
           break;
@@ -49,11 +55,19 @@ namespace Store {
 
   void LedSettings::write() {
     LedDriver& leds = LedDriver::getInstance();
-    std::vector<Animations::Animation*> animations = leds.getAnimations();
+    const std::vector<Animations::Animation*>& animations = leds.getAnimations();
 
     JsonDocument doc;
     doc["ledCount"] = leds.getLedCount();
     doc["play"]["brightness"] = leds.getBrightness();
+
+    JsonArray jsonColors = doc["colors"].to<JsonArray>();
+    for(CRGB rgb:leds.getColors()) {
+      JsonObject jsonColor = jsonColors.add<JsonObject>();
+      jsonColor["r"] = rgb.red;
+      jsonColor["g"] = rgb.green;
+      jsonColor["b"] = rgb.blue;
+    }
 
     JsonArray jsonAnimations = doc["animations"].to<JsonArray>();
     for(Animations::Animation* animation:animations) {

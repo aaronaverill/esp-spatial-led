@@ -21,6 +21,7 @@
         <div class="page">
           <div class="list selectable">
             <div onclick="showLedLayout()" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="showPage('pColors')" class="item d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
           </div>
         </div>
@@ -48,11 +49,11 @@
             <option value="strip">Strip</option>
             <option value="code">Javascript</option>
           </select>
-          <div class="page-layout" data-page="strip">
+          <div data-page="strip" class="page-layout">
             <div>Number of LEDs</div>
             <input id="ledCount" type="number" onkeypress="posIntKey(event)" oninput="refreshLayoutSave()" class="w-100 my-2" />    
           </div>
-          <div class="page-layout flex-grow-1" data-page="code" style="display:none; overflow-y:auto">
+          <div data-page="code" class="page-layout flex-grow-1" style="display:none; overflow-y:auto">
             <div class="d-flex flex-column h-100">
               <div class="d-flex align-center">
                 <div class="mr-3 my-2">Number of LEDs:</div>
@@ -65,6 +66,53 @@
                 ></textarea>
                 <div id="layoutPreview" style="flex-basis:50%"></div>
               </div>  
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Settings > Colors page -->
+      <div id="pColors" class="d-none flex-column h-100">
+        <div class="title"><div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">Colors</div></div>
+        <div class="page">
+          <div class="grid pa-4">
+          </div>
+        </div>
+      </div>
+      <!-- Settings > Colors > Edit page -->
+      <div id="pColorEdit" class="d-none flex-column h-100">
+        <div class="title"><div onclick="showPage('pColors')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="text pa-3"></div></div>
+        <div class="page pa-4">
+          <div class="color w-100"></div>
+          <div class="list">
+            <div class="item py-3">
+              <div>Hue</div>
+              <div class="d-flex w-100">
+                <div class="flex-grow-1 pr-3">
+                  <div><input data-type="hsv" data-field="h" type="range" oninput="onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div class="rainbow" style="height:20px; margin:0 5px 0 9px"></div>
+                </div>
+                <div class="value flex-shrink-0 rounded"></div>
+              </div>
+            </div>
+            <div class="item py-3">
+              <div>Saturation</div>
+              <div class="d-flex w-100">
+                <div class="flex-grow-1 pr-3">
+                  <div><input data-type="hsv" data-field="s" type="range" oninput="onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
+                </div>
+                <div class="value flex-shrink-0"></div>
+              </div>
+            </div>
+            <div class="item py-3">
+              <div>Value</div>
+              <div class="d-flex w-100">
+                <div class="flex-grow-1 pr-3">
+                  <div><input data-type="hsv" data-field="v" type="range" oninput="onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
+                </div>
+                <div class="value flex-shrink-0"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -84,8 +132,8 @@
     </div>
     <!-- Primary navigation -->
     <div class="nav d-flex selectable w-100">
-      <div onclick="showPage(this.dataset.page)" data-page="pLibrary" class="selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
-      <div onclick="showPage(this.dataset.page)" data-page="pSettings"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>
+      <div data-page="pLibrary" onclick="showPage(this.dataset.page)" class="selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
+      <div data-page="pSettings" onclick="showPage(this.dataset.page)"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>
     </div>
   </div>
 

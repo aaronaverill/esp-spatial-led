@@ -11,6 +11,13 @@
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
 
+  LedDriver::LedDriver() {
+    colors.push_back(CRGB(0xFF, 0x20, 0x00)); // Red
+    colors.push_back(CRGB(0xFF, 0xFF, 0x00)); // Yellow
+    colors.push_back(CRGB(0x00, 0xFF, 0x90)); // Green
+    colors.push_back(CRGB(0x90, 0x00, 0xFF)); // Purple
+  }
+
   void LedDriver::setLedCount(uint count) {
     ledCount = count;
   }
@@ -39,6 +46,12 @@ namespace Services {
         }
       }
     }
+  }
+
+  void LedDriver::setColor(int index, byte r, byte g, byte b) {
+    colors[index].r = r;
+    colors[index].g = g;
+    colors[index].b = b;
   }
 
   const Coordinate& LedDriver::getLedCoordinate(uint index) {

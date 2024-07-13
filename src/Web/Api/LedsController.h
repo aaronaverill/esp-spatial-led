@@ -9,6 +9,14 @@ namespace Web { namespace Api {
   class LedsController {
     public:
       /**
+       * Set an animation setting
+       */
+      static void setAnimationSetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+      /**
+       * Set color
+       */
+      static void setColor(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+      /**
        * Set the led settings
        */
       static void setSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
@@ -20,10 +28,6 @@ namespace Web { namespace Api {
        * Set a play setting
        */
       static void setPlaySetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
-      /**
-       * Set an animation setting
-       */
-      static void setAnimationSetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
       /**
        * Get the current playing frames per second
        */

@@ -12,7 +12,7 @@ namespace Web { namespace UI {
   }
 
   void HomePage::get(AsyncWebServerRequest *request) {
-    Serial.println("Web::Homepage::get " + request->url());
+    //Serial.println("Web::Homepage::get " + request->url());
 
     if (request->url().equals("/connecttest.txt")) {
       request->send(200, "text/plain", "Microsoft Connect Test");
