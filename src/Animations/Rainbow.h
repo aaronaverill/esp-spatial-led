@@ -20,6 +20,6 @@ namespace Animations {
       uint32_t everyMillis;
       byte hueIncrement;
       byte hue;
-      byte repeat6 = 18; // Number of times the rainbow repeats in 1/6ths
+      byte repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
   };
 }
