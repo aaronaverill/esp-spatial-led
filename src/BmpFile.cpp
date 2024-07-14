@@ -44,11 +44,15 @@ void BmpFile::writeLedData(AsyncWebServerRequest *request,  const Services::ILed
 
   AsyncWebServerResponse *response = request->beginResponse("image/bmp", size, 
     [leds, bmpHeader, bmpHeaderSize, size] (uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
-    //Write up to "maxLen" bytes into "buffer" and return the amount written.
-    //index equals the amount of bytes that have been already sent
-    //You will not be asked for more bytes once the content length has been reached.
-    //Keep in mind that you can not delay or yield waiting for more data!
-    //Send what you currently have and you will be asked for more again
+    // Fetch the CRGB data pointer and size within each request to fulfill a buffer chunk from 
+    // ESPAsyncWebServer in case  the number of LEDs has been changed and the buffer has been
+    // reallocated or resized during the time between when the data is requested and when a 
+    // response can be fulfilled. If the number of LEDs has decreased, a bitmap will be created sized
+    // to a the width of the original number of LED padded with black at the end.
+    // Technically speaking there is a very small window between when the LED buffer is requested
+    // and when the memcpy() occurs where the buffer could have been resized and recreated
+    // but this is a vanishingly rare occurrence, and worst case it means garbage in the bitmap
+    // for a single request.
     uint8_t* rgbData = (uint8_t*)leds->getLeds();
     size_t ledCount = leds->getRenderLedCount();
     size_t rgbSize = ledCount * 3;
