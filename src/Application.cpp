@@ -40,6 +40,7 @@ Application::Application() {
   webServer.addRequestHandler("/api/leds/colors", HTTP_PUT, [](AsyncWebServerRequest *r){}, &Web::Api::LedsController::setColor);
   webServer.addRequestHandler("/api/leds/play/settings", HTTP_PATCH, [](AsyncWebServerRequest *r){}, &Web::Api::LedsController::setPlaySetting);
   webServer.addRequestHandler("/api/leds/play/fps", HTTP_GET, &Web::Api::LedsController::getFps);
+  webServer.addRequestHandler("/api/leds/play/rgb", HTTP_GET, &Web::Api::LedsController::getRgb);
   webServer.addRequestHandler("/api/leds/play", HTTP_POST, &Web::Api::LedsController::setPlayIndex);
   webServer.addRequestHandler("/api/leds/settings", HTTP_PATCH, [](AsyncWebServerRequest *r){}, &Web::Api::LedsController::setSettings);
   webServer.addRequestHandler("", HTTP_GET, &Web::UI::HomePage::get);

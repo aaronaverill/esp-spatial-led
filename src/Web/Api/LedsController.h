@@ -32,5 +32,9 @@ namespace Web { namespace Api {
        * Get the current playing frames per second
        */
       static void getFps(AsyncWebServerRequest *request);
+      /**
+       * Get the current playing r,g,b data
+       */
+      static void getRgb(AsyncWebServerRequest *request);
   };
 }}

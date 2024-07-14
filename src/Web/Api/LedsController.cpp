@@ -5,6 +5,7 @@
 #include "Animations/Animation.h"
 #include "Store/LedLayout.h"
 #include "Store/LedSettings.h"
+#include "BmpFile.h"
 
 using namespace Services;
 
@@ -98,5 +99,9 @@ namespace Web { namespace Api {
   void LedsController::getFps(AsyncWebServerRequest *request) {
     LedDriver& leds = LedDriver::getInstance();
     request->send(200, "text/plain", String(leds.getFramesPerSecond()));
+  }
+
+  void LedsController::getRgb(AsyncWebServerRequest *request) {
+    BmpFile::writeLedData(request);
   }
 }}
