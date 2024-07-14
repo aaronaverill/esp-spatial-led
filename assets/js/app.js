@@ -18,6 +18,10 @@ let globalFields = [
  */
 let info
 /**
+ * A javscript timer id for the play preview request
+ */
+let playPreviewTimer
+/**
  * Model object for data while it's being edited
  */
 let editing
@@ -85,6 +89,9 @@ async function onload() {
   refreshPlay()
   refreshLibrary()
   refreshColors()
+
+  setInterval(refreshPlayPreview, 1000)
+  refreshPlayPreview()
 }
 
 /**
@@ -93,6 +100,19 @@ async function onload() {
 function refreshPlay() {
   if (info.leds.animations.length) {
     document.getElementById('play-name').innerText = info.leds.animations[info.leds.play.index].name
+  }
+}
+
+async function refreshPlayPreview() {
+  const response = await fetch('/api/leds/play/rgb')
+  if (response.ok) {
+    const bmpData = await response.arrayBuffer()
+    const blob = new Blob([bmpData], { type: 'image/bmp' })
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      document.getElementById('playPreview').src = reader.result
+    }
+    reader.readAsDataURL(blob)
   }
 }
 
@@ -519,7 +539,7 @@ async function updateFps() {
   if (response.ok) {
     let fps = await response.text()
     document.getElementById('fps').innerText = `${fps} fps`
-    refreshTimer = setTimeout(updateFps,2000)
+    refreshTimer = setTimeout(updateFps, 2000)
   } else {
     refreshTimer = 0
   }

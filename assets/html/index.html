@@ -127,8 +127,11 @@
     </div>
     <!-- Current animation playback -->
     <div class="play">
-      <div id="play-name" class="text-truncate pa-3 mr-auto">&nbsp;</div>
-      <div onclick="showOptions()" class="btn pa-3"><div class="img img-options"></div></div>
+      <div class="d-flex w-100">
+        <div id="play-name" class="text-truncate pa-3 mr-auto">&nbsp;</div>
+        <div onclick="showOptions()" class="btn pa-3"><div class="img img-options"></div></div>
+      </div>
+      <img id="playPreview" class="w-100" style="height:10px" />
     </div>
     <!-- Primary navigation -->
     <div class="nav d-flex selectable w-100">
