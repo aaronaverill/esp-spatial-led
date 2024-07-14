@@ -19,6 +19,11 @@ namespace Services {
   }
 
   void LedDriver::setLedCount(uint count) {
+    // Set the pending led count which will be updated in the next cycle of the loop()
+    // The CRGB buffer is updated in the loop() later rather than here immediatey because
+    // requests to change the led count could come in at any time asynchrnously and we need
+    // to prevent animations which are in the middle of rendering from buffer overruns if the
+    //  led count is reduced. 
     ledCount = count;
   }
 
