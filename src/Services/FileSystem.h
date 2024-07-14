@@ -25,16 +25,16 @@ namespace Services {
       /**
        * Return true if the file system was mounted
        */
-      const bool isMounted() { return mounted; }
+      bool isMounted() const { return mounted; }
 
       /**
        * Return true if the file exists
        */
-      bool exists(const char *path) { return LittleFS.exists(path); }
+      bool exists(const char *path) const { return LittleFS.exists(path); }
       /**
        * Open a file
        */
-      File open(const char *path, const char* mode) { return LittleFS.open(path, mode); }
+      File open(const char *path, const char* mode) const { return LittleFS.open(path, mode); }
 
       /**
        * Methods for the arduino processing loop

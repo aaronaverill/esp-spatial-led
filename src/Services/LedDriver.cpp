@@ -54,7 +54,7 @@ namespace Services {
     colors[index].b = b;
   }
 
-  const Coordinate& LedDriver::getLedCoordinate(uint index) {
+  const Coordinate& LedDriver::getLedCoordinate(uint index) const {
     if (index < renderLedCount && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {

@@ -10,7 +10,7 @@ namespace Animations {
     public:
       Colorloop(Services::ILedDriverAnimationContext& context);
       void getFields(Web::UI::FieldsInfo& fields);
-      void getSettings(JsonObject& settings);
+      void getSettings(JsonObject& settings) const;
       void setSettings(const JsonObject& settings);
       void renderFrame();
       void renderLed(int index);

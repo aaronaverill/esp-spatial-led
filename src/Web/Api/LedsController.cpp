@@ -102,6 +102,6 @@ namespace Web { namespace Api {
   }
 
   void LedsController::getRgb(AsyncWebServerRequest *request) {
-    BmpFile::writeLedData(request);
+    BmpFile::writeLedData(request, &Services::LedDriver::getInstance());
   }
 }}

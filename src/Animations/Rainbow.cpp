@@ -13,7 +13,7 @@ namespace Animations {
       "switch(parseInt(val)){case 1:case 5:val+'/6';break;case 2:case 4:(val/2)+'/3';break;case 3:'1/2';break;default:Math.round(val/6);}");
   }
 
-  void Rainbow::getSettings(JsonObject& settings) {
+  void Rainbow::getSettings(JsonObject& settings) const {
     settings["speed"] = bpm;
     settings["repeat"] = repeat6;
   }

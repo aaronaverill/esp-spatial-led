@@ -5,7 +5,7 @@ namespace Animations {
     fields.addHueChooser("hue", "Hue");
   }
 
-  void Solid::getSettings(JsonObject& settings) {
+  void Solid::getSettings(JsonObject& settings) const {
     settings["hue"] = hsv.hue;
   }
 

@@ -20,7 +20,7 @@ namespace Animations { namespace Spatial {
     }
   }
 
-  void RainbowPlane::getSettings(JsonObject& settings) {
+  void RainbowPlane::getSettings(JsonObject& settings) const {
     settings["speed"] = bpm;
     settings["repeat"] = repeat6;
     for(uint8_t i = 1; i < 3; i++) {

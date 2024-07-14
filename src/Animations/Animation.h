@@ -21,7 +21,7 @@ namespace Animations {
       /**
        * Construct custom settings
        */
-      virtual void getSettings(JsonObject& settings) {}
+      virtual void getSettings(JsonObject& settings) const {}
       /**
        * Set animation settings
        */

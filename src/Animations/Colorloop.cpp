@@ -11,7 +11,7 @@ namespace Animations {
     fields.addSlider("speed", "Speed", 1, 60, "`${val} bpm`", 0);
   }
 
-  void Colorloop::getSettings(JsonObject& settings) {
+  void Colorloop::getSettings(JsonObject& settings) const {
     settings["speed"] = bpm;
   }
 

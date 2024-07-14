@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include "IService.h"
+#include "ILedInfo.h"
 #include "Animations/Animation.h"
 #include "Color.h"
 
@@ -11,7 +12,7 @@ namespace Services {
   /**
    * A service that manages LED hardware, LED mapping and the animation library and playback
    */
-  class LedDriver: public IService, public ILedDriverAnimationContext {
+  class LedDriver: public IService, public ILedDriverAnimationContext, public ILedInfo {
     public:
       /**
        * Create singleton
@@ -30,7 +31,7 @@ namespace Services {
       /**
        * Get the total number of leds being rendered
        */
-      const uint getRenderLedCount() { return renderLedCount; }
+      uint getRenderLedCount() const { return renderLedCount; }
       /**
        * Set the number of leds
        */
@@ -39,19 +40,19 @@ namespace Services {
        * Get the total number of leds
        * This can differ from renderLedCount if loop() hasn't been called yet to update the strip.
        */
-      const uint getLedCount() { return ledCount; }
+      uint getLedCount() const { return ledCount; }
       /**
        * Get the led array
        */
-      const CRGB* getLeds() { return leds; }
+      CRGB* getLeds() const { return leds; }
       /**
        * Get the coordinate of an led by index
        */
-      const Coordinate& getLedCoordinate(uint index);
+      const Coordinate& getLedCoordinate(uint index) const;
       /**
        * Within a rendering context, the current led which is being rendered
        */
-      const uint getCurrentLed() { return currentLed; }
+      uint getCurrentLed() const { return currentLed; }
       /**
        * Set the current led which is being rendered
        */
@@ -73,7 +74,7 @@ namespace Services {
       /**
        * Get the overall led strip brightness
        */
-      const uint8_t getBrightness() { return brightness; }
+      uint8_t getBrightness() const { return brightness; }
       /**
        * Set the overall led strip brightness
        */
@@ -82,7 +83,7 @@ namespace Services {
       /**
        * Get the list of system colors
        */
-      const std::vector<CRGB>& getColors() { return colors; }
+      const std::vector<CRGB>& getColors() const { return colors; }
       /**
        * Set the system colors
        */
@@ -99,15 +100,15 @@ namespace Services {
       /**
        * Get a list of all the animations
        */
-      const std::vector<Animations::Animation*>& getAnimations() { return animations; }
+      const std::vector<Animations::Animation*>& getAnimations() const { return animations; }
       /**
        * Return the currently playing animation
        */
-      const Animations::Animation* getCurrentAnimation() { return currentAnimation; }
+      Animations::Animation* getCurrentAnimation() const { return currentAnimation; }
       /**
        * Get the index of the currently playing animation
        */
-      const uint getCurrentAnimationIndex() { return currentAnimationIndex; }
+      uint getCurrentAnimationIndex() const { return currentAnimationIndex; }
       /**
        * Set the index of the currently playing animation
        */
@@ -115,7 +116,7 @@ namespace Services {
       /**
        * Get the current frames per second playback speed
        */
-      const float getFramesPerSecond() { return fps; }
+      float getFramesPerSecond() const { return fps; }
 
       /**
        * Methods for the arduino processing loop
