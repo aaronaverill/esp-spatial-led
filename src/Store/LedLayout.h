@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <FS.h>
 
 namespace Store {
   /**
@@ -7,8 +8,8 @@ namespace Store {
    */
   class LedLayout {
     public:
-      static String readLayout();
-      static String readCoordinates();
-      static void write(const char *layout, const char *coordinates);
+      static String readLayout(FS& fs);
+      static String readCoordinates(FS& fs);
+      static void write(FS& fs, const char *layout, const char *coordinates);
   };
 }

@@ -24,7 +24,7 @@ namespace Web { namespace Api {
       if (animationIndex < animations.size()) {
         animations[animationIndex]->setSettings(doc.as<JsonObject>());
       }
-      Store::LedSettings::write();
+      Store::LedSettings::write(fs);
     }
     request->send(200, "text/plain", "OK");
   }
@@ -43,7 +43,7 @@ namespace Web { namespace Api {
       if (colorIndex < leds.getColors().size()) {
         leds.setColor(colorIndex, rgb["r"], rgb["g"] ,rgb["b"]);
       }
-      Store::LedSettings::write();
+      Store::LedSettings::write(fs);
     }
     request->send(200, "text/plain", "OK");
   }
@@ -65,10 +65,10 @@ namespace Web { namespace Api {
     JsonVariant coordinateValues = doc["ledLayout"]["coords"];
     if (coordinateValues) {
       leds.setLedCoordinates(coordinateValues);
-      Store::LedLayout::write(doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
+      Store::LedLayout::write(fs, doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
     }
     if (writeSettings) {
-      Store::LedSettings::write();
+      Store::LedSettings::write(fs);
     }
     request->send(200, "text/plain", "OK");
   }
@@ -91,17 +91,17 @@ namespace Web { namespace Api {
     JsonVariant brightness = doc["brightness"];
     if (brightness) {
       leds.setBrightness(brightness);
-      Store::LedSettings::write();
+      Store::LedSettings::write(fs);
     }
     request->send(200, "text/plain", "OK");
   }
 
-  void LedsController::getFps(AsyncWebServerRequest *request) {
+  void LedsController::getFps(AsyncWebServerRequest *request) const {
     LedDriver& leds = LedDriver::getInstance();
     request->send(200, "text/plain", String(leds.getFramesPerSecond()));
   }
 
-  void LedsController::getRgb(AsyncWebServerRequest *request) {
+  void LedsController::getRgb(AsyncWebServerRequest *request) const {
     BmpFile::writeLedData(request, &Services::LedDriver::getInstance());
   }
 }}

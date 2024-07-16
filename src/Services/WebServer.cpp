@@ -33,8 +33,8 @@ namespace Services {
     requestHandlers.push_back(Services::WebRequestHandler(route, method, requestHandler));
   }
 
-  void WebServer::addRequestHandler(const char* route, WebRequestMethodComposite method, ArRequestHandlerFunction requestHandler, ArBodyHandlerFunction bodyHandler) {
-    requestHandlers.push_back(Services::WebRequestHandler(route, method, requestHandler, bodyHandler));
+  void WebServer::addRequestHandler(const char* route, WebRequestMethodComposite method, ArBodyHandlerFunction bodyHandler) {
+    requestHandlers.push_back(Services::WebRequestHandler(route, method, bodyHandler));
   }
 
   void WebServer::setup() {
@@ -47,7 +47,9 @@ namespace Services {
       AsyncCallbackWebHandler* callbackHandler = new AsyncCallbackWebHandler();
       callbackHandler->setUri(handler.route);
       callbackHandler->setMethod(handler.method);
-      callbackHandler->onRequest(handler.requestHandler);
+      if (handler.hasRequestHandler) {
+        callbackHandler->onRequest(handler.requestHandler);
+      }
       if (handler.hasBodyHandler) {
         callbackHandler->onBody([handler](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
           // size_t maxLength = 10240; // Option to limit HTTP body size to 10240 bytes

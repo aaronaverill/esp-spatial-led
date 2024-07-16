@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <FS.h>
 #include <FastLED.h>
 #include "IService.h"
 #include "ILedInfo.h"
@@ -17,9 +18,9 @@ namespace Services {
       /**
        * Create singleton
        */
-      static LedDriver& create() {
+      static LedDriver& create(FS& fs) {
         if (instance == NULL) {
-          instance = new LedDriver();
+          instance = new LedDriver(fs);
         }
         return *instance;
       }
@@ -125,8 +126,9 @@ namespace Services {
       void loop();
 
     private:
-      LedDriver();
+      LedDriver(FS& fs);
       static LedDriver *instance;
+      FS& fs;
 
       CLEDController* controller;
       uint renderLedCount;

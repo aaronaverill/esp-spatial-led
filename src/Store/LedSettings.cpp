@@ -1,6 +1,5 @@
 #include "LedSettings.h"
 #include <ArduinoJson.h>
-#include "Services/FileSystem.h"
 #include "Services/LedDriver.h"
 
 using namespace Services;
@@ -8,15 +7,16 @@ using namespace Services;
 namespace Store {
   const char* filename = "/led/settings.json";
 
-  void LedSettings::read() {
-    FileSystem& fs = FileSystem::getInstance();
-
+  void LedSettings::read(FS& fs) {
     if (!fs.exists(filename)) return;
     File file = fs.open(filename, "r");
     if (!file) return;
     
     JsonDocument doc;
     if(deserializeJson(doc, file)) return;
+
+    //Serial.println("LedSettings::read()");
+    //Serial.println(doc.as<String>());
 
     LedDriver& leds = LedDriver::getInstance();
 
@@ -53,7 +53,7 @@ namespace Store {
     file.close();
   }
 
-  void LedSettings::write() {
+  void LedSettings::write(FS& fs) {
     LedDriver& leds = LedDriver::getInstance();
     const std::vector<Animations::Animation*>& animations = leds.getAnimations();
 
@@ -75,7 +75,9 @@ namespace Store {
       animation->getSettings(jsonSettings);     
     }
 
-    FileSystem& fs = FileSystem::getInstance();
+    //Serial.println("LedSettings::write()");
+    //Serial.println(doc.as<String>());
+
     File file = fs.open(filename, "w");
     serializeJson(doc, file);
     file.close();

@@ -11,7 +11,7 @@
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
 
-  LedDriver::LedDriver() {
+  LedDriver::LedDriver(FS& fs): fs(fs) {
     colors.push_back(CRGB(0xFF, 0x20, 0x00)); // Red
     colors.push_back(CRGB(0xFF, 0xFF, 0x00)); // Yellow
     colors.push_back(CRGB(0x00, 0xFF, 0x90)); // Green
@@ -97,8 +97,8 @@ namespace Services {
   }
 
   void LedDriver::setup() {
-    Store::LedSettings::read();
-    setLedCoordinates(Store::LedLayout::readCoordinates().c_str());
+    Store::LedSettings::read(fs);
+    setLedCoordinates(Store::LedLayout::readCoordinates(fs).c_str());
     
     controller = new CHIPSET<DATA_PIN, RGB_ORDER>();
     renderLedCount = ledCount;

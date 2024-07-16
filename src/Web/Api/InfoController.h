@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <FS.h>
 #include "ESPAsyncWebServer.h"
 
 namespace Web { namespace Api {
@@ -9,9 +10,13 @@ namespace Web { namespace Api {
    */
   class InfoController {
     public:
+      InfoController(FS& fs) : fs(fs) {}
       /**
        * Get info about system
        */
-      static void get(AsyncWebServerRequest *request);
+      void get(AsyncWebServerRequest *request);
+
+    private:
+      FS& fs;
   };
 }}
