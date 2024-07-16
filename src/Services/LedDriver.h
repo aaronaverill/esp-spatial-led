@@ -24,10 +24,6 @@ namespace Services {
         }
         return *instance;
       }
-      /**
-       * Singleton accessor
-       */
-      static LedDriver& getInstance() { return *instance; }
 
       /**
        * Get the total number of leds being rendered

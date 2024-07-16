@@ -1,5 +1,6 @@
 #pragma once
 #include <FS.h>
+#include "Services/LedDriver.h"
 
 namespace Store {
   /**
@@ -7,7 +8,7 @@ namespace Store {
    */
   class LedSettings {
     public:
-      static void read(FS& fs);
-      static void write(FS& fs);
+      static void read(FS& fs, Services::LedDriver& leds);
+      static void write(FS& fs, Services::LedDriver& leds);
   };
 }

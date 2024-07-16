@@ -1,5 +1,4 @@
 #include "BmpFile.h"
-#include "Services/LedDriver.h"
 
 /**
  * Respond to an HTTP request by returning the current LED R,G,B data as an image/bmp

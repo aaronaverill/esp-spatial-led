@@ -26,7 +26,7 @@ Application::Application() {
   FS& fs = LittleFS;
   bool mounted = LittleFS.begin();
   FSInfo fs_info;
-  if (LittleFS.info(fs_info)) {
+  if (mounted && LittleFS.info(fs_info)) {
     Serial.println("LittleFS mounted:");
     Serial.println("  totalBytes=" + String(fs_info.totalBytes));
     Serial.println("  usedBytes=" + String(fs_info.usedBytes));
@@ -52,14 +52,14 @@ Application::Application() {
   WebServer& webServer = WebServer::create();
 
   // Add HTTP request handlers for the info API
-  Web::Api::InfoController infoController(fs);
+  Web::Api::InfoController infoController(fs, ledDriver);
   webServer.addRequestHandler("/api/info", HTTP_GET, 
     [infoController](AsyncWebServerRequest *request) mutable {
     infoController.get(request);
   });
 
   // Add HTTP request handlers for the leds API
-  Web::Api::LedsController ledsController(fs);
+  Web::Api::LedsController ledsController(fs, ledDriver);
   webServer.addRequestHandler("/api/leds/animations/settings", HTTP_PATCH, 
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setAnimationSetting(request, data, len, index, total);

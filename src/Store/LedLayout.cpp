@@ -1,8 +1,5 @@
 #include "LedLayout.h"
 #include <ArduinoJson.h>
-#include "Services/LedDriver.h"
-
-using namespace Services;
 
 namespace Store {
   const char* layoutFile = "/led/layout.json";

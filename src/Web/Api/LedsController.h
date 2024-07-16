@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <FS.h>
+#include "Services/LedDriver.h"
 #include "ESPAsyncWebServer.h"
 
 namespace Web { namespace Api {
@@ -9,7 +10,7 @@ namespace Web { namespace Api {
    */
   class LedsController {
     public:
-      LedsController(FS& fs) : fs(fs) {}
+      LedsController(FS& fs, Services::LedDriver& leds) : fs(fs), leds(leds) {}
       /**
        * Set an animation setting
        */
@@ -41,5 +42,6 @@ namespace Web { namespace Api {
 
     private:
       FS& fs;
+      Services::LedDriver& leds;
   };
 }}

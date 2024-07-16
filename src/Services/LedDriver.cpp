@@ -97,7 +97,7 @@ namespace Services {
   }
 
   void LedDriver::setup() {
-    Store::LedSettings::read(fs);
+    Store::LedSettings::read(fs, *this);
     setLedCoordinates(Store::LedLayout::readCoordinates(fs).c_str());
     
     controller = new CHIPSET<DATA_PIN, RGB_ORDER>();

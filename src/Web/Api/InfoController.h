@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <FS.h>
+#include "Services/LedDriver.h"
 #include "ESPAsyncWebServer.h"
 
 namespace Web { namespace Api {
@@ -10,7 +11,7 @@ namespace Web { namespace Api {
    */
   class InfoController {
     public:
-      InfoController(FS& fs) : fs(fs) {}
+      InfoController(FS& fs, Services::LedDriver& leds) : fs(fs), leds(leds) {}
       /**
        * Get info about system
        */
@@ -18,5 +19,6 @@ namespace Web { namespace Api {
 
     private:
       FS& fs;
+      Services::LedDriver& leds;
   };
 }}

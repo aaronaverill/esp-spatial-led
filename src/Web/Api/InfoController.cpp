@@ -1,14 +1,12 @@
 #include "InfoController.h"
 #include <ArduinoJson.h>
 #include "Application.h"
-#include "Services/LedDriver.h"
 #include "Store/LedLayout.h"
 
 using namespace Services;
 
 namespace Web { namespace Api {
   void InfoController::get(AsyncWebServerRequest *request) {
-    LedDriver& leds = LedDriver::getInstance();
     const std::vector<Animations::Animation*>& animations = leds.getAnimations();
 
     JsonDocument doc;

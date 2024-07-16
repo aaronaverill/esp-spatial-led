@@ -1,7 +1,6 @@
 #include "LedsController.h"
 #include <ArduinoJson.h>
 #include "Application.h"
-#include "Services/LedDriver.h"
 #include "Animations/Animation.h"
 #include "Store/LedLayout.h"
 #include "Store/LedSettings.h"
@@ -19,12 +18,11 @@ namespace Web { namespace Api {
 
     JsonVariant animationIndex = doc["index"];
     if (!animationIndex.isNull()) {
-      LedDriver& leds = LedDriver::getInstance();
       const std::vector<Animations::Animation*>& animations = leds.getAnimations();
       if (animationIndex < animations.size()) {
         animations[animationIndex]->setSettings(doc.as<JsonObject>());
       }
-      Store::LedSettings::write(fs);
+      Store::LedSettings::write(fs, leds);
     }
     request->send(200, "text/plain", "OK");
   }
@@ -39,11 +37,10 @@ namespace Web { namespace Api {
     JsonVariant colorIndex = doc["index"];
     JsonVariant rgb = doc["rgb"];
     if (!colorIndex.isNull() && rgb) {
-      LedDriver& leds = LedDriver::getInstance();
       if (colorIndex < leds.getColors().size()) {
         leds.setColor(colorIndex, rgb["r"], rgb["g"] ,rgb["b"]);
       }
-      Store::LedSettings::write(fs);
+      Store::LedSettings::write(fs, leds);
     }
     request->send(200, "text/plain", "OK");
   }
@@ -57,7 +54,6 @@ namespace Web { namespace Api {
 
     bool writeSettings = false;
     JsonVariant ledCount = doc["ledCount"];
-    LedDriver& leds = LedDriver::getInstance();
     if (ledCount) {
       leds.setLedCount(ledCount);
       writeSettings = true;
@@ -68,13 +64,12 @@ namespace Web { namespace Api {
       Store::LedLayout::write(fs, doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
     }
     if (writeSettings) {
-      Store::LedSettings::write(fs);
+      Store::LedSettings::write(fs, leds);
     }
     request->send(200, "text/plain", "OK");
   }
 
   void LedsController::setPlayIndex(AsyncWebServerRequest *request) {
-    LedDriver& leds = LedDriver::getInstance();
     uint index = request->getParam("index")->value().toInt();
     leds.setCurrentAnimationIndex(index);
     request->send(200, "text/plain", "OK");
@@ -87,21 +82,19 @@ namespace Web { namespace Api {
       request->send(500);
     }
 
-    LedDriver& leds = LedDriver::getInstance();
     JsonVariant brightness = doc["brightness"];
     if (brightness) {
       leds.setBrightness(brightness);
-      Store::LedSettings::write(fs);
+      Store::LedSettings::write(fs, leds);
     }
     request->send(200, "text/plain", "OK");
   }
 
   void LedsController::getFps(AsyncWebServerRequest *request) const {
-    LedDriver& leds = LedDriver::getInstance();
     request->send(200, "text/plain", String(leds.getFramesPerSecond()));
   }
 
   void LedsController::getRgb(AsyncWebServerRequest *request) const {
-    BmpFile::writeLedData(request, &Services::LedDriver::getInstance());
+    BmpFile::writeLedData(request, &leds);
   }
 }}
