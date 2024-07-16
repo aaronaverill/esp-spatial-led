@@ -20,10 +20,6 @@ namespace Services {
         }
         return *instance;
       }
-      /**
-       * Singleton accessor
-       */
-      static WebServer& getInstance() { return *instance; }
 
       /**
        * Add a request handler
