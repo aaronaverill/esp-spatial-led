@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="ma-0" onload="onload()">
+<body class="ma-0" onload="app.init()">
   <div class="d-flex flex-column h-100" class="h-100">
     <!-- This container holds all the page content -->
     <div class="main">
@@ -20,16 +20,16 @@
         <div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Settings</div></div>
         <div class="page">
           <div class="list selectable">
-            <div onclick="showLedLayout()" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
-            <div onclick="showPage('pColors')" class="item d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
-            <div onclick="showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="app.showLedLayout()" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="app.showPage('pColors')" class="item d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="app.showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
           </div>
         </div>
       </div>
       <!-- Play options modal page -->
       <div id="pPlayOptions" class="d-none flex-column h-100">
         <div class="title">
-          <div onclick="showPage('pLibrary')" class="btn pa-4"><div class="img img-close"></div></div>
+          <div onclick="app.showPage('pLibrary')" class="btn pa-4"><div class="img img-close"></div></div>
           <div class="pa-3">Options</div>
         </div>
         <div class="page options pa-4">
@@ -39,19 +39,19 @@
       <!-- Settings > LED Layout page -->
       <div id="pLedLayout" class="d-none flex-column h-100">
         <div class="title">
-          <div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-close"></div></div>
+          <div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-close"></div></div>
           <div class="pa-3 mr-auto">LED Layout</div>
-          <div class="mr-3"><button id="saveLayout" onclick="onLayoutSave()" class="btn tonal primary">Save</button></div>
+          <div class="mr-3"><button id="saveLayout" onclick="app.onLayoutSave()" class="btn tonal primary">Save</button></div>
         </div>
         <div class="page d-flex flex-column pa-4">
           <div>Layout</div>
-          <select id="ledLayoutType" onchange="onLayoutTypeChange()" class="w-100 my-2">
+          <select id="ledLayoutType" onchange="app.onLayoutTypeChange()" class="w-100 my-2">
             <option value="strip">Strip</option>
             <option value="code">Javascript</option>
           </select>
           <div data-page="strip" class="page-layout">
             <div>Number of LEDs</div>
-            <input id="ledCount" type="number" onkeypress="posIntKey(event)" oninput="refreshLayoutSave()" class="w-100 my-2" />    
+            <input id="ledCount" type="number" onkeypress="app.onKeyPositiveInt(event)" oninput="app.onLayoutLedCountChange()" class="w-100 my-2" />
           </div>
           <div data-page="code" class="page-layout flex-grow-1" style="display:none; overflow-y:auto">
             <div class="d-flex flex-column h-100">
@@ -61,7 +61,7 @@
               </div>
               <div class="d-flex flex-grow-1">
                 <textarea id="code" type="text" spellcheck="false" rows="10" 
-                  oninput="onLayoutCodeChange()" 
+                  oninput="app.onLayoutCodeChange()" 
                   class="font-small" style="flex-basis:50%; resize:none; margin:1px"
                 ></textarea>
                 <div id="layoutPreview" style="flex-basis:50%"></div>
@@ -72,7 +72,7 @@
       </div>
       <!-- Settings > Colors page -->
       <div id="pColors" class="d-none flex-column h-100">
-        <div class="title"><div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">Colors</div></div>
+        <div class="title"><div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">Colors</div></div>
         <div class="page pa-4">
           <div class="grid">
           </div>
@@ -80,7 +80,7 @@
       </div>
       <!-- Settings > Colors > Edit page -->
       <div id="pColorEdit" class="d-none flex-column h-100">
-        <div class="title"><div onclick="showPage('pColors')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="text pa-3"></div></div>
+        <div class="title"><div onclick="app.showPage('pColors')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="text pa-3"></div></div>
         <div class="page pa-4">
           <div class="color w-100"></div>
           <div class="list">
@@ -88,7 +88,7 @@
               <div>Hue</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="h" type="range" oninput="onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="h" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="rainbow" style="height:20px; margin:0 5px 0 9px"></div>
                 </div>
                 <div class="value flex-shrink-0 rounded"></div>
@@ -98,7 +98,7 @@
               <div>Saturation</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="s" type="range" oninput="onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="s" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
                 <div class="value flex-shrink-0"></div>
@@ -108,7 +108,7 @@
               <div>Value</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="v" type="range" oninput="onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="v" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
                 <div class="value flex-shrink-0"></div>
@@ -119,7 +119,7 @@
       </div>
       <!-- Settings > About page -->
       <div id="pAbout" class="d-none flex-column h-100">
-        <div class="title"><div onclick="showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
+        <div class="title"><div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
         <div class="page pa-4">
           <div id="fps" class="text-center"></div>
         </div>
@@ -129,14 +129,14 @@
     <div class="play">
       <div class="d-flex w-100">
         <div id="play-name" class="text-truncate pa-3 mr-auto">&nbsp;</div>
-        <div onclick="showOptions()" class="btn pa-3"><div class="img img-options"></div></div>
+        <div onclick="app.showOptions()" class="btn pa-3"><div class="img img-options"></div></div>
       </div>
       <img id="playPreview" class="w-100" style="height:10px" />
     </div>
     <!-- Primary navigation -->
     <div class="nav d-flex selectable w-100">
-      <div data-page="pLibrary" onclick="showPage(this.dataset.page)" class="selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
-      <div data-page="pSettings" onclick="showPage(this.dataset.page)"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>
+      <div data-page="pLibrary" onclick="app.showPage(this.dataset.page)" class="selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
+      <div data-page="pSettings" onclick="app.showPage(this.dataset.page)"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>
     </div>
   </div>
 
@@ -151,7 +151,7 @@
   <div>${label}</div>
   <div class="d-flex w-100">
     <div class="flex-grow-1 pr-3">
-      <div><input type="range" oninput="onOptionChange(this)" min="${range[0]}" max="${range[1]}" class="w-100" /></div>
+      <div><input type="range" oninput="app.onOptionChange(this)" min="${range[0]}" max="${range[1]}" class="w-100" /></div>
       <div class="d-flex justify-between font-micro"><div>${rangeLabels[0]}</div><div>${rangeLabels[1]}</div></div>
     </div>
     <div class="value flex-shrink-0"></div>
@@ -165,7 +165,7 @@
   <div>${label}</div>
   <div class="d-flex w-100">
     <div class="flex-grow-1 pr-3">
-      <div><input type="range" oninput="onOptionChange(this)" min="0" max="255" class="w-100" /></div>
+      <div><input type="range" oninput="app.onOptionChange(this)" min="0" max="255" class="w-100" /></div>
       <div class="rainbow" style="height:10px; margin:0 5px 0 9px"></div>
     </div>
     <div class="value flex-shrink-0 rounded"></div>
@@ -173,5 +173,6 @@
 </div>
   </script>
   <script src="js/app.js"></script>
+</body>
 </body>
 </html>
