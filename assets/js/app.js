@@ -1,4 +1,38 @@
+function throttle(func, delay) {
+  let lastCall = 0
+  let timeoutId
+
+  return function(...args) {
+    const now = Date.now()
+    const remainingTime = delay - (now - lastCall)
+
+    clearTimeout(timeoutId)
+
+    if (remainingTime <= 0) {
+      lastCall = now
+      func.apply(this, args)
+    } else {
+      timeoutId = setTimeout(() => {
+        lastCall = Date.now()
+        func.apply(this, args)
+      }, remainingTime)
+    }
+  }
+}
+
 class App {
+  constructor() {
+    // Update play setting options once per second
+    this.#throttledSavePlaySettings = throttle((patch) => {
+      this.#savePlaySettings(patch)
+    }, 1000)
+
+    // Update animation setting options once per second
+    this.#throttledSaveAnimationSettings = throttle((patch) => {
+      this.#saveAnimationSettings(patch)
+    }, 1000)
+  }
+
   /**
    * App UI initialization. Fetch global data from the server and refresh the UI
    */
@@ -116,17 +150,25 @@ class App {
     let patch = {}
     patch[id] = modelVal
     if (isGlobal) {
-      await fetch('/api/leds/play/settings', {
-        method:'PATCH',
-        body:JSON.stringify(patch)
-      })
+      this.#throttledSavePlaySettings(patch)
     } else {
       patch.index = this.#info.leds.play.index
-      await fetch('/api/leds/animations/settings', {
-        method:'PATCH',
-        body:JSON.stringify(patch)
-      })
+      this.#throttledSaveAnimationSettings(patch)
     }
+  }
+
+  #savePlaySettings(patch) {
+    fetch('/api/leds/play/settings', {
+      method:'PATCH',
+      body:JSON.stringify(patch)
+    })
+  }
+
+  #saveAnimationSettings(patch) {
+    fetch('/api/leds/animations/settings', {
+      method:'PATCH',
+      body:JSON.stringify(patch)
+    })
   }
 
   /**
@@ -440,7 +482,6 @@ class App {
    */
   async onColorHueClick(element, event) {
     var hue = Math.floor(event.offsetX/element.clientWidth*255)
-    console.log(hue)
     var inputElement = element.closest('.item').querySelector('input')
     inputElement.value = hue
     this.onColorChange(inputElement)
@@ -575,6 +616,14 @@ class App {
    * Model object for data while it's being edited
    */
   #editing
+  /**
+   * A throttled save play setting function. This prevents sliders in the UI from calling the backend too frequently with updates
+   */
+  #throttledSavePlaySettings
+  /**
+   * A throttled save animation function. This prevents sliders in the UI from calling the backend too frequently with updates
+   */
+  #throttledSaveAnimationSettings
   /**
    * A javascript interval id for periodically freshing the play preview image
    */
