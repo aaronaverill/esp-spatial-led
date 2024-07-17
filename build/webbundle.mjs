@@ -1,6 +1,7 @@
 import fs from 'fs'
 import htmlMinifier from 'html-minifier'
 import CleanCSS from 'clean-css'
+import { rollup } from 'rollup'
 import { minify as Terser } from 'terser'
 import zlib from 'zlib'
 
@@ -77,14 +78,37 @@ function bundleCss(source, destination, variableName) {
 // Minify, compress, and generate a header file with a PROGMEM block of the JS file
 async function bundleJs(source, destination, variableName) {
   console.info(`Processing ${source}`)
-  const content = fs.readFileSync(source).toString()
-  const originalSize = content.length
 
-  console.info(' - Minifying JS')
-  const minifyOptions = {}
-  const result = await Terser(content, minifyOptions)
-  console.info(` - Resized ${resizeText(originalSize, result.code.length)}`)
-  bundleGzippedArray(source, result.code, destination, variableName)
+  const rollupOptions = {
+    input: source,
+    onwarn(warning, warn) {
+      // suppress eval warnings
+      if (warning.code === 'EVAL') return
+      warn(warning)
+    }
+  }
+  const outputOptions = {}
+  var bundle
+  try {
+    console.info(' - Bundling with rollup')
+    bundle = await rollup(rollupOptions)
+    const { output } = await bundle.generate(outputOptions)
+    const originalSize = output[0].code.length
+
+    console.info(' - Minifying JS')
+    const minifyOptions = {}
+    const result = await Terser(output[0].code, minifyOptions)
+    console.info(` - Resized ${resizeText(originalSize, result.code.length)}`)
+    bundleGzippedArray(source, result.code, destination, variableName)
+
+  } catch (ex) {
+    console.info('Rollup failed')
+    console.info(ex)
+    process.exitCode = 1
+    process.exit()
+  } finally {
+    bundle.close()
+  }
 }
 
 // Generate a header file with the comment preable and a char[] PROGMEM in plaintext

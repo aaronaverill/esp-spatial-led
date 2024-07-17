@@ -1,26 +1,6 @@
-function throttle(func, delay) {
-  let lastCall = 0
-  let timeoutId
+import throttle from './throttle.js'
 
-  return function(...args) {
-    const now = Date.now()
-    const remainingTime = delay - (now - lastCall)
-
-    clearTimeout(timeoutId)
-
-    if (remainingTime <= 0) {
-      lastCall = now
-      func.apply(this, args)
-    } else {
-      timeoutId = setTimeout(() => {
-        lastCall = Date.now()
-        func.apply(this, args)
-      }, remainingTime)
-    }
-  }
-}
-
-class App {
+export default class App {
   constructor() {
     // Update play setting options once per second
     this.#throttledSavePlaySettings = throttle((patch) => {
@@ -190,14 +170,14 @@ class App {
     let range = [field.min, field.max]
     let rangeLabels = []
     range.forEach(val => {
-      rangeLabels.push(field.template ? eval(field.template) : val)
+      rangeLabels.push(field.template ? eval(field.template, val) : val)
     })
 
     switch (field.type) {
       case 'slider':
-        return eval('`' + document.getElementById('tSlider').innerHTML + '`')
+        return eval('`' + document.getElementById('tSlider').innerHTML + '`', id, label, range, rangeLabels)
       case 'hue':
-        return eval('`' + document.getElementById('tColor').innerHTML + '`')
+        return eval('`' + document.getElementById('tColor').innerHTML + '`', id, label, range, rangeLabels)
       default:
         return ''
     }
@@ -235,7 +215,7 @@ class App {
     }
     switch (field.type) {
       case 'slider':
-        if (field.template) val = eval(field.template)
+        if (field.template) val = eval(field.template, val)
           element.querySelector('.value').innerHTML = val
         break
       case 'hue':
@@ -648,5 +628,3 @@ class App {
     }
   ]
 }
-
-let app = new App()

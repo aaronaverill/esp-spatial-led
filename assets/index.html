@@ -172,6 +172,9 @@
   </div>
 </div>
   </script>
-  <script src="js/app.js"></script>
+  <script type="module">
+    import App from '/js/app.js'
+    window.app = new App()
+  </script>
 </body>
 </html>
