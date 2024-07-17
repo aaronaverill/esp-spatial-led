@@ -459,7 +459,7 @@ class App {
       let text = this.#textColor(bg)
       let textHex = this.#toHex(text)
       let bgHex = this.#toHex(bg)
-      html += `<div onclick="app.onColorClick(${index})" class="color selectable" style="color:${textHex};background-color:${bgHex}">${index+1}</div>`
+      html += `<div onclick="app.onColorClick(${index})" class="color selectabl rounded" style="color:${textHex};background-color:${bgHex}">${index+1}</div>`
       index++
     });
     document.querySelector('#pColors .grid').innerHTML = html
