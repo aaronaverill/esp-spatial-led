@@ -16,7 +16,7 @@ if (!fs.existsSync(contentFolder)){
 }
 
 // This is the list of assets that wil be bundled
-bundleHtml(`${assetsFolder}/html/index.html`, `${contentFolder}/index_html.h`, 'index_html')
+bundleHtml(`${assetsFolder}/index.html`, `${contentFolder}/index_html.h`, 'index_html')
 bundleCss(`${assetsFolder}/css/app.css`, `${contentFolder}/app_css.h`, 'app_css')
 await bundleJs(`${assetsFolder}/js/app.js`, `${contentFolder}/app_js.h`, 'app_js')
 

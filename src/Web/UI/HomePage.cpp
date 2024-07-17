@@ -25,10 +25,10 @@ namespace Web { namespace UI {
     if (request->url().equals("/")) {
       sendGZipResponse(request, "text/html", index_html, index_html_length);
       return;
-    } else if (request->url().equals("/app.css")) {
+    } else if (request->url().equals("/css/app.css")) {
       sendGZipResponse(request, "text/css", app_css, app_css_length);
       return;
-    } else if (request->url().equals("/app.js")) {
+    } else if (request->url().equals("/js/app.js")) {
       sendGZipResponse(request, "text/javascript", app_js, app_js_length);
       return;
     }
