@@ -51,6 +51,10 @@ namespace Services {
         callbackHandler->onRequest(handler.requestHandler);
       }
       if (handler.hasBodyHandler) {
+        if (!handler.hasRequestHandler) {
+          // Add an empty request handler otherwise the onBody handler is never called
+          callbackHandler->onRequest([](AsyncWebServerRequest *r){});
+        }
         callbackHandler->onBody([handler](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
           // size_t maxLength = 10240; // Option to limit HTTP body size to 10240 bytes
           if (total > 0 && request->_tempObject == NULL /* && total < maxLength */) { 
