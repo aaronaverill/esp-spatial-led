@@ -432,6 +432,19 @@ class App {
       })
     })
   }
+
+  /**
+   * Handle a click in the rainbow strip below the hue slider to pick a hue
+   * @param {HTMLElement} element 
+   * @param {PointerEvent} event 
+   */
+  async onColorHueClick(element, event) {
+    var hue = Math.floor(event.offsetX/element.clientWidth*255)
+    console.log(hue)
+    var inputElement = element.closest('.item').querySelector('input')
+    inputElement.value = hue
+    this.onColorChange(inputElement)
+  }
   
   /**
    * Refresh the details of the edit color page

@@ -89,7 +89,7 @@
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
                   <div><input data-type="hsv" data-field="h" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
-                  <div class="rainbow" style="height:20px; margin:0 5px 0 9px"></div>
+                  <div onclick="app.onColorHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
                 </div>
                 <div class="value flex-shrink-0 rounded"></div>
               </div>
