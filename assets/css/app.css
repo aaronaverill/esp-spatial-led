@@ -29,6 +29,10 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .flex-grow-1 { flex-grow: 1; }
 .flex-shrink-0 { flex-shrink: 0; }
 
+/* Overflow */
+.overflow-hidden { overflow: hidden; }
+.overflow-y-auto { overflow-y: auto; }
+
 /* Grid */
 .grid {
   display:grid;

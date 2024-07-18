@@ -1,4 +1,5 @@
 import throttle from './throttle.js'
+import Led3D from './Led3D.js'
 
 export default class App {
   constructor() {
@@ -28,7 +29,7 @@ export default class App {
     this.#refreshLibrary()
     this.#refreshColors()
   
-    this.#playRefreshInterval = setInterval(this.#refreshPlayPreview, 1000)
+    this.#playRefreshInterval = setInterval(this.#refreshPlayPreview, 500)
     this.#refreshPlayPreview()
   }
 
@@ -59,7 +60,30 @@ export default class App {
       response = await fetch('/api/leds/play/rgb')
     } catch { }
     if (response.ok) {
-      let bmpData = await response.arrayBuffer()
+      const rgbBmpData = await response.arrayBuffer()
+
+      // Get the header size from the BMP data starting at byte 10 stored in little endian
+      const headerSize = new DataView(rgbBmpData).getUint32(10, true)
+      // Update the layout preview component with the color data
+      document.getElementById('layoutPreview').colorArray = rgbBmpData.slice(headerSize)
+
+      // To display the R,G,B data as a bitmap it must be convered from R,G,B to B,G,R which
+      // is the correct bitmap file format pixel order. Dumb.
+      const bmpData = new ArrayBuffer(rgbBmpData.byteLength);
+      const rgbView = new Uint8Array(rgbBmpData);
+      const bmpView = new Uint8Array(bmpData);
+
+      // Copy the header bytes as is
+      bmpView.set(rgbView.slice(0, headerSize), 0);
+
+      // Reorder the remaining bytes from RGB to BGR
+      for (let i = headerSize; i < rgbView.length; i += 3) {
+        bmpView[i] = rgbView[i + 2]; // Blue
+        bmpView[i + 1] = rgbView[i + 1]; // Green
+        bmpView[i + 2] = rgbView[i]; // Red
+      }
+
+      // Read the data into a URL we can use to set the src attribute of the preview img element
       let blob = new Blob([bmpData], { type: 'image/bmp' })
       let reader = new FileReader()
       reader.onloadend = () => {
@@ -95,7 +119,7 @@ export default class App {
     let fields = []
     for (let f of this.#globalFields) fields.push(f.id)
     if (a.fields) {
-      for(let f of a.fields) fields.push(f.id)
+      for (let f of a.fields) fields.push(f.id)
     }
     for (let f of fields) {
       html += this.#optionHtml(this.#optionsField(f))
@@ -245,7 +269,7 @@ export default class App {
    */
   #refreshLibrary() {
     let html = ''
-    for(let i = 0; i < this.#info.leds.animations.length; i++) {
+    for (let i = 0; i < this.#info.leds.animations.length; i++) {
       let selected = i == this.#info.leds.play.index ? ' selected' : ''
       html += '<div class="item pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + this.#info.leds.animations[i].name + '</div></div>'
     }
@@ -299,17 +323,43 @@ export default class App {
     this.#refreshCodeInfo()
     this.#refreshLayoutSave()
   }
-    
+  
+  /**
+   * Convert the text specified into a list of [x, y, z] coordinates.
+   * @param text - A flat list of comma separated floating points representing the x, y, z values
+   */
+  #coordinatesFromText(text) {
+    let coordinates = []
+    if (text) {
+      let numbers = text.split(',').map(parseFloat)
+      for (let i = 0; i < numbers.length; i += 3) {
+        coordinates.push([numbers[i], numbers[i+1], numbers[i+2]])
+      }
+    }
+    return coordinates
+  }
+
+  /**
+   * Convert a list of [x, y, z] coordinates into a flattened array of floating point
+   * @param coordinates - A list of [x, y, z] coordinates
+   */
+  #coordinatesToText(coordinates) {
+    let flattened = coordinates.flat();
+    return flattened.join(',')
+  }
+
   /**
    * Clone the LED layout information from the global settings so it can be modified by controls prior to saving
    */
   #copyLedLayout() {
-    this.#editing = structuredClone(this.#info.leds.layout)
-    try {
-      this.#editing.config = JSON.parse(this.#editing.config)
-    } catch {
-      this.#editing.config = {}
+    this.#editing = {
+      config: {},
+      xyz: this.#coordinatesFromText(this.#info.leds.layout.coords)
     }
+
+    try {
+      this.#editing.config = JSON.parse(this.#info.leds.layout.config)
+    } catch { }
   }
 
   /**
@@ -330,7 +380,8 @@ export default class App {
    * If successful update the model with the coordinate info and led count
    */
   #refreshCodeInfo() {
-    let coords
+    var parsedOk = false
+    this.#editing.xyz = []
     if (this.#editing.config.code?.trim().length) {
       try {
         let code = this.#editing.config.code
@@ -338,25 +389,26 @@ export default class App {
         if (!Array.isArray(pts)) {
           throw ''
         }
-        coords = []
         pts.forEach(pt => {
           if (Array.isArray(pt)) {
-            for(let i = 0; i < 3; i++) {
+            let coordinate = [0, 0, 0]
+            for (let i = 0; i < 3; i++) {
               if (i < pt.length && typeof pt[i] === 'number') {
-                coords.push(Math.round(10000*pt[i])/10000)
-              } else {
-                coords.push(0)
+                coordinate[i] = Math.round(10000*pt[i])/10000
               }
             }
+            this.#editing.xyz.push(coordinate)
           }
         })
+        parsedOk = true
       } catch (ex) {
-        coords = undefined
+        this.#editing.xyz = []
         console.log('Error: ' + ex)
       }
     }
-    this.#editing.coords = coords ? coords.join(',') : ''
-    document.getElementById('codeLeds').innerHTML = coords === undefined ? '&#9888;' : coords.length/3
+    document.getElementById('codeLeds').innerHTML = parsedOk ? this.#editing.xyz.length : '&#9888;'
+    let previewElement = document.getElementById('layoutPreview')
+    previewElement.vertices = this.#editing.xyz
   }
 
   /**
@@ -367,7 +419,7 @@ export default class App {
     let canSave = false
     switch (this.#editing.config.type) {
       case 'code':
-        canSave = this.#editing.coords?.length
+        canSave = this.#editing.xyz.length
         break
       default: // 'strip'
         canSave = parseInt(document.getElementById('ledCount').value) > 0
@@ -384,10 +436,10 @@ export default class App {
     let layout
     switch (this.#editing.config.type) {
       case 'code':
-        count = this.#editing.coords.split(',').length/3
+        count = this.#editing.xyz.length
         layout = {
           config: JSON.stringify(this.#editing.config),
-          coords: this.#editing.coords
+          coords: this.#coordinatesToText(this.#editing.xyz)
         }
         break
       default: // 'strip'

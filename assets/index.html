@@ -53,18 +53,18 @@
             <div>Number of LEDs</div>
             <input id="ledCount" type="number" onkeypress="app.onKeyPositiveInt(event)" oninput="app.onLayoutLedCountChange()" class="w-100 my-2" />
           </div>
-          <div data-page="code" class="page-layout flex-grow-1" style="display:none; overflow-y:auto">
+          <div data-page="code" class="page-layout d-none flex-grow-1 overflow-hidden">
             <div class="d-flex flex-column h-100">
               <div class="d-flex align-center">
                 <div class="mr-3 my-2">Number of LEDs:</div>
                 <div id="codeLeds"></div>
               </div>
-              <div class="d-flex flex-grow-1">
+              <div class="d-flex flex-grow-1 overflow-hidden">
                 <textarea id="code" type="text" spellcheck="false" rows="10" 
                   oninput="app.onLayoutCodeChange()" 
                   class="font-small" style="flex-basis:50%; resize:none; margin:1px"
                 ></textarea>
-                <div id="layoutPreview" style="flex-basis:50%"></div>
+                <led-3d id="layoutPreview" class="d-block w-100 h-100 overflow-hidden ml-3" style="flex-basis:50%"></led-3d>
               </div>  
             </div>
           </div>
