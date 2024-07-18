@@ -133,13 +133,12 @@ export default class Led3D extends HTMLElement {
 
       const points = []
       this.#vertices.forEach((vertex, index) => {
-        const xyz = Quaternion.rotatePoint(this.#rotation, vertex);
+        const xyz = Quaternion.rotatePoint(this.#rotation, vertex)
 
         // Project onto 2D screen
         const depthScale = 10 / (10 - (1+xyz[2]))
         const screenXY = xyz.map((value, i) => center[i] + value * depthScale * scale)
 
-        // TODO: Implement code to get r,g,b from color array
         // Determine color
         const colorIndex = index * 3
         const alpha = Math.min(1, 0.3+(2+xyz[2])/3)
@@ -148,36 +147,59 @@ export default class Led3D extends HTMLElement {
         const b = colorIndex + 2 < colors.length ? colors[colorIndex + 2] : 255
         const sizeScale = 6 / (6 - (1+xyz[2]))
 
+        // Add the LED to the points collection.
         points.push({
+          i: index,
           x: screenXY[0],
           y: screenXY[1],
           z: xyz[2],
           radius: this.#radius * sizeScale,
           color: [r, g, b, alpha]
         })
+
+        // Draw the wires
         if (lastPoint) {
           ctx.beginPath()
           ctx.lineWidth = 1
-          ctx.strokeStyle = `rgba(255, 255, 255, ${(lastPoint[2] + alpha)/4})`
+          ctx.strokeStyle = `rgba(255,255,255,${(lastPoint[2] + alpha)/4})`
           ctx.moveTo(lastPoint[0], lastPoint[1])
           ctx.lineTo(screenXY[0], screenXY[1])
           ctx.stroke()
         }
         lastPoint = [screenXY[0], screenXY[1], alpha]
+
       })
 
+      // Sort the leds from back to front so closer points are drawn on top
       points.sort((a, b) => a.z - b.z)
 
       points.forEach(point => {
         ctx.beginPath()
-        ctx.fillStyle = `rgba(${point.color[0]}, ${point.color[1]}, ${point.color[2]}, ${point.color[3]})`
+        ctx.fillStyle = `rgba(${point.color[0]},${point.color[1]},${point.color[2]},${point.color[3]})`
         ctx.arc(point.x, point.y, point.radius, 0, 2 * Math.PI)
         ctx.fill()
         ctx.lineWidth = point.radius * 3
-        ctx.strokeStyle = `rgba(${point.color[0]}, ${point.color[1]}, ${point.color[2]}, ${point.color[3]*.3})`
+        ctx.strokeStyle = `rgba(${point.color[0]},${point.color[1]},${point.color[2]},${point.color[3]*.3})`
         ctx.stroke()
       })
+
+      // Draw dout and din
+      if (points.length) {
+        this.#drawText(ctx, 'din', points.find(p => p.i == 0))
+        if (points.length > 1) {
+          this.#drawText(ctx, 'dout', points.find(p => p.i ==points.length - 1))
+        }
+      }
     }
+  }
+
+  #drawText(ctx, text, point) {
+    ctx.font = '14pt Arial'
+    ctx.fillStyle = `rgba(255,255,255,${point.color[3]})`
+    const textWidth = ctx.measureText(text).width
+    const textX = point.x - textWidth / 2
+    const textY = point.y - this.#radius - 10
+    ctx.fillText(text, textX, textY)
   }
 
   /**
