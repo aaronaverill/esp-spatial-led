@@ -1,10 +1,50 @@
+class Quaternion {
+  constructor(w, x, y, z) {
+    this.w = w
+    this.x = x
+    this.y = y
+    this.z = z
+  }
+
+  static multiply(q1, q2) {
+    return new Quaternion(
+      q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z,
+      q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y,
+      q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x,
+      q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w
+    )
+  }
+
+  static rotatePoint(q, point) {
+    const p = new Quaternion(0, point[0], point[1], point[2])
+    const qConjugate = new Quaternion(q.w, -q.x, -q.y, -q.z)
+    const rotatedP = Quaternion.multiply(Quaternion.multiply(q, p), qConjugate)
+    return [rotatedP.x, rotatedP.y, rotatedP.z ]
+  }
+
+  static fromAxisAngle(axis, angle) {
+    const halfAngle = angle / 2
+    const s = Math.sin(halfAngle)
+    return new Quaternion(Math.cos(halfAngle), axis[0] * s, axis[1] * s, axis[2] * s)
+  }
+
+  static fromEulerAngles(xAngle, yAngle, zAngle) {
+    const xQuat = Quaternion.fromAxisAngle([1, 0, 0], xAngle)
+    const yQuat = Quaternion.fromAxisAngle([0, 1, 0], yAngle)
+    const zQuat = Quaternion.fromAxisAngle([0, 0, 1], zAngle)
+
+    // Combined rotation quaternion
+    return Quaternion.multiply(Quaternion.multiply(zQuat, yQuat), xQuat)
+  }
+}
+
 /**
  * Web component to display layout mapping in a 3d view
  */
 export default class Led3D extends HTMLElement {
   constructor() {
     super()
-    
+
     // Attach a shadow DOM
     this.attachShadow({ mode: 'open' })
 
@@ -88,29 +128,9 @@ export default class Led3D extends HTMLElement {
     if (this.#vertices.length > 0) {
       const colors = new Uint8Array(this.#colorArray)
 
-      // Calculate rotation angles
-      const cos = []
-      const sin = []
-      for (let i = 0; i < 3; i++) {
-        cos.push(Math.cos(this.#rotateAngle[i]))
-        sin.push(Math.sin(this.#rotateAngle[i]))
-      }
-
       const points = []
       this.#vertices.forEach((vertex, index) => {
-        // Rotate around each axis. Here be dragons :)
-        const xyz = [...vertex]
-        const axisPairs = [[1, 2], [0, 2], [0, 1]]
-        axisPairs.forEach((axes, axisIndex) => {
-          let rotated = [
-            xyz[axes[0]] * cos[axisIndex] - xyz[axes[1]] * sin[axisIndex],
-            xyz[axes[0]] * sin[axisIndex] + xyz[axes[1]] * cos[axisIndex]
-          ]
-          for (let i = 0; i < 2; i++) {
-            xyz[axes[i]] = rotated[i]
-            xyz[axes[i]] = rotated[i]
-          }
-        })
+        const xyz = Quaternion.rotatePoint(this.#rotation, vertex);
 
         // Project onto 2D screen
         const depthScale = 10 / (10 - (1+xyz[2]))
@@ -176,10 +196,16 @@ export default class Led3D extends HTMLElement {
 
     this.#render()
     if (deltaTime > 0 && this.#autoRotate) {
-      for(let i = 0; i < 3; i++) {
-        this.#rotateAngle[i] += this.#rotateSpeed[i] * deltaTime/1000
-      }
+      this.#rotation = Quaternion.multiply(
+        this.#rotation, 
+        Quaternion.fromEulerAngles(
+          this.#rotateSpeed[0] * deltaTime/1000,
+          this.#rotateSpeed[1] * deltaTime/1000,
+          this.#rotateSpeed[2] * deltaTime/1000
+        )
+      )
     }
+    
     requestAnimationFrame((timestamp) => { this.#animate(timestamp) })
   }
 
@@ -209,9 +235,9 @@ export default class Led3D extends HTMLElement {
   #radius = 6
   #zoom = 0.4
   #autoRotate = true
-  #rotateSpeed = [-0.1, 0.15, 0.1]
+  #rotateSpeed = [0, -0.50, 0]
+  #rotation = Quaternion.fromAxisAngle([1, 0, 0], -.5)
 
-  #rotateAngle = [0, 0, 0]
   #lastFrameTime = 0
 
   /**
