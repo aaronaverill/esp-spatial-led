@@ -185,20 +185,30 @@ export default class Led3D extends HTMLElement {
 
       // Draw dout and din
       if (points.length) {
-        this.#drawText(ctx, 'din', points.find(p => p.i == 0))
+        const firstPoint = points.find(p => p.i == 0)
+        this.#drawText(ctx, 'din', firstPoint.x, firstPoint.y - this.#radius, firstPoint.color[3])
         if (points.length > 1) {
-          this.#drawText(ctx, 'dout', points.find(p => p.i ==points.length - 1))
+          const lastPoint = points.find(p => p.i ==points.length - 1)
+          this.#drawText(ctx, 'dout', lastPoint.x, lastPoint.y - this.#radius, lastPoint.color[3])
         }
       }
     }
   }
 
-  #drawText(ctx, text, point) {
+  /**
+   * Draw text above the specified point
+   * @param {CanvasRenderingContext2D} ctx - Canvas context
+   * @param text - The text
+   * @param x - X position in client coordinates
+   * @param y - Y position in client coordinates
+   * @param alpha - Alpha between 0..1
+   */
+  #drawText(ctx, text, x, y, alpha) {
     ctx.font = '14pt Arial'
-    ctx.fillStyle = `rgba(255,255,255,${point.color[3]})`
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`
     const textWidth = ctx.measureText(text).width
-    const textX = point.x - textWidth / 2
-    const textY = point.y - this.#radius - 10
+    const textX = x - textWidth / 2
+    const textY = y - 10
     ctx.fillText(text, textX, textY)
   }
 
