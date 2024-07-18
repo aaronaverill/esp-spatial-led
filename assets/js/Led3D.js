@@ -114,8 +114,8 @@ export default class Led3D extends HTMLElement {
     this.#canvas.width = rect.width
     this.#canvas.height = Math.floor(rect.height)
 
-    // Fill the background with black
-    ctx.fillStyle = '#222'
+    // Fill the background
+    ctx.fillStyle = '#181818' // Background color
     ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
 
     // Center of the canvas
@@ -193,6 +193,11 @@ export default class Led3D extends HTMLElement {
         }
       }
     }
+
+    // Draw a nice border
+    ctx.strokeStyle = '#666'  // Border color
+    ctx.lineWidth = 1
+    ctx.strokeRect(0, 0, this.#canvas.width, this.#canvas.height)
   }
 
   /**
