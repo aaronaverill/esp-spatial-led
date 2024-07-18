@@ -57,6 +57,9 @@ export default class Led3D extends HTMLElement {
     this.#resizeObserver.observe(this)
 
     // Mouse events
+    this.addEventListener('mousedown', this.#handleMouseDown.bind(this))
+    this.addEventListener('mousemove', this.#handleMouseMove.bind(this))
+    this.addEventListener('mouseup', this.#handleMouseUp.bind(this))
     this.addEventListener('wheel', this.#handleMouseWheel.bind(this))
 
       // Animation loop
@@ -196,17 +199,55 @@ export default class Led3D extends HTMLElement {
 
     this.#render()
     if (deltaTime > 0 && this.#autoRotate) {
+      const rotationQuatX = Quaternion.fromAxisAngle([0, 1, 0], this.#rotateSpeed * deltaTime/1000)
       this.#rotation = Quaternion.multiply(
-        this.#rotation, 
-        Quaternion.fromEulerAngles(
-          this.#rotateSpeed[0] * deltaTime/1000,
-          this.#rotateSpeed[1] * deltaTime/1000,
-          this.#rotateSpeed[2] * deltaTime/1000
-        )
+        rotationQuatX,
+        this.#rotation
       )
     }
     
     requestAnimationFrame((timestamp) => { this.#animate(timestamp) })
+  }
+
+  /**
+   * Handle the mouse down event by disabling auto rotation
+   * @param {MouseEvent} event 
+   */
+  #handleMouseDown(event) {
+    this.#isDragging = true
+    this.#autoRotate = false
+    this.#mouseDownLocation = [event.clientX, event.clientY]
+    this.#mouseDownRotation = new Quaternion(this.#rotation.w, this.#rotation.x, this.#rotation.y, this.#rotation.z)
+  }
+
+  /**
+   * Handle the mouse drag event by changing the Y and X angles
+   * @param {MouseEvent} event 
+   */
+  #handleMouseMove(event) {
+    if (this.#isDragging) {
+      const delta = [event.clientX - this.#mouseDownLocation[0], event.clientY - this.#mouseDownLocation[1]]
+
+      const rotationQuatX = Quaternion.fromAxisAngle([1, 0, 0], -delta[1]/100)
+      const rotationQuatY = Quaternion.fromAxisAngle([0, 1, 0], delta[0]/100)
+
+      const rotationQuat = Quaternion.multiply(rotationQuatY, rotationQuatX)
+
+      this.#rotation = Quaternion.multiply(
+        rotationQuat,
+        this.#mouseDownRotation
+      )
+      this.#render()
+    }
+  }
+
+  /**
+   * Handle the mouse up event by turning auto rotation on
+   * @param {MouseEvent} event 
+   */
+  #handleMouseUp(event) {
+    this.#isDragging = false
+    this.#autoRotate = true
   }
 
   /**
@@ -233,12 +274,15 @@ export default class Led3D extends HTMLElement {
   #colorArray = new Uint8Array()
 
   #radius = 6
-  #zoom = 0.4
+  #zoom = 0.45
   #autoRotate = true
-  #rotateSpeed = [0, -0.50, 0]
-  #rotation = Quaternion.fromAxisAngle([1, 0, 0], -.5)
+  #rotateSpeed = -0.4
+  #rotation = Quaternion.fromAxisAngle([1, 0, 0], -.4)
+  #isDragging = false
+  #mouseDownLocation
+  #mouseDownRotation
 
-  #lastFrameTime = 0
+  #lastFrameTime
 
   /**
    * The canvas object
