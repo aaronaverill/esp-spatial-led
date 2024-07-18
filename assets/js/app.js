@@ -19,7 +19,7 @@ export default class App {
    */
   async init() {
     try {
-      let response = await fetch('/api/info')
+      const response = await fetch('/api/info')
       if (!response.ok) throw `Error: ${response.status}`
       this.#info = await response.json()
     } catch (e) {
@@ -69,23 +69,23 @@ export default class App {
 
       // To display the R,G,B data as a bitmap it must be convered from R,G,B to B,G,R which
       // is the correct bitmap file format pixel order. Dumb.
-      const bmpData = new ArrayBuffer(rgbBmpData.byteLength);
-      const rgbView = new Uint8Array(rgbBmpData);
-      const bmpView = new Uint8Array(bmpData);
+      const bmpData = new ArrayBuffer(rgbBmpData.byteLength)
+      const rgbView = new Uint8Array(rgbBmpData)
+      const bmpView = new Uint8Array(bmpData)
 
       // Copy the header bytes as is
-      bmpView.set(rgbView.slice(0, headerSize), 0);
+      bmpView.set(rgbView.slice(0, headerSize), 0)
 
       // Reorder the remaining bytes from RGB to BGR
       for (let i = headerSize; i < rgbView.length; i += 3) {
-        bmpView[i] = rgbView[i + 2]; // Blue
-        bmpView[i + 1] = rgbView[i + 1]; // Green
-        bmpView[i + 2] = rgbView[i]; // Red
+        bmpView[i] = rgbView[i + 2] // Blue
+        bmpView[i + 1] = rgbView[i + 1] // Green
+        bmpView[i + 2] = rgbView[i] // Red
       }
 
       // Read the data into a URL we can use to set the src attribute of the preview img element
-      let blob = new Blob([bmpData], { type: 'image/bmp' })
-      let reader = new FileReader()
+      const blob = new Blob([bmpData], { type: 'image/bmp' })
+      const reader = new FileReader()
       reader.onloadend = () => {
         document.getElementById('playPreview').src = reader.result
       }
@@ -113,20 +113,24 @@ export default class App {
    * Create the controls for the options page from the currently running animation and make the page visible
    */
   showOptions() {
-    let a = this.#info.leds.animations[this.#info.leds.play.index]
-    let list = document.querySelector('.page.options .list')
+    const animations = this.#info.leds.animations[this.#info.leds.play.index]
+    const list = document.querySelector('.page.options .list')
     let html = ''
     let fields = []
-    for (let f of this.#globalFields) fields.push(f.id)
-    if (a.fields) {
-      for (let f of a.fields) fields.push(f.id)
+    for (let field of this.#globalFields) {
+      fields.push(field.id)
     }
-    for (let f of fields) {
-      html += this.#optionHtml(this.#optionsField(f))
+    if (animations.fields) {
+      for (let field of animations.fields) {
+        fields.push(field.id)
+      }
+    }
+    for (let field of fields) {
+      html += this.#optionHtml(this.#optionsField(field))
     }
     list.innerHTML = html
-    for (let f of fields) {
-      this.#refreshOptionControls(this.#optionsField(f))
+    for (let field of fields) {
+      this.#refreshOptionControls(this.#optionsField(field))
     }
     this.showPage('pPlayOptions')
   }
@@ -136,11 +140,11 @@ export default class App {
    * @param {HTMLElement} element - The element that is changing
    */
   async onOptionChange(element) {
-    let itemElement = element.closest('.item')
-    let id = itemElement.dataset.field
-    let field = this.#optionsField(id)
-    let isGlobal = this.#globalFields.some(f => f.id == id)
-    let val = element.value
+    const itemElement = element.closest('.item')
+    const id = itemElement.dataset.field
+    const field = this.#optionsField(id)
+    const isGlobal = this.#globalFields.some(f => f.id == id)
+    const val = element.value
     let modelVal = val
     if (field.factor) {
       modelVal *= field.factor
@@ -151,7 +155,7 @@ export default class App {
       this.#info.leds.animations[this.#info.leds.play.index].settings[id] = modelVal
     }
     this.#refreshOptionValue(itemElement, val, field)
-    let patch = {}
+    const patch = {}
     patch[id] = modelVal
     if (isGlobal) {
       this.#throttledSavePlaySettings(patch)
@@ -189,10 +193,10 @@ export default class App {
    * @param field - Field information
    */
   #optionHtml(field) {
-    let id = field.id
-    let label = field.label
-    let range = [field.min, field.max]
-    let rangeLabels = []
+    const id = field.id
+    const label = field.label
+    const range = [field.min, field.max]
+    const rangeLabels = []
     range.forEach(val => {
       rangeLabels.push(field.template ? eval(field.template, val) : val)
     })
@@ -215,12 +219,11 @@ export default class App {
     let val = this.#info.leds.play.settings[field.id] || this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
     if (field.factor) val /= field.factor
 
-    let itemElement = document.querySelector(`.page.options [data-field="${field.id}"]`)
+    const itemElement = document.querySelector(`.page.options [data-field="${field.id}"]`)
     switch (field.type) {
       case 'slider':
       case 'hue':
-        let input = itemElement.querySelector('input')
-        input.value = val
+        const input = itemElement.querySelector('input').value = val
         break
     }
     this.#refreshOptionValue(itemElement, val, field)
@@ -234,7 +237,7 @@ export default class App {
    */
   #refreshOptionValue(element, val, field) {
     if (field.decimals != undefined) {
-      let multiple = Math.pow(10, field.decimals)
+      const multiple = Math.pow(10, field.decimals)
       val = Math.round(val*multiple)/multiple
     }
     switch (field.type) {
@@ -270,7 +273,7 @@ export default class App {
   #refreshLibrary() {
     let html = ''
     for (let i = 0; i < this.#info.leds.animations.length; i++) {
-      let selected = i == this.#info.leds.play.index ? ' selected' : ''
+      const selected = i == this.#info.leds.play.index ? ' selected' : ''
       html += '<div class="item pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + this.#info.leds.animations[i].name + '</div></div>'
     }
     document.getElementById('animations').innerHTML = html
@@ -329,9 +332,9 @@ export default class App {
    * @param text - A flat list of comma separated floating points representing the x, y, z values
    */
   #coordinatesFromText(text) {
-    let coordinates = []
+    const coordinates = []
     if (text) {
-      let numbers = text.split(',').map(parseFloat)
+      const numbers = text.split(',').map(parseFloat)
       for (let i = 0; i < numbers.length; i += 3) {
         coordinates.push([numbers[i], numbers[i+1], numbers[i+2]])
       }
@@ -344,8 +347,7 @@ export default class App {
    * @param coordinates - A list of [x, y, z] coordinates
    */
   #coordinatesToText(coordinates) {
-    let flattened = coordinates.flat();
-    return flattened.join(',')
+    return coordinates.flat().join(',')
   }
 
   /**
@@ -367,7 +369,7 @@ export default class App {
    */
   #refreshLedLayout() {
     document.getElementById('ledCount').value = this.#info.leds.count
-    let type = this.#editing.config.type||'strip'
+    const type = this.#editing.config.type||'strip'
     document.getElementById('ledLayoutType').value = type
     document.querySelectorAll('#pLedLayout .page-layout').forEach(e => {
       e.style.display = e.dataset.page == type ? 'block' : 'none'
@@ -384,14 +386,14 @@ export default class App {
     this.#editing.xyz = []
     if (this.#editing.config.code?.trim().length) {
       try {
-        let code = this.#editing.config.code
-        let pts = eval(`var x=${code};if(typeof x==='function'){x()}else{x}`)
+        const code = this.#editing.config.code
+        const pts = eval(`var x=${code};if(typeof x==='function'){x()}else{x}`)
         if (!Array.isArray(pts)) {
           throw ''
         }
         pts.forEach(pt => {
           if (Array.isArray(pt)) {
-            let coordinate = [0, 0, 0]
+            const coordinate = [0, 0, 0]
             for (let i = 0; i < 3; i++) {
               if (i < pt.length && typeof pt[i] === 'number') {
                 coordinate[i] = Math.round(10000*pt[i])/10000
@@ -407,7 +409,7 @@ export default class App {
       }
     }
     document.getElementById('codeLeds').innerHTML = parsedOk ? this.#editing.xyz.length : '&#9888;'
-    let previewElement = document.getElementById('layoutPreview')
+    const previewElement = document.getElementById('layoutPreview')
     previewElement.vertices = this.#editing.xyz
   }
 
@@ -444,9 +446,9 @@ export default class App {
         break
       default: // 'strip'
         count = parseInt(document.getElementById('ledCount').value)
-        let coords = []
+        const coords = []
         for (let i = 0; i < count; i++) {
-          let coord = Math.round(10000*(i+.5)/count)/10000
+          const coord = Math.round(10000*(i+.5)/count)/10000
           coords.push(coord + ',' + coord + ',' + coord)
         }
         layout = {
@@ -488,11 +490,11 @@ export default class App {
    * @param {HTMLElement} element - The element whose value is changing
    */
   async onColorChange(element) {
-    let hsv = {}
+    const hsv = {}
     document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
       hsv[element.dataset.field] = element.value
     })
-    let rgb = this.#info.leds.colors[this.#editing]
+    const rgb = this.#info.leds.colors[this.#editing]
     for (const [key, value] of Object.entries(this.#hsv2rgb(hsv))) {
       rgb[key] = value
     }
@@ -523,11 +525,11 @@ export default class App {
    * Refresh the details of the edit color page
    */
   #refreshColorEdit(field) {
-    let rgb = this.#info.leds.colors[this.#editing]
+    const rgb = this.#info.leds.colors[this.#editing]
     var colorElement = document.querySelector('#pColorEdit .color')
     colorElement.style.backgroundColor = this.#toHex(rgb)
     colorElement.style.color = this.#toHex(this.#textColor(rgb))
-    let hsv = this.#rgb2hsv(rgb)
+    const hsv = this.#rgb2hsv(rgb)
     document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
       if (element.dataset.field != field) {
         element.value = hsv[element.dataset.field]
@@ -542,12 +544,12 @@ export default class App {
     let html = ''
     let index = 0
     this.#info.leds.colors.forEach(bg => {
-      let text = this.#textColor(bg)
-      let textHex = this.#toHex(text)
-      let bgHex = this.#toHex(bg)
+      const text = this.#textColor(bg)
+      const textHex = this.#toHex(text)
+      const bgHex = this.#toHex(bg)
       html += `<div onclick="app.onColorClick(${index})" class="color selectabl rounded" style="color:${textHex};background-color:${bgHex}">${index+1}</div>`
       index++
-    });
+    })
     document.querySelector('#pColors .grid').innerHTML = html
   }
 
@@ -573,7 +575,7 @@ export default class App {
       response = await fetch('/api/leds/play/fps')
     } catch {}
     if (response.ok) {
-      let fps = await response.text()
+      const fps = await response.text()
       document.getElementById('fps').innerText = `${fps} fps`
     } else {
       document.getElementById('fps').innerText = 'fps unavailable'
@@ -613,9 +615,9 @@ export default class App {
   }
   
   #rgb2hsv(rgb) {
-    let r = rgb.r/255, g = rgb.g/255, b = rgb.b/255
-    let v = Math.max(r, g, b), c = v-Math.min(r, g, b)
-    let h = c && ((v == r) ? (g-b)/c : ((v == g) ? 2 + (b-r)/c : 4+(r-g)/c))
+    const r = rgb.r/255, g = rgb.g/255, b = rgb.b/255
+    const v = Math.max(r, g, b), c = v-Math.min(r, g, b)
+    const h = c && ((v == r) ? (g-b)/c : ((v == g) ? 2 + (b-r)/c : 4+(r-g)/c))
     return {
       h: Math.round(42.5*(h < 0 ? h+6 : h)),
       s: Math.round(255*(v&&c/v)),
@@ -624,8 +626,8 @@ export default class App {
   }
   
   #hsv2rgb(hsv) {
-    let h = hsv.h*360/255, s = hsv.s/255, v = hsv.v/255
-    let f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0)
+    const h = hsv.h*360/255, s = hsv.s/255, v = hsv.v/255
+    const f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0)
     return {
       r: Math.round(255*f(5)),
       g: Math.round(255*f(3)),
