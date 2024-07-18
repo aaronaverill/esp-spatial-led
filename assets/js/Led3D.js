@@ -251,7 +251,7 @@ export default class Led3D extends HTMLElement {
    * @param {MouseEvent} event 
    */
   #handleMouseDown(event) {
-    this.#isDragging = true
+    this.#isDragging = 1
     this.#autoRotate = false
     this.#mouseDownLocation = [event.clientX, event.clientY]
     this.#mouseDownRotation = new Quaternion(this.#rotation.w, this.#rotation.x, this.#rotation.y, this.#rotation.z)
@@ -263,18 +263,22 @@ export default class Led3D extends HTMLElement {
    */
   #handleMouseMove(event) {
     if (this.#isDragging) {
-      const delta = [event.clientX - this.#mouseDownLocation[0], event.clientY - this.#mouseDownLocation[1]]
+      if (this.#moveDistance(event) > 6) {
+        this.#isDragging = 2
+      }
+      if (this.#isDragging == 2) {
+        const delta = [event.clientX - this.#mouseDownLocation[0], event.clientY - this.#mouseDownLocation[1]]
+        const rotationQuatX = Quaternion.fromAxisAngle([1, 0, 0], -delta[1]/100)
+        const rotationQuatY = Quaternion.fromAxisAngle([0, 1, 0], delta[0]/100)
 
-      const rotationQuatX = Quaternion.fromAxisAngle([1, 0, 0], -delta[1]/100)
-      const rotationQuatY = Quaternion.fromAxisAngle([0, 1, 0], delta[0]/100)
+        const rotationQuat = Quaternion.multiply(rotationQuatY, rotationQuatX)
 
-      const rotationQuat = Quaternion.multiply(rotationQuatY, rotationQuatX)
-
-      this.#rotation = Quaternion.multiply(
-        rotationQuat,
-        this.#mouseDownRotation
-      )
-      this.#render()
+        this.#rotation = Quaternion.multiply(
+          rotationQuat,
+          this.#mouseDownRotation
+        )
+        this.#render()
+      }
     }
   }
 
@@ -283,8 +287,15 @@ export default class Led3D extends HTMLElement {
    * @param {MouseEvent} event 
    */
   #handleMouseUp(event) {
-    this.#isDragging = false
-    this.#autoRotate = true
+    this.#isDragging = 0
+    if (this.#moveDistance(event) < 6) {
+      this.#autoRotate = true
+    }
+  }
+
+  #moveDistance(event) {
+    const delta = [event.clientX - this.#mouseDownLocation[0], event.clientY - this.#mouseDownLocation[1]]
+    return Math.sqrt(delta[0]*delta[0] + delta[1]*delta[1])
   }
 
   /**
@@ -315,7 +326,7 @@ export default class Led3D extends HTMLElement {
   #autoRotate = true
   #rotateSpeed = -0.4
   #rotation = Quaternion.fromAxisAngle([1, 0, 0], -.4)
-  #isDragging = false
+  #isDragging = 0
   #mouseDownLocation
   #mouseDownRotation
 
