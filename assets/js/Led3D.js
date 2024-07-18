@@ -13,8 +13,11 @@ export default class Led3D extends HTMLElement {
     this.shadowRoot.appendChild(this.#canvas)
 
     // Bind the resize event
-    this.#resizeObserver = new ResizeObserver(() => this.#onResize());
-    this.#resizeObserver.observe(this);
+    this.#resizeObserver = new ResizeObserver(() => this.#onResize())
+    this.#resizeObserver.observe(this)
+
+    // Mouse events
+    this.addEventListener('wheel', this.#handleMouseWheel.bind(this))
 
       // Animation loop
     requestAnimationFrame((timestamp) => { this.#animate(timestamp) })
@@ -49,12 +52,18 @@ export default class Led3D extends HTMLElement {
     this.#render()
   }
 
+  /**
+   * Set the color array
+   * @param colorArray - A ArrayBuffer object with R,G,B bytes for the colors
+   */
   set colorArray(colorArray) {
     this.#colorArray = colorArray
     this.#render()
   }
 
-  // Render method to draw on the canvas
+  /**
+   * Render the vertex information to the canvas
+   */
   #render() {
     const ctx = this.#canvas.getContext('2d')
     // Set canvas size
@@ -77,20 +86,21 @@ export default class Led3D extends HTMLElement {
 
     let lastPoint = undefined
     if (this.#vertices.length > 0) {
-      const colors = new Uint8Array(this.#colorArray);
+      const colors = new Uint8Array(this.#colorArray)
+
+      // Calculate rotation angles
+      const cos = []
+      const sin = []
+      for (let i = 0; i < 3; i++) {
+        cos.push(Math.cos(this.#rotateAngle[i]))
+        sin.push(Math.sin(this.#rotateAngle[i]))
+      }
+
       const points = []
       this.#vertices.forEach((vertex, index) => {
-        // Apply rotations
-        const cos = []
-        const sin = []
-        for (let i = 0; i < 3; i++) {
-          cos.push(Math.cos(this.#rotateAngle[i]))
-          sin.push(Math.sin(this.#rotateAngle[i]))
-        }
-
         // Rotate around each axis. Here be dragons :)
         const xyz = [...vertex]
-        const axisPairs = [[1,2], [0, 2], [0, 1]]
+        const axisPairs = [[1, 2], [0, 2], [0, 1]]
         axisPairs.forEach((axes, axisIndex) => {
           let rotated = [
             xyz[axes[0]] * cos[axisIndex] - xyz[axes[1]] * sin[axisIndex],
@@ -136,31 +146,36 @@ export default class Led3D extends HTMLElement {
       points.sort((a, b) => a.z - b.z)
 
       points.forEach(point => {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(${point.color[0]}, ${point.color[1]}, ${point.color[2]}, ${point.color[3]})`;
-        ctx.arc(point.x, point.y, point.radius, 0, 2 * Math.PI);
-        ctx.fill();
+        ctx.beginPath()
+        ctx.fillStyle = `rgba(${point.color[0]}, ${point.color[1]}, ${point.color[2]}, ${point.color[3]})`
+        ctx.arc(point.x, point.y, point.radius, 0, 2 * Math.PI)
+        ctx.fill()
         ctx.lineWidth = point.radius * 3
-        ctx.strokeStyle = `rgba(${point.color[0]}, ${point.color[1]}, ${point.color[2]}, ${point.color[3]*.3})`;
-        ctx.stroke();
+        ctx.strokeStyle = `rgba(${point.color[0]}, ${point.color[1]}, ${point.color[2]}, ${point.color[3]*.3})`
+        ctx.stroke()
       })
     }
   }
 
-  // Handle resize events
+  /**
+   * Handle resize events
+   */
   #onResize() {
-    this.#render();
+    this.#render()
   }
 
-  // Animation loop
+  /**
+   * Animation loop to update auto rotation and render the canvas
+   * @param timestamp Time stamp of the animation event
+   */
   #animate(timestamp) {
-    const deltaTime = timestamp - this.#lastFrameTime;
+    const deltaTime = timestamp - this.#lastFrameTime
 
     // Update the last frame time
-    this.#lastFrameTime = timestamp;
+    this.#lastFrameTime = timestamp
 
-    this.#render();
-    if (deltaTime > 0) {
+    this.#render()
+    if (deltaTime > 0 && this.#autoRotate) {
       for(let i = 0; i < 3; i++) {
         this.#rotateAngle[i] += this.#rotateSpeed[i] * deltaTime/1000
       }
@@ -168,9 +183,24 @@ export default class Led3D extends HTMLElement {
     requestAnimationFrame((timestamp) => { this.#animate(timestamp) })
   }
 
-  // Clean up observer when element is removed
+  /**
+   * Handle the mouse wheel event by zooming in or out
+   * @param {WheelEvent} event The wheel event
+   */
+  #handleMouseWheel(event) {
+    if (event.deltaY > 0) {
+      this.#zoom *= 0.95
+    } else {
+      this.#zoom /= 0.95
+    }
+    this.#render()
+  }
+
+  /**
+   * Clean up observer when element is removed 
+   */
   disconnectedCallback() {
-    this.#resizeObserver.disconnect();
+    this.#resizeObserver.disconnect()
   }
 
   #vertices = []
@@ -178,7 +208,8 @@ export default class Led3D extends HTMLElement {
 
   #radius = 6
   #zoom = 0.4
-  #rotateSpeed = [-0.1, 0.15, 0.0]
+  #autoRotate = true
+  #rotateSpeed = [-0.1, 0.15, 0.1]
 
   #rotateAngle = [0, 0, 0]
   #lastFrameTime = 0
@@ -196,4 +227,4 @@ export default class Led3D extends HTMLElement {
 /**
  * Define the custom element for this web component
  */
-customElements.define('led-3d', Led3D);
+customElements.define('led-3d', Led3D)
