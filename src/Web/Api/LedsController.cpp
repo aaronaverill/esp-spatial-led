@@ -38,7 +38,7 @@ namespace Web { namespace Api {
     JsonVariant rgb = doc["rgb"];
     if (!colorIndex.isNull() && rgb) {
       if (colorIndex < leds.getColors().size()) {
-        leds.setColor(colorIndex, rgb["r"], rgb["g"] ,rgb["b"]);
+        leds.setColor(colorIndex, rgb[0], rgb[1] ,rgb[2]);
       }
       Store::LedSettings::write(fs, leds);
     }
