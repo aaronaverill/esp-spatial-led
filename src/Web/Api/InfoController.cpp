@@ -17,10 +17,10 @@ namespace Web { namespace Api {
 
     JsonArray jsonColors = jsonLeds["colors"].to<JsonArray>();
     for(CRGB rgb:leds.getColors()) {
-      JsonObject jsonColor = jsonColors.add<JsonObject>();
-      jsonColor["r"] = rgb.red;
-      jsonColor["g"] = rgb.green;
-      jsonColor["b"] = rgb.blue;
+      JsonArray jsonColor = jsonColors.add<JsonArray>();
+      jsonColor.add(rgb.r);
+      jsonColor.add(rgb.g);
+      jsonColor.add(rgb.b);
     }
 
     JsonObject jsonPlay = jsonLeds["play"].to<JsonObject>();

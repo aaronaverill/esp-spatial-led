@@ -494,10 +494,8 @@ export default class App {
     document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
       hsv[element.dataset.field] = element.value
     })
-    const rgb = this.#info.leds.colors[this.#editing]
-    for (const [key, value] of Object.entries(this.#hsv2rgb(hsv))) {
-      rgb[key] = value
-    }
+    const rgb = this.#hsv2rgb(hsv)
+    this.#info.leds.colors[this.#editing] = [...rgb]
     this.#refreshColorEdit(element.dataset.field)
     this.#refreshColors()
     await fetch('/api/leds/colors', {
@@ -598,24 +596,38 @@ export default class App {
     }
   }
 
+  /**
+   * Get the text foreground color appropriate for showing on the background
+   * @param {Array} background - An array of [r,g,b]
+   * @returns 
+   */
   #textColor(background) {
-    if ((background.r*0.299 + background.g*0.587 + background.b*0.114) > 160) {
-      return {r: 0, g: 0, b: 0}
+    if ((background[0]*0.299 + background[1]*0.587 + background[2]*0.114) > 160) {
+      return [0, 0, 0]
     } else {
-      return {r: 255, g: 255, b: 255}
+      return [255, 255, 255]
     }
   }
   
+  /**
+   * Convert an rgb array to a hex string
+   * @param {Array} rgb - An array of [r,g,b]
+   */
   #toHex(rgb) {
     let hex = '#';
-    [rgb.r, rgb.g, rgb.b].forEach(v => {
+    rgb.forEach(v => {
       hex += v.toString(16).padStart(2,'0')
     })
     return hex
   }
   
+  /**
+   * Convert an rgb array to a hue, saturation, value
+   * @param {Array} rgb - An array of [r,g,b]
+   * @returns A structure of {h, s, v}
+   */
   #rgb2hsv(rgb) {
-    const r = rgb.r/255, g = rgb.g/255, b = rgb.b/255
+    const r = rgb[0]/255, g = rgb[1]/255, b = rgb[2]/255
     const v = Math.max(r, g, b), c = v-Math.min(r, g, b)
     const h = c && ((v == r) ? (g-b)/c : ((v == g) ? 2 + (b-r)/c : 4+(r-g)/c))
     return {
@@ -625,14 +637,19 @@ export default class App {
     }
   }
   
+  /**
+   * Convert a hue, saturation, value to red, green, blue
+   * @param hsv - A structure of {h, s, v}
+   * @returns - An array of [r,g,b]
+   */
   #hsv2rgb(hsv) {
     const h = hsv.h*360/255, s = hsv.s/255, v = hsv.v/255
     const f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0)
-    return {
-      r: Math.round(255*f(5)),
-      g: Math.round(255*f(3)),
-      b: Math.round(255*f(1))
-    }
+    return [
+      Math.round(255*f(5)),
+      Math.round(255*f(3)),
+      Math.round(255*f(1))
+    ]
   }
 
   /**
