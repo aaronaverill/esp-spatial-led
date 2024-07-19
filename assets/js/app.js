@@ -54,6 +54,9 @@ export default class App {
     })
   }
 
+  /**
+   * Query the server for the currently playing R,G,B values and update the preview bitmap and visualization color arrays
+   */
   async #refreshPlayPreview() {
     let response = { ok: false }
     try {
@@ -113,6 +116,77 @@ export default class App {
    * Create the controls for the options page from the currently running animation and make the page visible
    */
   showOptions() {
+    this.#refreshAnimationOptions()
+    this.showPage('pPlayOptions')
+  }
+
+  /**
+   * Handle the event when an option value changes
+   * @param {HTMLElement} element - The element that is changing
+   */
+  async onOptionChange(element) {
+    const itemElement = element.closest('.item')
+    const id = itemElement.dataset.field
+    const field = this.#optionsField(id)
+    const val = element.value
+    let modelVal = val
+    if (field.factor) {
+      modelVal *= field.factor
+    }
+    await this.#setOptionModelAndSave(itemElement, id, modelVal, val)
+  }
+
+  /**
+   * Handle a change to the hue slider for an option color field
+   * @param {HTMLElement} element - The field's element being updated
+   */
+  async onOptionColorHueChange(element) {
+    const itemElement = element.closest('.item')
+    const id = itemElement.dataset.field
+    const hue = element.value
+    const modelVal = {
+      number: 0,
+      rgb: this.#hsv2rgb({h: hue, s: 255, v: 255})
+    }
+    await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
+  }
+
+  /**
+   * Show the color selection page
+   * @param {HTMLElement} element - The field's element which was clicked
+   */
+  showAnimationSelectColor(element) {
+    const itemElement = element.closest('.item')
+    this.#editing = itemElement.dataset.field
+    const field = this.#optionsField(this.#editing)
+    document.querySelector('#pAnimationColor .title .text').innerText = `Select ${field.label}`
+    this.#refreshSelectColor()
+    this.showPage('pAnimationColor')
+  }
+
+  /**
+   * Set the color number to the selected element
+   * @param {HTMLElement} element - Color number selected by index
+   */
+  selectColorNumber(element) {
+    const number = Array.from(element.parentNode.children).indexOf(element)
+    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].number = number
+    const modelVal = this.#animationColorValue(this.#editing)
+    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].rgb = [...modelVal.rgb]
+    this.#refreshSelectColor()
+    this.#refreshAnimationOptions()
+
+    const patch = {
+      index: this.#info.leds.play.index
+    }
+    patch[this.#editing] = modelVal
+    this.#throttledSaveAnimationSettings(patch)
+  }
+
+  /**
+   * Refresh the animation options page
+   */
+  #refreshAnimationOptions() {
     const animations = this.#info.leds.animations[this.#info.leds.play.index]
     const list = document.querySelector('.page.options .list')
     let html = ''
@@ -132,45 +206,63 @@ export default class App {
     for (let field of fields) {
       this.#refreshOptionControls(this.#optionsField(field))
     }
-    this.showPage('pPlayOptions')
   }
   
   /**
-   * Handle the event when an option value changes
-   * @param {HTMLElement} element - The element that is changing
+   * Get the color object associated with the current animation field
+   * @param {string} id - Field id
+   * @returns An object {number, rgb}
    */
-  async onOptionChange(element) {
-    const itemElement = element.closest('.item')
-    const id = itemElement.dataset.field
-    const field = this.#optionsField(id)
-    const val = element.value
-    let modelVal = val
-    if (field.factor) {
-      modelVal *= field.factor
+  #animationColorValue(id) {
+    const val = structuredClone(this.#info.leds.animations[this.#info.leds.play.index].settings[id])
+    if (val.number && val.number <= this.#info.leds.colors.length) {
+      val.rgb = this.#info.leds.colors[val.number-1]
     }
-    await this.#setOptionModelAndSave(itemElement, id, modelVal, val)
+    return val
   }
 
-  async onOptionColorHueChange(element) {
-    const itemElement = element.closest('.item')
-    const id = itemElement.dataset.field
-    const hue = element.value
-    const modelVal = {
-      number: 0,
-      rgb: this.#hsv2rgb({h: hue, s: 255, v: 255})
-    }
-    await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
-  }
-
-  showAnimationSelectColor(element) {
-    const itemElement = element.closest('.item')
-    this.#editing = itemElement.dataset.field
+  /**
+   * Refresh the select color page with the field being currently edited
+   */
+  #refreshSelectColor() {
     const field = this.#optionsField(this.#editing)
-    document.querySelector('#pAnimationColor .title .text').innerText = `Select ${field.label}`
-    //this.#refreshColorEdit()
-    this.showPage('pAnimationColor')
+    const val = this.#animationColorValue(field.id)
+
+    const colors = [val.rgb].concat(this.#info.leds.colors)
+    let html = ''
+    colors.forEach((rgb, index) => {
+      const classes = ['color', 'font-huge', 'flex-grow-1']
+      classes.push(val.number == index ? 'selected' : ' selectable')
+      if (index < colors.length - 1) {
+        classes.push('mr-3')
+      }
+      const basis = index ? 15: 25
+      const label = index ? `<div>${index}</div>` : ''
+      const styles = ['height:100px', `background-color:${this.#toHex(rgb)}`, `flex-basis:${basis}%`]
+      html += `<div onclick="app.selectColorNumber(this)" class="${classes.join(' ')}" style="${styles.join(';')}">${label}</div>`
+    })
+    document.querySelector('#pAnimationColor .colors').innerHTML = html
+    this.#refreshSelectColorControls(field, val)
+  }
+
+  /**
+   * Refresh the controls for color selection
+   * @param {object} field - The field being edited
+   * @param {object} val - The field's value
+   */
+  #refreshSelectColorControls(field, val) {
+    const pageElement = document.querySelector('#pAnimationColor')
+    const colorElement = pageElement.querySelectorAll('.color')[val.number]
+    this.#refreshHSVControls(field, pageElement, colorElement, val.rgb)
   }
   
+  /**
+   * 
+   * @param {HTMLElement} itemElement - The element of the field being edited
+   * @param {string} id 
+   * @param {*} modelVal 
+   * @param {*} val 
+   */
   async #setOptionModelAndSave(itemElement, id, modelVal, val) {
     const field = this.#optionsField(id)
     const isGlobal = this.#globalFields.some(f => f.id == id)
@@ -190,6 +282,11 @@ export default class App {
     }
   }
 
+  /**
+   * Save the play options. Called from a throttled function to prevent overloading the server with
+   * too frequent calls while a user is adjusting sliders
+   * @param {object} patch - An object of key = values passed to the server
+   */
   #savePlaySettings(patch) {
     fetch('/api/leds/play/settings', {
       method:'PATCH',
@@ -197,6 +294,11 @@ export default class App {
     })
   }
 
+  /**
+   * Save the animation options. Called from a throttled function to prevent overloading the server with
+   * too frequent calls while a user is adjusting sliders
+   * @param {object} patch - An object of key = values passed to the server
+   */
   #saveAnimationSettings(patch) {
     fetch('/api/leds/animations/settings', {
       method:'PATCH',
@@ -214,7 +316,7 @@ export default class App {
 
   /**
    * Get the HTML for the specified field using the control templates in HTML scripts
-   * @param field - Field information
+   * @param {object} field - Field information
    */
   #optionHtml(field) {
     const id = field.id
@@ -240,7 +342,7 @@ export default class App {
 
   /**
    * Refresh the controls for the specified field using the play or animation model settings
-   * @param field - Field information
+   * @param {object} field - Field information
    */
   #refreshOptionControls(field) {
     let val = this.#info.leds.play.settings[field.id] || this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
@@ -253,11 +355,8 @@ export default class App {
         itemElement.querySelector('input').value = val
         break
       case 'color':
-        let rgb = val.rgb
-        if (val.number > 0 && val.number <= this.#info.leds.colors.length) {
-          rgb = this.#info.leds.colors[val.number-1]
-        }
-        const hsv = this.#rgb2hsv(rgb)
+        const color = this.#animationColorValue(field.id)
+        const hsv = this.#rgb2hsv(color.rgb)
         itemElement.querySelector('input').value = hsv.h
         break
     }
@@ -267,8 +366,8 @@ export default class App {
   /**
    * Refresh the controls for a specific item with the value
    * @param {HTMLElement} element - Top level item option div element
-   * @param val - The value
-   * @param field - Field information
+   * @param {string} val - The value
+   * @param {object} field - Field information
    */
   #refreshOptionValue(element, val, field) {
     if (field.decimals != undefined) {
@@ -288,15 +387,13 @@ export default class App {
         break
       case 'color': {
         const valueElement = element.querySelector('.value')
-        let rgb = val.rgb
-        if (val.number > 0 && val.number <= this.#info.leds.colors.length) {
-          rgb = this.#info.leds.colors[val.number-1]
-          valueElement.style.color = this.#toHex(this.#textColor(rgb))
-          valueElement.innerHTML = `<div>${val.number}</div>`
+        const color = this.#animationColorValue(field.id)
+        if (color.number && color.number <= this.#info.leds.colors.length) {
+          valueElement.innerHTML = `<div>${color.number}</div>`
         } else {
           valueElement.innerHTML = ''
         }
-        valueElement.style.backgroundColor = this.#toHex(rgb)
+        valueElement.style.backgroundColor = this.#toHex(color.rgb)
         break
       }
     }
@@ -571,14 +668,28 @@ export default class App {
 
   /**
    * Refresh the details of the edit color page
+   * @param {object} field - The field
    */
   #refreshColorEdit(field) {
     const rgb = this.#info.leds.colors[this.#editing]
-    var colorElement = document.querySelector('#pColorEdit .color')
-    colorElement.style.backgroundColor = this.#toHex(rgb)
-    colorElement.style.color = this.#toHex(this.#textColor(rgb))
+    const pageElement = document.querySelector('#pColorEdit')
+    const colorElement = pageElement.querySelector('.color')
+    this.#refreshHSVControls(field, pageElement, colorElement, rgb)
+  }
+
+  /**
+   * Refresh a color block and hue, saturation, value sliders with a color
+   * @param {object} field - The field
+   * @param {HTMLElement} pageElement - The page element
+   * @param {HTMLElement} colorElement - The current color element
+   * @param {Array} rgb - An array of [r,g,b]
+   */
+  #refreshHSVControls(field, pageElement, colorElement, rgb) {
+    if (colorElement) {
+      colorElement.style.backgroundColor = this.#toHex(rgb)
+    }
     const hsv = this.#rgb2hsv(rgb)
-    document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
+    pageElement.querySelectorAll('[data-type="hsv"]').forEach(element => {
       if (element.dataset.field != field) {
         element.value = hsv[element.dataset.field]
       }
@@ -592,9 +703,8 @@ export default class App {
     let html = ''
     let index = 0
     this.#info.leds.colors.forEach(bg => {
-      const textHex = this.#toHex(this.#textColor(bg))
       const bgHex = this.#toHex(bg)
-      html += `<div onclick="app.onColorClick(${index})" class="color font-huge selectable rounded" style="color:${textHex};background-color:${bgHex};height:100px"><div>${index+1}</div></div>`
+      html += `<div onclick="app.onColorClick(${index})" class="color font-huge selectable" style="background-color:${bgHex};height:100px"><div>${index+1}</div></div>`
       index++
     })
     document.querySelector('#pColors .grid').innerHTML = html
@@ -645,19 +755,7 @@ export default class App {
     }
   }
 
-  /**
-   * Get the text foreground color appropriate for showing on the background
-   * @param {Array} background - An array of [r,g,b]
-   * @returns 
-   */
-  #textColor(background) {
-    if ((background[0]*0.299 + background[1]*0.587 + background[2]*0.114) > 160) {
-      return [0, 0, 0]
-    } else {
-      return [255, 255, 255]
-    }
-  }
-  
+ 
   /**
    * Convert an rgb array to a hex string
    * @param {Array} rgb - An array of [r,g,b]
