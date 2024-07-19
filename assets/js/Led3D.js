@@ -114,10 +114,6 @@ export default class Led3D extends HTMLElement {
     this.#canvas.width = rect.width
     this.#canvas.height = Math.floor(rect.height)
 
-    // Fill the background
-    ctx.fillStyle = '#181818' // Background color
-    ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
-
     // Center of the canvas
     const center = [
       this.#canvas.width / 2,
@@ -127,70 +123,47 @@ export default class Led3D extends HTMLElement {
 
     const scale = this.#zoom * Math.min(center[0], center[1])
 
-    let lastPoint = undefined
-    if (this.#vertices.length > 0) {
-      const colors = new Uint8Array(this.#colorArray)
+    const points = this.#getCoordinateDrawInfo(this.#vertices, center, scale, new Uint8Array(this.#colorArray))
 
-      const points = []
-      this.#vertices.forEach((vertex, index) => {
-        const xyz = Quaternion.rotatePoint(this.#rotation, vertex)
+    // Fill the background
+    ctx.fillStyle = '#181818' // Background color
+    ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
 
-        // Project onto 2D screen
-        const depthScale = 10 / (10 - (1+xyz[2]))
-        const screenXY = xyz.map((value, i) => center[i] + value * depthScale * scale)
-
-        // Determine color
-        const colorIndex = index * 3
-        const alpha = Math.min(1, 0.3+(2+xyz[2])/3)
-        const r = colorIndex < colors.length ? colors[colorIndex] : 255
-        const g = colorIndex + 1 < colors.length ? colors[colorIndex + 1] : 255
-        const b = colorIndex + 2 < colors.length ? colors[colorIndex + 2] : 255
-        const sizeScale = 6 / (6 - (1+xyz[2]))
-
-        // Add the LED to the points collection.
-        points.push({
-          i: index,
-          x: screenXY[0],
-          y: screenXY[1],
-          z: xyz[2],
-          radius: this.#radius * sizeScale,
-          color: [r, g, b, alpha]
-        })
-
-        // Draw the wires
-        if (lastPoint) {
-          ctx.beginPath()
-          ctx.lineWidth = 1
-          ctx.strokeStyle = `rgba(255,255,255,${(lastPoint[2] + alpha)/4})`
-          ctx.moveTo(lastPoint[0], lastPoint[1])
-          ctx.lineTo(screenXY[0], screenXY[1])
-          ctx.stroke()
-        }
-        lastPoint = [screenXY[0], screenXY[1], alpha]
-
-      })
-
-      // Sort the leds from back to front so closer points are drawn on top
-      points.sort((a, b) => a.z - b.z)
-
-      points.forEach(point => {
+    // Draw the wires
+    ctx.lineWidth = 1
+    points.forEach((point, index) => {
+      if (index > 0) {
+        const lineAlpha = 0.25 * (points[index-1].color[3] + point.color[3])
         ctx.beginPath()
-        ctx.fillStyle = `rgba(${point.color[0]},${point.color[1]},${point.color[2]},${point.color[3]})`
-        ctx.arc(point.x, point.y, point.radius, 0, 2 * Math.PI)
-        ctx.fill()
-        ctx.lineWidth = point.radius * 3
-        ctx.strokeStyle = `rgba(${point.color[0]},${point.color[1]},${point.color[2]},${point.color[3]*.3})`
+        ctx.strokeStyle = `rgba(255,255,255,${lineAlpha})`
+        ctx.moveTo(points[index-1].x, points[index-1].y)
+        ctx.lineTo(point.x, point.y)
         ctx.stroke()
-      })
+      }
+    })
 
-      // Draw dout and din
-      if (points.length) {
-        const firstPoint = points.find(p => p.i == 0)
-        this.#drawText(ctx, 'din', firstPoint.x, firstPoint.y - this.#radius, firstPoint.color[3])
-        if (points.length > 1) {
-          const lastPoint = points.find(p => p.i ==points.length - 1)
-          this.#drawText(ctx, 'dout', lastPoint.x, lastPoint.y - this.#radius, lastPoint.color[3])
-        }
+    // Sort the leds from back to front so closer points are drawn on top
+    points.sort((a, b) => b.depth - a.depth)
+
+    // Draw the leds
+    points.forEach(point => {
+      const radius = this.#radius * (1 - point.depth * .5) * this.#zoom
+      ctx.beginPath()
+      ctx.fillStyle = `rgba(${point.color[0]},${point.color[1]},${point.color[2]},${point.color[3]})`
+      ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI)
+      ctx.fill()
+      ctx.lineWidth = radius * 2
+      ctx.strokeStyle = `rgba(${point.color[0]},${point.color[1]},${point.color[2]},${point.color[3]*.3})`
+      ctx.stroke()
+    })
+
+    // Draw dout and din
+    if (points.length) {
+      const firstPoint = points.find(p => p.i == 0)
+      this.#drawText(ctx, 'din', firstPoint.x, firstPoint.y - this.#radius, firstPoint.color[3])
+      if (points.length > 1) {
+        const lastPoint = points.find(p => p.i ==points.length - 1)
+        this.#drawText(ctx, 'dout', lastPoint.x, lastPoint.y - this.#radius, lastPoint.color[3])
       }
     }
 
@@ -198,6 +171,36 @@ export default class Led3D extends HTMLElement {
     ctx.strokeStyle = '#666'  // Border color
     ctx.lineWidth = 1
     ctx.strokeRect(0, 0, this.#canvas.width, this.#canvas.height)
+  }
+
+  #getCoordinateDrawInfo(coordinates, center, scale, colors) {
+    const points = []
+    coordinates.forEach((coordinate, index) => {
+      const xyz = Quaternion.rotatePoint(this.#rotation, coordinate)
+
+      const depth = 0.5 - xyz[2] / 3.4645 // 0 (closest) to 1 (farthest)
+
+      // Project onto 2D screen
+      const depthScale = 1 - depth * 0.5
+      const screenXY = xyz.map((value, i) => center[i] + value * depthScale * scale)
+
+      // Determine color
+      const colorIndex = index * 3
+      const r = colors && colorIndex < colors.length ? colors[colorIndex] : 255
+      const g = colors && colorIndex + 1 < colors.length ? colors[colorIndex + 1] : 255
+      const b = colors && colorIndex + 2 < colors.length ? colors[colorIndex + 2] : 255
+      const alpha = Math.min(1, 1.3 - depth)
+
+      // Add the LED to the points collection.
+      points.push({
+        i: index,
+        x: screenXY[0],
+        y: screenXY[1],
+        color: [r, g, b, alpha],
+        depth: depth
+      })
+    })
+    return points
   }
 
   /**
@@ -321,7 +324,7 @@ export default class Led3D extends HTMLElement {
   #vertices = []
   #colorArray = new Uint8Array()
 
-  #radius = 6
+  #radius = 20
   #zoom = 0.45
   #autoRotate = true
   #rotateSpeed = -0.4
