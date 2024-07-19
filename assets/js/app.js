@@ -12,6 +12,11 @@ export default class App {
     this.#throttledSaveAnimationSettings = throttle((patch) => {
       this.#saveAnimationSettings(patch)
     }, 1000)
+
+    // Update color info once per second
+    this.#throttledSaveColor = throttle((patch) => {
+      this.#saveColor(patch)
+    }, 1000)
   }
 
   /**
@@ -149,6 +154,55 @@ export default class App {
       rgb: this.#hsv2rgb({h: hue, s: 255, v: 255})
     }
     await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
+  }
+
+
+  /**
+   * Handle a control change
+   * @param {HTMLElement} element - The element whose value is changing
+   */
+  async onAnimationColorChange(element) {
+    const rgb = this.#getColorHSVControlRGB('pAnimationColor')
+    const number = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].number
+
+    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].rgb = [...rgb]
+
+    const isNumberedColor = number && number <= this.#info.leds.colors.length
+    if (isNumberedColor) {
+      this.#info.leds.colors[number-1] = [...rgb]
+    }
+
+    this.#refreshSelectColor()
+    this.#refreshAnimationOptions()
+    this.#refreshColors()
+  
+    if (isNumberedColor) {
+      this.#throttledSaveColor({
+        index: number-1,
+        rgb: rgb
+      })
+    } else {
+      const patch = {
+        index: this.#info.leds.play.index,
+      }
+      patch[this.#editing] = {
+        number: number,
+        rgb: rgb
+      }
+      this.#throttledSaveAnimationSettings(patch)
+    }
+  }
+
+  /**
+   * Handle a click in the rainbow strip below the hue slider to pick a hue
+   * @param {HTMLElement} element 
+   * @param {PointerEvent} event 
+   */
+  async onAnimationHueClick(element, event) {
+    var hue = Math.floor(event.offsetX/element.clientWidth*255)
+    var inputElement = element.closest('.item').querySelector('input')
+    inputElement.value = hue
+    this.onAnimationColorChange(inputElement)
   }
 
   /**
@@ -637,20 +691,14 @@ export default class App {
    * @param {HTMLElement} element - The element whose value is changing
    */
   async onColorChange(element) {
-    const hsv = {}
-    document.querySelectorAll('#pColorEdit [data-type="hsv"]').forEach(element => {
-      hsv[element.dataset.field] = element.value
-    })
-    const rgb = this.#hsv2rgb(hsv)
+    const rgb = this.#getColorHSVControlRGB('pColorEdit')
+
     this.#info.leds.colors[this.#editing] = [...rgb]
     this.#refreshColorEdit(element.dataset.field)
     this.#refreshColors()
-    await fetch('/api/leds/colors', {
-      method:'PUT',
-      body:JSON.stringify({
-        index: this.#editing,
-        rgb: rgb
-      })
+    this.#throttledSaveColor({
+      index: this.#editing,
+      rgb: rgb
     })
   }
 
@@ -708,6 +756,29 @@ export default class App {
       index++
     })
     document.querySelector('#pColors .grid').innerHTML = html
+  }
+
+  /**
+   * Get the hue, saturation, value control values from the page and return an [r,g,b] array
+   * @param {string} pageId - The page id
+   */
+  #getColorHSVControlRGB(pageId) {
+    const hsv = {}
+    document.querySelectorAll(`#${pageId} [data-type="hsv"]`).forEach(element => {
+      hsv[element.dataset.field] = element.value
+    })
+    return this.#hsv2rgb(hsv)
+  }
+
+  /**
+   * Save the information for the color
+   * @param {object} patch - An object {index, rgb: [r,g,b]}
+   */
+  #saveColor(patch) {
+    fetch('/api/leds/colors', {
+      method:'PUT',
+      body:JSON.stringify(patch)
+    })
   }
 
   // -----------------------------------------------------------------------------
@@ -822,6 +893,10 @@ export default class App {
    * A throttled save animation function. This prevents sliders in the UI from calling the backend too frequently with updates
    */
   #throttledSaveAnimationSettings
+  /**
+   * A throttled save color function. This prevents sliders in the UI from calling the backend too frequently with updates
+   */
+  #throttledSaveColor
   /**
    * A javascript interval id for periodically freshing the play preview image
    */

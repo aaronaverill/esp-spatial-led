@@ -50,8 +50,8 @@
               <div>Hue</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="h" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
-                  <div onclick="app.onColorHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
+                  <div><input data-type="hsv" data-field="h" type="range" oninput="app.onAnimationColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div onclick="app.onAnimationHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
                 </div>
                 <div class="value flex-shrink-0 rounded"></div>
               </div>
@@ -60,7 +60,7 @@
               <div>Saturation</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="s" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="s" type="range" oninput="app.onAnimationColorChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
                 <div class="value flex-shrink-0"></div>
@@ -70,7 +70,7 @@
               <div>Value</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="v" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="v" type="range" oninput="app.onAnimationColorChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
                 <div class="value flex-shrink-0"></div>
