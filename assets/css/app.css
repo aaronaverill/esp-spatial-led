@@ -7,6 +7,9 @@ body {
   color: #fff;
   font-family: sans-serif;
 }
+html, body, select {
+  font-size: 16px;
+}
 select, input, textarea {
   color: white;
   background-color: #222;

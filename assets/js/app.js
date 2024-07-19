@@ -529,18 +529,11 @@ export default class App {
   }
   
   /**
-   * Convert the text specified into a list of [x, y, z] coordinates.
-   * @param text - A flat list of comma separated floating points representing the x, y, z values
+   * Handle a change to the fit type
    */
-  #coordinatesFromText(text) {
-    const coordinates = []
-    if (text) {
-      const numbers = text.split(',').map(parseFloat)
-      for (let i = 0; i < numbers.length; i += 3) {
-        coordinates.push([numbers[i], numbers[i+1], numbers[i+2]])
-      }
-    }
-    return coordinates
+  onLayoutFitChange() {
+    this.#editing.layout.fit = document.getElementById('ledFit').value
+    this.#refreshCodeInfo()
   }
 
   /**
@@ -548,7 +541,11 @@ export default class App {
    * @param coordinates - A list of [x, y, z] coordinates
    */
   #coordinatesToText(coordinates) {
-    return coordinates.flat().join(',')
+    return coordinates
+      .flat()
+      .map(v => v == 0 ? '0' : v.toFixed(3).replace(/0+$/g, '')
+      .replace(/\.$/, ''))
+      .join(',')
   }
 
   /**
@@ -574,6 +571,7 @@ export default class App {
     document.querySelectorAll('#pLedLayout .page-layout').forEach(e => {
       e.style.display = e.dataset.page == type ? 'block' : 'none'
     })
+    document.getElementById('ledFit').value = this.#editing.layout.fit||'contain'
     document.getElementById('code').value = this.#editing.layout.code||''
   }
 
@@ -596,12 +594,15 @@ export default class App {
             const coordinate = [0, 0, 0]
             for (let i = 0; i < 3; i++) {
               if (i < pt.length && typeof pt[i] === 'number') {
-                coordinate[i] = Math.round(1000*pt[i])/1000
+                coordinate[i] = pt[i]
               }
             }
             this.#editing.xyz.push(coordinate)
           }
         })
+        if (this.#editing.layout.fit != 'none') {
+          this.#editing.xyz = this.#fitCoordinates(this.#editing.xyz, this.#editing.layout.fit != 'fill') 
+        }
         parsedOk = true
       } catch (ex) {
         this.#editing.xyz = []
@@ -611,6 +612,52 @@ export default class App {
     document.getElementById('codeLeds').innerHTML = parsedOk ? this.#editing.xyz.length : '&#9888;'
     const previewElement = document.getElementById('layoutPreview')
     previewElement.vertices = this.#editing.xyz
+  }
+
+  /**
+   * Process the coordinates by fitting them into a cube whose dimensions are [0..1]
+   * @param {Array} xyz - An array of [x,y,z] coordinates
+   * @param {boolean} contain 
+   *   - If true contain the points in the cube and keep the same aspect ratio
+   *   - if false fill the point to the cube by stretching or shrinking each axis separately
+   */
+  #fitCoordinates(xyz, contain) {
+    if (!xyz.length) {
+      return []
+    }
+
+    const minMaxes = [
+      [Infinity, -Infinity], // min[x], max[x]
+      [Infinity, -Infinity], // min[y], max[y]
+      [Infinity, -Infinity], // min[z], max[z]
+    ]
+
+    // Find the min and max for each axis
+    for (let coord of xyz) {
+      for (let i = 0; i < 3; i++) {
+        minMaxes[i][0] = Math.min(minMaxes[i][0], coord[i])
+        minMaxes[i][1] = Math.max(minMaxes[i][1], coord[i])
+      }
+    }
+
+    const axisRanges = minMaxes.map(axisMinMax => axisMinMax[1] - axisMinMax[0])
+    let scale = [1, 1, 1]
+
+    if (contain) {
+      // Find the maximum range
+      const maxRange = Math.max(...axisRanges)
+      scale = [1 / maxRange, 1 / maxRange, 1 / maxRange]
+    } else {
+      // Scale each axis independently
+      scale = axisRanges.map(axisRange => 1 / axisRange)
+    }
+
+    // Normalize coordinates
+    return xyz.map(coord => [
+      (coord[0] - minMaxes[0][0]) * scale[0],
+      (coord[1] - minMaxes[1][0]) * scale[1],
+      (coord[2] - minMaxes[2][0]) * scale[2]
+    ])
   }
 
   /**
@@ -645,7 +692,7 @@ export default class App {
         patch.count = parseInt(document.getElementById('ledCount').value)
         const coords = []
         for (let i = 0; i < patch.count; i++) {
-          const coord = Math.round(10000*(i+.5)/patch.count)/10000
+          const coord = (i+.5)/patch.count
           coords.push(coord + ',' + coord + ',' + coord)
         }
         patch.layout = '{"type":"strip"}',

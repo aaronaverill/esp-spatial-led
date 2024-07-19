@@ -98,9 +98,17 @@
           </div>
           <div data-page="code" class="page-layout d-none flex-grow-1 overflow-hidden">
             <div class="d-flex flex-column h-100">
-              <div class="d-flex align-center">
-                <div class="mr-3 my-2">Number of LEDs:</div>
-                <div id="codeLeds"></div>
+              <div class="d-flex align-center my-2">
+                <div class="mr-3">Number of LEDs:</div>
+                <div id="codeLeds" class="mr-auto"></div>
+                <div class="mr-3">Coordinate Fit:</div>
+                <div>
+                  <select id="ledFit" onchange="app.onLayoutFitChange()" style="margin-right:1px">
+                    <option value="contain">Contain</option>
+                    <option value="fill">Fill</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
               </div>
               <div class="d-flex flex-grow-1 overflow-hidden">
                 <textarea id="code" type="text" spellcheck="false" rows="10" 
