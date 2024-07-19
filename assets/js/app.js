@@ -162,6 +162,15 @@ export default class App {
     await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
   }
 
+  showAnimationSelectColor(element) {
+    const itemElement = element.closest('.item')
+    this.#editing = itemElement.dataset.field
+    const field = this.#optionsField(this.#editing)
+    document.querySelector('#pAnimationColor .title .text').innerText = `Select ${field.label}`
+    //this.#refreshColorEdit()
+    this.showPage('pAnimationColor')
+  }
+  
   async #setOptionModelAndSave(itemElement, id, modelVal, val) {
     const field = this.#optionsField(id)
     const isGlobal = this.#globalFields.some(f => f.id == id)
@@ -199,7 +208,6 @@ export default class App {
    * Get the field information for the specified id from either the global fields or the animation's fields
    * @param {string} id - The field id
    */
-  // Play options page
   #optionsField(id) {
     return this.#globalFields.find(f => f.id == id)|| this.#info.leds.animations[this.#info.leds.play.index].fields?.find( f=> f.id == id)
   }
@@ -245,13 +253,10 @@ export default class App {
         itemElement.querySelector('input').value = val
         break
       case 'color':
-        console.log(val)
         let rgb = val.rgb
-        console.log(rgb)
         if (val.number > 0 && val.number <= this.#info.leds.colors.length) {
           rgb = this.#info.leds.colors[val.number-1]
         }
-        console.log(rgb)
         const hsv = this.#rgb2hsv(rgb)
         itemElement.querySelector('input').value = hsv.h
         break
@@ -283,16 +288,14 @@ export default class App {
         break
       case 'color': {
         const valueElement = element.querySelector('.value')
-        console.log(val)
         let rgb = val.rgb
         if (val.number > 0 && val.number <= this.#info.leds.colors.length) {
           rgb = this.#info.leds.colors[val.number-1]
-          valueElement.innerText = val.number
           valueElement.style.color = this.#toHex(this.#textColor(rgb))
+          valueElement.innerHTML = `<div>${val.number}</div>`
         } else {
-          valueElement.innerText = ''
+          valueElement.innerHTML = ''
         }
-        console.log(rgb)
         valueElement.style.backgroundColor = this.#toHex(rgb)
         break
       }
@@ -321,7 +324,7 @@ export default class App {
     let html = ''
     for (let i = 0; i < this.#info.leds.animations.length; i++) {
       const selected = i == this.#info.leds.play.index ? ' selected' : ''
-      html += '<div class="item pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + this.#info.leds.animations[i].name + '</div></div>'
+      html += '<div class="item selectable pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + this.#info.leds.animations[i].name + '</div></div>'
     }
     document.getElementById('animations').innerHTML = html
   }
@@ -565,7 +568,7 @@ export default class App {
     inputElement.value = hue
     this.onColorChange(inputElement)
   }
-  
+
   /**
    * Refresh the details of the edit color page
    */
@@ -591,7 +594,7 @@ export default class App {
     this.#info.leds.colors.forEach(bg => {
       const textHex = this.#toHex(this.#textColor(bg))
       const bgHex = this.#toHex(bg)
-      html += `<div onclick="app.onColorClick(${index})" class="color selectable rounded" style="color:${textHex};background-color:${bgHex};height:100px">${index+1}</div>`
+      html += `<div onclick="app.onColorClick(${index})" class="color font-huge selectable rounded" style="color:${textHex};background-color:${bgHex};height:100px"><div>${index+1}</div></div>`
       index++
     })
     document.querySelector('#pColors .grid').innerHTML = html

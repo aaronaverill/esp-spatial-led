@@ -12,17 +12,17 @@
       <div id="pLibrary" class="d-flex flex-column h-100">
         <div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Library</div></div>
         <div class="page">
-          <div id="animations" class="list selectable"></div>
+          <div id="animations" class="list"></div>
         </div>
       </div>
       <!-- The top level settings page -->
       <div id="pSettings" class="d-none flex-column h-100">
         <div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Settings</div></div>
         <div class="page">
-          <div class="list selectable">
-            <div onclick="app.showLedLayout()" class="item d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
-            <div onclick="app.showPage('pColors')" class="item d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
-            <div onclick="app.showAbout()" class="item d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+          <div class="list">
+            <div onclick="app.showLedLayout()" class="item selectable d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="app.showPage('pColors')" class="item selectable d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="app.showAbout()" class="item selectable d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
           </div>
         </div>
       </div>
@@ -34,6 +34,55 @@
         </div>
         <div class="page options pa-4">
           <div class="list"></div>
+        </div>
+      </div>
+      <!-- Animation options select color field page -->
+      <div id="pAnimationColor" class="d-none flex-column h-100">
+        <div class="title">
+          <div onclick="app.showPage('pPlayOptions')" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+          <div class="text pa-3"></div>
+        </div>
+        <div class="page d-flex flex-column pa-4">
+          <div class="d-flex">
+            <div class="color selectable mr-3 flex-grow-1"
+              style="background-color:red;height: 100px;flex-basis: 20%;"></div>
+            <div class="color font-huge selected mr-3 flex-grow-1" style="background-color:purple;height: 100px;flex-basis: 15%;"><div>1</div></div>
+            <div class="color font-huge selectable mr-3 flex-grow-1" style="color:#000;background-color:yellow;height: 100px;flex-basis: 15%;"><div>2</div></div>
+            <div class="color font-huge selectable mr-3 flex-grow-1" style="color:#000;background-color:cyan;height: 100px;flex-basis: 15%;"><div>3</div></div>
+            <div class="color font-huge selectable flex-grow-1" style="background-color:green;height: 100px;flex-basis: 15%;"><div>4</div></div>
+          </div>
+          <div class="list">
+            <div class="item py-3">
+              <div>Hue</div>
+              <div class="d-flex w-100">
+                <div class="flex-grow-1 pr-3">
+                  <div><input data-type="hsv" data-field="h" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div onclick="app.onColorHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
+                </div>
+                <div class="value flex-shrink-0 rounded"></div>
+              </div>
+            </div>
+            <div class="item py-3">
+              <div>Saturation</div>
+              <div class="d-flex w-100">
+                <div class="flex-grow-1 pr-3">
+                  <div><input data-type="hsv" data-field="s" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
+                </div>
+                <div class="value flex-shrink-0"></div>
+              </div>
+            </div>
+            <div class="item py-3">
+              <div>Value</div>
+              <div class="d-flex w-100">
+                <div class="flex-grow-1 pr-3">
+                  <div><input data-type="hsv" data-field="v" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
+                </div>
+                <div class="value flex-shrink-0"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Settings > LED Layout page -->
@@ -72,7 +121,10 @@
       </div>
       <!-- Settings > Colors page -->
       <div id="pColors" class="d-none flex-column h-100">
-        <div class="title"><div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">Colors</div></div>
+        <div class="title">
+          <div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+          <div class="pa-3">Colors</div>
+        </div>
         <div class="page pa-4">
           <div class="grid">
           </div>
@@ -80,9 +132,12 @@
       </div>
       <!-- Settings > Colors > Edit page -->
       <div id="pColorEdit" class="d-none flex-column h-100">
-        <div class="title"><div onclick="app.showPage('pColors')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="text pa-3"></div></div>
+        <div class="title">
+          <div onclick="app.showPage('pColors')" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+          <div class="text pa-3"></div>
+        </div>
         <div class="page pa-4">
-          <div class="color w-100 rounded" style="height:100px"></div>
+          <div class="color w-100" style="height:100px"></div>
           <div class="list">
             <div class="item py-3">
               <div>Hue</div>
@@ -119,7 +174,10 @@
       </div>
       <!-- Settings > About page -->
       <div id="pAbout" class="d-none flex-column h-100">
-        <div class="title"><div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="pa-3">About</div></div>
+        <div class="title">
+          <div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+          <div class="pa-3">About</div>
+        </div>
         <div class="page pa-4">
           <div id="fps" class="text-center"></div>
         </div>
@@ -134,9 +192,9 @@
       <img id="playPreview" class="w-100" style="height:10px" />
     </div>
     <!-- Primary navigation -->
-    <div class="nav d-flex selectable w-100">
-      <div data-page="pLibrary" onclick="app.showPage(this.dataset.page)" class="selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
-      <div data-page="pSettings" onclick="app.showPage(this.dataset.page)"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>
+    <div class="nav d-flex w-100">
+      <div data-page="pLibrary" onclick="app.showPage(this.dataset.page)" class="selectable selected"><div class="img img-lg img-library mb-2"></div><div>Library</div></div>
+      <div data-page="pSettings" onclick="app.showPage(this.dataset.page)" class="selectable"><div class="img img-lg img-gear mb-2"></div><div>Settings</div></div>
     </div>
   </div>
 
@@ -182,7 +240,7 @@
       <div><input type="range" oninput="app.onOptionColorHueChange(this)" min="0" max="255" class="w-100" /></div>
       <div class="rainbow" style="height:10px; margin:0 5px 0 9px"></div>
     </div>
-    <div onclick="app.onOptionColorClick(this)" class="value flex-shrink-0 color rounded selectable"></div>
+    <div onclick="app.showAnimationSelectColor(this)" class="value color flex-shrink-0 selectable"><div></div></div>
   </div>
 </div>
   </script>

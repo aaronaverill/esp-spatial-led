@@ -65,6 +65,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .font-bold { font-weight: bold; }
 .font-micro { font-size: 70%; }
 .font-small { font-size: 85%; }
+.font-large { font-size: 120% }
+.font-huge { font-size: 140% }
 
 /* Text */
 .text-center {
@@ -86,7 +88,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 
 /* Selection */
 .selectable, .btn { cursor: pointer; }
-.selectable > div:hover { background-color: #BBF2; }
+.selectable:hover { background-color: #BBF2; }
 
 /* Buttons */
 .btn[disabled] {
@@ -127,18 +129,28 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 
 /* Color */
 .color {
-  font-size: 30px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.color.selectable {
-  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 3px #000;
 }
 .color.selectable:hover {
-  box-shadow: inset 0 0 0 10em rgba(255, 255, 255, 0.4);
-  font-size: 40px;
+  box-shadow: inset 0 0 0 1px #FFFA, inset 0 0 0 3px #000;
+}
+.color.selected {
+  box-shadow: inset 0 0 0 2px #FFF, inset 0 0 0 6px #000;
+}
+.color > div {
+  background-color: #000;
+  color: #FFF;
+  width: 1.6em;
+  height: 1.6em;
+  text-align: center;
+  line-height: 1.6em;
+  border-radius: 50%;
+  border: 1px solid #FFF;
 }
 
 /* Pages */
