@@ -596,7 +596,7 @@ export default class App {
             const coordinate = [0, 0, 0]
             for (let i = 0; i < 3; i++) {
               if (i < pt.length && typeof pt[i] === 'number') {
-                coordinate[i] = Math.round(10000*pt[i])/10000
+                coordinate[i] = Math.round(1000*pt[i])/1000
               }
             }
             this.#editing.xyz.push(coordinate)
