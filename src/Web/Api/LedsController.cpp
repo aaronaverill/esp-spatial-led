@@ -53,15 +53,15 @@ namespace Web { namespace Api {
     }
 
     bool writeSettings = false;
-    JsonVariant ledCount = doc["ledCount"];
-    if (ledCount) {
-      leds.setLedCount(ledCount);
+    JsonVariant count = doc["count"];
+    if (count) {
+      leds.setLedCount(count);
       writeSettings = true;
     }
-    JsonVariant coordinateValues = doc["ledLayout"]["coords"];
-    if (coordinateValues) {
-      leds.setLedCoordinates(coordinateValues);
-      Store::LedLayout::write(fs, doc["ledLayout"]["config"], doc["ledLayout"]["coords"]);
+    JsonVariant coordinates = doc["coordinates"];
+    if (coordinates) {
+      leds.setLedCoordinates(coordinates);
+      Store::LedLayout::write(fs, doc["layout"], doc["coordinates"]);
     }
     if (writeSettings) {
       Store::LedSettings::write(fs, leds);

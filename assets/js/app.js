@@ -507,7 +507,7 @@ export default class App {
    * Handle a layout type change by showing the relevant options page for that LED layout
    */
   onLayoutTypeChange() {
-    this.#editing.config.type = document.getElementById('ledLayoutType').value
+    this.#editing.layout.type = document.getElementById('ledLayoutType').value
     this.#refreshLedLayout()
     this.#refreshLayoutSave()
   }
@@ -523,7 +523,7 @@ export default class App {
    * Handle a change to the text in the code input
    */
   onLayoutCodeChange() {
-    this.#editing.config.code = document.getElementById('code').value
+    this.#editing.layout.code = document.getElementById('code').value
     this.#refreshCodeInfo()
     this.#refreshLayoutSave()
   }
@@ -556,12 +556,11 @@ export default class App {
    */
   #copyLedLayout() {
     this.#editing = {
-      config: {},
-      xyz: this.#coordinatesFromText(this.#info.leds.layout.coords)
+      layout: {},
     }
 
     try {
-      this.#editing.config = JSON.parse(this.#info.leds.layout.config)
+      this.#editing.layout = JSON.parse(this.#info.leds.layout)
     } catch { }
   }
 
@@ -570,12 +569,12 @@ export default class App {
    */
   #refreshLedLayout() {
     document.getElementById('ledCount').value = this.#info.leds.count
-    const type = this.#editing.config.type||'strip'
+    const type = this.#editing.layout.type||'strip'
     document.getElementById('ledLayoutType').value = type
     document.querySelectorAll('#pLedLayout .page-layout').forEach(e => {
       e.style.display = e.dataset.page == type ? 'block' : 'none'
     })
-    document.getElementById('code').value = this.#editing.config.code||''
+    document.getElementById('code').value = this.#editing.layout.code||''
   }
 
   /**
@@ -585,9 +584,9 @@ export default class App {
   #refreshCodeInfo() {
     var parsedOk = false
     this.#editing.xyz = []
-    if (this.#editing.config.code?.trim().length) {
+    if (this.#editing.layout.code?.trim().length) {
       try {
-        const code = this.#editing.config.code
+        const code = this.#editing.layout.code
         const pts = eval(`var x=${code};if(typeof x==='function'){x()}else{x}`)
         if (!Array.isArray(pts)) {
           throw ''
@@ -620,7 +619,7 @@ export default class App {
    */
   #refreshLayoutSave() {
     let canSave = false
-    switch (this.#editing.config.type) {
+    switch (this.#editing.layout.type) {
       case 'code':
         canSave = this.#editing.xyz.length
         break
@@ -635,38 +634,30 @@ export default class App {
    * Save the LED Layout to the server
    */
   async #saveLedLayout() {
-    let count
-    let layout
-    switch (this.#editing.config.type) {
+    const patch = {}
+    switch (this.#editing.layout.type) {
       case 'code':
-        count = this.#editing.xyz.length
-        layout = {
-          config: JSON.stringify(this.#editing.config),
-          coords: this.#coordinatesToText(this.#editing.xyz)
-        }
+        patch.count = this.#editing.xyz.length
+        patch.layout = JSON.stringify(this.#editing.layout)
+        patch.coordinates = this.#coordinatesToText(this.#editing.xyz)
         break
       default: // 'strip'
-        count = parseInt(document.getElementById('ledCount').value)
+        patch.count = parseInt(document.getElementById('ledCount').value)
         const coords = []
-        for (let i = 0; i < count; i++) {
-          const coord = Math.round(10000*(i+.5)/count)/10000
+        for (let i = 0; i < patch.count; i++) {
+          const coord = Math.round(10000*(i+.5)/patch.count)/10000
           coords.push(coord + ',' + coord + ',' + coord)
         }
-        layout = {
-          config: '{"layout":"strip"}',
-          coords: coords.join(',')
-        }
+        patch.layout = '{"type":"strip"}',
+        patch.coordinates = coords.join(',')
         break
     }
-    if (layout) {
-      this.#info.leds.count = count
-      this.#info.leds.layout = layout
+    if (patch.layout) {
+      this.#info.leds.count = patch.count
+      this.#info.leds.layout = patch.layout
       await fetch('/api/leds/settings',{
         method:'PATCH',
-        body:JSON.stringify({
-          ledCount: count,
-          ledLayout: layout
-        })
+        body:JSON.stringify(patch)
       })
     }
   }
