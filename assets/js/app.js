@@ -143,12 +143,28 @@ export default class App {
     const itemElement = element.closest('.item')
     const id = itemElement.dataset.field
     const field = this.#optionsField(id)
-    const isGlobal = this.#globalFields.some(f => f.id == id)
     const val = element.value
     let modelVal = val
     if (field.factor) {
       modelVal *= field.factor
     }
+    await this.#setOptionModelAndSave(itemElement, id, modelVal, val)
+  }
+
+  async onOptionColorHueChange(element) {
+    const itemElement = element.closest('.item')
+    const id = itemElement.dataset.field
+    const hue = element.value
+    const modelVal = {
+      number: 0,
+      rgb: this.#hsv2rgb({h: hue, s: 255, v: 255})
+    }
+    await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
+  }
+
+  async #setOptionModelAndSave(itemElement, id, modelVal, val) {
+    const field = this.#optionsField(id)
+    const isGlobal = this.#globalFields.some(f => f.id == id)
     if (isGlobal) {
       this.#info.leds.play.settings[id] = modelVal
     } else {
@@ -195,17 +211,20 @@ export default class App {
   #optionHtml(field) {
     const id = field.id
     const label = field.label
-    const range = [field.min, field.max]
-    const rangeLabels = []
-    range.forEach(val => {
-      rangeLabels.push(field.template ? eval(field.template, val) : val)
-    })
 
+    const element = document.getElementById(`t_${field.type}`)
     switch (field.type) {
-      case 'slider':
-        return eval('`' + document.getElementById('tSlider').innerHTML + '`', id, label, range, rangeLabels)
+      case 'slider': {
+        const range = [field.min, field.max]
+        const rangeLabels = []
+        range.forEach(val => {
+          rangeLabels.push(field.template ? eval(field.template, val) : val)
+        })
+        return eval('`' + element.innerHTML + '`', id, label, range, rangeLabels)    
+      }
       case 'hue':
-        return eval('`' + document.getElementById('tColor').innerHTML + '`', id, label, range, rangeLabels)
+      case 'color':
+        return eval('`' + element.innerHTML + '`', id, label)
       default:
         return ''
     }
@@ -217,13 +236,24 @@ export default class App {
    */
   #refreshOptionControls(field) {
     let val = this.#info.leds.play.settings[field.id] || this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
-    if (field.factor) val /= field.factor
 
     const itemElement = document.querySelector(`.page.options [data-field="${field.id}"]`)
     switch (field.type) {
       case 'slider':
       case 'hue':
-        const input = itemElement.querySelector('input').value = val
+        if (field.factor) val /= field.factor
+        itemElement.querySelector('input').value = val
+        break
+      case 'color':
+        console.log(val)
+        let rgb = val.rgb
+        console.log(rgb)
+        if (val.number > 0 && val.number <= this.#info.leds.colors.length) {
+          rgb = this.#info.leds.colors[val.number-1]
+        }
+        console.log(rgb)
+        const hsv = this.#rgb2hsv(rgb)
+        itemElement.querySelector('input').value = hsv.h
         break
     }
     this.#refreshOptionValue(itemElement, val, field)
@@ -242,13 +272,30 @@ export default class App {
     }
     switch (field.type) {
       case 'slider':
-        if (field.template) val = eval(field.template, val)
-          element.querySelector('.value').innerHTML = val
+        if (field.template) {
+          val = eval(field.template, val)
+        }
+        element.querySelector('.value').innerHTML = val
         break
       case 'hue':
         val *= (360/255)
-        element.querySelector('.value').style.backgroundColor=`hsl(${val},100%,50%)`
+        element.querySelector('.value').style.backgroundColor = `hsl(${val},100%,50%)`
         break
+      case 'color': {
+        const valueElement = element.querySelector('.value')
+        console.log(val)
+        let rgb = val.rgb
+        if (val.number > 0 && val.number <= this.#info.leds.colors.length) {
+          rgb = this.#info.leds.colors[val.number-1]
+          valueElement.innerText = val.number
+          valueElement.style.color = this.#toHex(this.#textColor(rgb))
+        } else {
+          valueElement.innerText = ''
+        }
+        console.log(rgb)
+        valueElement.style.backgroundColor = this.#toHex(rgb)
+        break
+      }
     }
   }
 
@@ -542,10 +589,9 @@ export default class App {
     let html = ''
     let index = 0
     this.#info.leds.colors.forEach(bg => {
-      const text = this.#textColor(bg)
-      const textHex = this.#toHex(text)
+      const textHex = this.#toHex(this.#textColor(bg))
       const bgHex = this.#toHex(bg)
-      html += `<div onclick="app.onColorClick(${index})" class="color selectabl rounded" style="color:${textHex};background-color:${bgHex}">${index+1}</div>`
+      html += `<div onclick="app.onColorClick(${index})" class="color selectable rounded" style="color:${textHex};background-color:${bgHex};height:100px">${index+1}</div>`
       index++
     })
     document.querySelector('#pColors .grid').innerHTML = html
@@ -624,7 +670,7 @@ export default class App {
   /**
    * Convert an rgb array to a hue, saturation, value
    * @param {Array} rgb - An array of [r,g,b]
-   * @returns A structure of {h, s, v}
+   * @returns A structure of {h, s, v} whose values are [0..255]
    */
   #rgb2hsv(rgb) {
     const r = rgb[0]/255, g = rgb[1]/255, b = rgb[2]/255
@@ -639,7 +685,7 @@ export default class App {
   
   /**
    * Convert a hue, saturation, value to red, green, blue
-   * @param hsv - A structure of {h, s, v}
+   * @param hsv - A structure of {h, s, v} whose values are [0..255]
    * @returns - An array of [r,g,b]
    */
   #hsv2rgb(hsv) {

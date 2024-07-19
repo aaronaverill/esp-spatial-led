@@ -22,4 +22,11 @@ namespace Web { namespace UI {
     field["type"] = "hue";
     field["label"] = label;
   }
+
+  void FieldsInfo::addColorChooser(const char *id, const char *label) {
+    JsonObject field = fields.add<JsonObject>();
+    field["id"] = id;
+    field["type"] = "color";
+    field["label"] = label;
+  }
 }}

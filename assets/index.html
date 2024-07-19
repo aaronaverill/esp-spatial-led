@@ -82,7 +82,7 @@
       <div id="pColorEdit" class="d-none flex-column h-100">
         <div class="title"><div onclick="app.showPage('pColors')" class="btn pa-4"><div class="img img-arrow-back"></div></div><div class="text pa-3"></div></div>
         <div class="page pa-4">
-          <div class="color w-100"></div>
+          <div class="color w-100 rounded" style="height:100px"></div>
           <div class="list">
             <div class="item py-3">
               <div>Hue</div>
@@ -146,7 +146,7 @@
   <!-- Gzip will compress most of this -->
 
   <!-- Template for option controls for field type 'slider' -->
-  <script type="text/x-template" id="tSlider">
+  <script type="text/x-template" id="t_slider">
 <div data-field="${id}" class="item pa-2">
   <div>${label}</div>
   <div class="d-flex w-100">
@@ -160,7 +160,7 @@
   </script>
 
   <!-- Template for option controls for field type 'hue' -->
-  <script type="text/x-template" id="tColor">
+  <script type="text/x-template" id="t_hue">
 <div data-field="${id}" class="item pa-2">
   <div>${label}</div>
   <div class="d-flex w-100">
@@ -172,6 +172,21 @@
   </div>
 </div>
   </script>
+
+  <!-- Template for option controls for field type 'color' -->
+  <script type="text/x-template" id="t_color">
+<div data-field="${id}" class="item pa-2">
+  <div>${label}</div>
+  <div class="d-flex w-100">
+    <div class="flex-grow-1 pr-3">
+      <div><input type="range" oninput="app.onOptionColorHueChange(this)" min="0" max="255" class="w-100" /></div>
+      <div class="rainbow" style="height:10px; margin:0 5px 0 9px"></div>
+    </div>
+    <div onclick="app.onOptionColorClick(this)" class="value flex-shrink-0 color rounded selectable"></div>
+  </div>
+</div>
+  </script>
+
   <script type="module">
     import App from '/js/app.js'
     window.app = new App()

@@ -36,5 +36,9 @@ namespace Services {
        * Set the current led's color by RGB
        */
       virtual void rgb(const CRGB& rgb) = 0;
+      /**
+       * Get the list of system colors
+       */
+      virtual const std::vector<CRGB>& getColors() const = 0;
   };
 }
