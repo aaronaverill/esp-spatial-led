@@ -164,12 +164,49 @@ export default class Led3D extends HTMLElement {
     // Draw dout and din
     if (points.length) {
       const firstPoint = points.find(p => p.i == 0)
-      this.#drawText(ctx, 'din', firstPoint.x, firstPoint.y - this.#radius, firstPoint.color[3])
+      this.#drawText(ctx, 'din', firstPoint.x, firstPoint.y - this.#radius - 10, firstPoint.color[3])
       if (points.length > 1) {
         const lastPoint = points.find(p => p.i ==points.length - 1)
-        this.#drawText(ctx, 'dout', lastPoint.x, lastPoint.y - this.#radius, lastPoint.color[3])
+        this.#drawText(ctx, 'dout', lastPoint.x, lastPoint.y - this.#radius - 10, lastPoint.color[3])
       }
     }
+
+    // Draw the axis
+    const axisCoordinates = []
+    for(let i = 0; i < 7; i++) {
+      axisCoordinates[i] = [0, 0, 0]
+    }
+    for(let i = 0; i < 3; i++) {
+      axisCoordinates[i][i] = 1
+      axisCoordinates[3+i][i] = 0.8
+    }
+
+    const axisSize = 100
+    const axisRect = {
+      x: 5,
+      y: drawRect.h - axisSize - 5,
+      w: axisSize,
+      h: axisSize
+    }
+    const axisPoints = this.#getCoordinateDrawInfo(axisCoordinates, axisRect, 0.6)
+    const axisColors = ['#F66', '#66F', '#8E8']
+    const axisLabels = ['x', 'y', 'z']
+
+    ctx.font = '14pt Arial'
+    ctx.textBaseline = 'middle'
+    ctx.textAlign = 'center'
+    ctx.lineWidth = 3
+    axisColors.forEach((color, index) => {
+      ctx.strokeStyle = color
+      ctx.beginPath()
+      ctx.moveTo(axisPoints[6].x, axisPoints[6].y)
+      ctx.lineTo(axisPoints[3+index].x, axisPoints[3+index].y)
+      ctx.stroke()
+
+      ctx.fillStyle = color
+      ctx.fillText(axisLabels[index], axisPoints[index].x, axisPoints[index].y)
+    })
+
 
     // Draw a nice border
     ctx.strokeStyle = '#666'  // Border color
@@ -233,11 +270,9 @@ export default class Led3D extends HTMLElement {
    */
   #drawText(ctx, text, x, y, alpha) {
     ctx.font = '14pt Arial'
+    ctx.textAlign = 'center'
     ctx.fillStyle = `rgba(255,255,255,${alpha})`
-    const textWidth = ctx.measureText(text).width
-    const textX = x - textWidth / 2
-    const textY = y - 10
-    ctx.fillText(text, textX, textY)
+    ctx.fillText(text, x, y)
   }
 
   /**
@@ -348,12 +383,14 @@ export default class Led3D extends HTMLElement {
   #zoom = 0.33
   #autoRotate = true
   #rotateSpeed = -0.4
-  #rotation = Quaternion.fromAxisAngle([1, 0, 0], -.4)
+  #rotation = Quaternion.fromEulerAngles(Math.PI*3/4, Math.PI/8, -Math.PI/8)
   #isDragging = 0
   #mouseDownLocation
   #mouseDownRotation
 
   #lastFrameTime
+
+  //Quaternion {w: -0.27178155050789454, x: -0.8857626750332447, y: -0.10754572916847172, z: -0.3605456815149862}
 
   /**
    * The canvas object
