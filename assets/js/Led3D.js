@@ -68,7 +68,7 @@ export default class Led3D extends HTMLElement {
 
   /**
    * Set the vertices
-   * @param vertices - An array of [x,y,z] tuples
+   * @param {Array} vertices - An array of [x,y,z] tuples
    */
   set vertices(vertices) {
     this.#vertices = []
@@ -100,7 +100,7 @@ export default class Led3D extends HTMLElement {
 
   /**
    * Set the color array
-   * @param colorArray - A ArrayBuffer object with R,G,B bytes for the colors
+   * @param {ArrayBuffer} colorArray - A ArrayBuffer object with R,G,B bytes for the colors
    */
   set colorArray(colorArray) {
     this.#colorArray = colorArray
@@ -111,23 +111,24 @@ export default class Led3D extends HTMLElement {
    * Render the vertex information to the canvas
    */
   #render() {
-    const ctx = this.#canvas.getContext('2d')
     // Set canvas size
     const rect = this.getBoundingClientRect()
+    if (!rect.width || !rect.height) {
+      return
+    }
+
     this.#canvas.width = rect.width
     this.#canvas.height = Math.floor(rect.height)
 
-    // Center of the canvas
-    const center = [
-      this.#canvas.width / 2,
-      this.#canvas.height / 2,
-      0
-    ]
+    const drawRect = {
+      x: 0, 
+      y: 0, 
+      w: rect.width, 
+      h: rect.height
+    }
+    const points = this.#getCoordinateDrawInfo(this.#vertices, drawRect, this.#zoom, new Uint8Array(this.#colorArray))
 
-    const scale = this.#zoom * Math.min(center[0], center[1])
-
-    const points = this.#getCoordinateDrawInfo(this.#vertices, center, scale, new Uint8Array(this.#colorArray))
-
+    const ctx = this.#canvas.getContext('2d')
     // Fill the background
     ctx.fillStyle = '#181818' // Background color
     ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
@@ -176,7 +177,23 @@ export default class Led3D extends HTMLElement {
     ctx.strokeRect(0, 0, this.#canvas.width, this.#canvas.height)
   }
 
-  #getCoordinateDrawInfo(coordinates, center, scale, colors) {
+  /**
+   * 
+   * @param {Array} coordinates - An array of coordinates in [x,y,z] format
+   * @param {object} drawRect - An object where the coordinates are drawn {x,y,w,h}
+   * @param {number} zoom - The zoom factor, use 0.33 to fit a [0..1] cube
+   * @param {ArrayByffer} colors - The coordinate colors in r,g,b order
+   * @returns 
+   */
+  #getCoordinateDrawInfo(coordinates, drawRect, zoom, colors) {
+    // Center of the draw area
+    const center = [
+      drawRect.x + drawRect.w / 2,
+      drawRect.y + drawRect.h / 2,
+      0
+    ]
+    const scale = zoom * Math.min(drawRect.w, drawRect.h)
+    
     const points = []
     coordinates.forEach((coordinate, index) => {
       const xyz = Quaternion.rotatePoint(this.#rotation, coordinate)
@@ -327,8 +344,8 @@ export default class Led3D extends HTMLElement {
   #vertices = []
   #colorArray = new Uint8Array()
 
-  #radius = 20
-  #zoom = 0.45
+  #radius = 30
+  #zoom = 0.33
   #autoRotate = true
   #rotateSpeed = -0.4
   #rotation = Quaternion.fromAxisAngle([1, 0, 0], -.4)
