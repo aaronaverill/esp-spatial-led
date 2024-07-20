@@ -14,7 +14,7 @@ namespace Algorithm {
     return Matrix3D();
   }
 
-  Matrix3D Matrix3D::translation(float tx, float ty, float tz) {
+  Matrix3D Matrix3D::translation(CoordinateType tx, CoordinateType ty, CoordinateType tz) {
     Matrix3D result;
     result.matrix[0][3] = tx;
     result.matrix[1][3] = ty;
@@ -22,14 +22,15 @@ namespace Algorithm {
     return result;
   }
 
-  Matrix3D Matrix3D::rotation(float ax, float ay, float az) {
+  Matrix3D Matrix3D::rotation(CoordinateType ax, CoordinateType ay, CoordinateType az) {
+    float pi2 = 6.28318530718;
     Matrix3D result;
-    float cx = std::cos(ax);
-    float sx = std::sin(ax);
-    float cy = std::cos(ay);
-    float sy = std::sin(ay);
-    float cz = std::cos(az);
-    float sz = std::sin(az);
+    CoordinateType cx = std::cos(((float)ax)/CoordinateMax * pi2);
+    CoordinateType sx = std::sin(((float)ax)/CoordinateMax * pi2);
+    CoordinateType cy = std::cos(((float)ay)/CoordinateMax * pi2);
+    CoordinateType sy = std::sin(((float)ay)/CoordinateMax * pi2);
+    CoordinateType cz = std::cos(((float)az)/CoordinateMax * pi2);
+    CoordinateType sz = std::sin(((float)az)/CoordinateMax * pi2);
 
     result.matrix[0][0] = cy * cz;
     result.matrix[0][1] = -cy * sz;
@@ -54,10 +55,11 @@ namespace Algorithm {
     return result;
   }
 
-  Matrix3D Matrix3D::rotationX(float angle) {
+/*
+  Matrix3D Matrix3D::rotationX(CoordinateType angle) {
     Matrix3D result;
-    float c = std::cos(angle);
-    float s = std::sin(angle);
+    CoordinateType c = std::cos(angle);
+    CoordinateType s = std::sin(angle);
     result.matrix[1][1] = c;
     result.matrix[1][2] = -s;
     result.matrix[2][1] = s;
@@ -65,10 +67,10 @@ namespace Algorithm {
     return result;
   }
 
-  Matrix3D Matrix3D::rotationY(float angle) {
+  Matrix3D Matrix3D::rotationY(CoordinateType angle) {
     Matrix3D result;
-    float c = std::cos(angle);
-    float s = std::sin(angle);
+    CoordinateType c = std::cos(angle);
+    CoordinateType s = std::sin(angle);
     result.matrix[0][0] = c;
     result.matrix[0][2] = s;
     result.matrix[2][0] = -s;
@@ -76,10 +78,10 @@ namespace Algorithm {
     return result;
   }
 
-  Matrix3D Matrix3D::rotationZ(float angle) {
+  Matrix3D Matrix3D::rotationZ(CoordinateType angle) {
     Matrix3D result;
-    float c = std::cos(angle);
-    float s = std::sin(angle);
+    CoordinateType c = std::cos(angle);
+    CoordinateType s = std::sin(angle);
     result.matrix[0][0] = c;
     result.matrix[0][1] = -s;
     result.matrix[1][0] = s;
@@ -87,13 +89,14 @@ namespace Algorithm {
     return result;
   }
 
-  Matrix3D Matrix3D::scale(float sx, float sy, float sz) {
+  Matrix3D Matrix3D::scale(CoordinateType sx, CoordinateType sy, CoordinateType sz) {
     Matrix3D result;
     result.matrix[0][0] = sx;
     result.matrix[1][1] = sy;
     result.matrix[2][2] = sz;
     return result;
   }
+*/
 
   Matrix3D Matrix3D::operator*(const Matrix3D& other) const {
     Matrix3D result;
@@ -108,7 +111,7 @@ namespace Algorithm {
     return result;
   }
 
-  void Matrix3D::multiplyVec(const float vec[4], float result[4]) const {
+  void Matrix3D::multiplyVec(const CoordinateType vec[4], CoordinateType result[4]) const {
     for (int i = 0; i < 4; ++i) {
       result[i] = 0;
       for (int j = 0; j < 4; ++j) {

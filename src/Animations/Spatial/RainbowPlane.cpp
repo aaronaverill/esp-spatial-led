@@ -25,7 +25,7 @@ namespace Animations { namespace Spatial {
     settings["repeat"] = repeat6;
     for(uint8_t i = 1; i < 3; i++) {
       String id = String("rotation") + String((int)i);
-      settings[id] = rotation[i];
+      settings[id] = rotation[i]/CoordinateMax;
     }
   }
 
@@ -43,7 +43,7 @@ namespace Animations { namespace Spatial {
     for(uint8_t i = 1; i < 3; i++) {
       String id = String("rotation") + String((int)i);
       if (!settings[id].isNull()) {
-        rotation[i] = settings[id];
+        rotation[i] = ((float)settings[id])*CoordinateMax;
         setRotation = true;
       }
     }
@@ -60,12 +60,13 @@ namespace Animations { namespace Spatial {
     Animation::renderFrame();
   }
 
+
   void RainbowPlane::renderLed(int index, const Coordinate& coordinate) {
-    float point[4] = {coordinate.x, coordinate.y, coordinate.z, 1};
-    float transformedPoint[4];
+    CoordinateType point[4] = {coordinate.x, coordinate.y, coordinate.z, 1};
+    CoordinateType transformedPoint[4];
     rotationMatrix.multiplyVec(point, transformedPoint);
 
-    byte offset = transformedPoint[0]*256*repeat6/6;
+    byte offset = transformedPoint[0]*256*repeat6/CoordinateMax;
     context.hsv(CHSV(hue+offset, 255, 255));
   }
 
@@ -82,7 +83,6 @@ namespace Animations { namespace Spatial {
   }
 
   void RainbowPlane::updateRotation() {
-    float pi2 = 6.28318530718;
-    rotationMatrix = Algorithm::Matrix3D::rotation(pi2*rotation[0]/360, pi2*rotation[1]/360, pi2*rotation[2]/360);
+    rotationMatrix = Algorithm::Matrix3D::rotation(rotation[0], rotation[1], rotation[2]);
   }
 }}

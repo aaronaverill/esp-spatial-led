@@ -20,7 +20,7 @@ namespace Animations { namespace Spatial {
       byte hueIncrement;
       byte hue;
       byte repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
-      float rotation[3] = {0, 0, 0};
+      CoordinateType rotation[3] = {0, 0, 0};
       Algorithm::Matrix3D rotationMatrix;
   };
 }}

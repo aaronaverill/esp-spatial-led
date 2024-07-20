@@ -31,9 +31,9 @@ namespace Services {
     ledCoordinates = std::vector<Coordinate>();
     byte pos = 0;
     char *err, *p =(char *)coordinates;
-    float parts[3];
+    CoordinateType parts[3];
     while (*p) {
-      parts[pos] = strtod(p, &err);
+      parts[pos] = strtof(p, &err) * CoordinateMax;
       if (p == err) {
         p++;
       } else {

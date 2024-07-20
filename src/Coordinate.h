@@ -1,6 +1,8 @@
 #pragma once
 
-#define CoordinateType float
+#include <Arduino.h>
+#define CoordinateType uint16_t
+#define CoordinateMax 65535
 
 /**
  * Represents a 3 dimensional coordinate
