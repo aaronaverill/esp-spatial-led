@@ -541,7 +541,6 @@ export default class App {
    * @param coordinates - A list of [x, y, z] coordinates
    */
   #coordinatesToText(coordinates) {
-    console.log(coordinates.flat().join(','))
     return coordinates
       .flat()
       .map(v => v == 0 ? '0' : v.toFixed(3).replace(/0+$/g, '').replace(/\.$/, ''))
@@ -653,11 +652,11 @@ export default class App {
     }
 
     // Normalize coordinates
-    return xyz.map(coord => [
-      (coord[0] - minMaxes[0][0]) * scale[0],
-      (coord[1] - minMaxes[1][0]) * scale[1],
-      (coord[2] - minMaxes[2][0]) * scale[2]
-    ])
+    return xyz.map(
+      coord => [0, 1, 2].map(
+        axis => Number.isFinite(scale[axis]) ? (coord[axis] - minMaxes[axis][0]) * scale[axis] : 0.5
+      )
+    )
   }
 
   /**
@@ -687,7 +686,6 @@ export default class App {
         patch.count = this.#editing.xyz.length
         patch.layout = JSON.stringify(this.#editing.layout)
         patch.coordinates = this.#coordinatesToText(this.#editing.xyz)
-        console.log(patch.coordinates)
         break
       default: // 'strip'
         patch.count = parseInt(document.getElementById('ledCount').value)
