@@ -90,7 +90,10 @@ export default class Led3D extends HTMLElement {
 
       const centers = maxValues.map((max, i) => (max + minValues[i]) / 2)
 
-      this.#vertices = vertices.map(vertex => vertex.map((value, i) => (value - centers[i]) * scaleFactor))
+      this.#vertices = vertices
+        .map(vertex => vertex
+          .map((value, i) => isFinite(scaleFactor) ? (value - centers[i]) * scaleFactor : 0.5) 
+        )
     }
     this.#render()
   }
