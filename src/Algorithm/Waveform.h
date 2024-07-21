@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "Algorithm/Math.h"
 
 #define PI2 PI*2
 
@@ -24,6 +25,11 @@ namespace Algorithm {
        * Return value linearly rises from 0 to 1 then drops back to zero.
        */
       static float sawtooth(float v) {
+        if (v < 0) {
+          v = 1 + Algorithm::Math::fraction(v);
+        } else if (v > 1) {
+          v = Algorithm::Math::fraction(v);
+        }
         return v;
       }
 
@@ -32,7 +38,13 @@ namespace Algorithm {
        * Return value linearly rises from 0 to 1 until input is 0.5 then falls linearly back to zero.
        */
       static float triangle(float v) {
-        return 1.f - fabsf(v*2 - 1);
+        if (v < 0) {
+          v = 1 + Algorithm::Math::fraction(v);
+        } else if (v > 1) {
+          v = Algorithm::Math::fraction(v);
+        }
+        float x = 1.f - fabsf(v*2 - 1);
+        return x;
       }
 
       /**
