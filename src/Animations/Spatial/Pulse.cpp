@@ -1,6 +1,7 @@
 #include "Pulse.h"
 
 #include "System/Clock.h"
+#include "Algorithm/Math.h"
 #include "Algorithm/Waveform.h"
 
 using namespace System;
@@ -9,7 +10,7 @@ using namespace Algorithm;
 namespace Animations { namespace Spatial {
 
   void Pulse::getFields(Web::UI::FieldsInfo& fields) {
-    fields.addSlider("speed", "Speed", 1, 60);
+    fields.addSlider("speed", "Speed", 1, 60, nullptr, 0);
   }
 
   void Pulse::getSettings(JsonObject& settings) const {
@@ -37,16 +38,12 @@ namespace Animations { namespace Spatial {
     float y = (float)coordinate.y / CoordinateMax;
     float z = (float)coordinate.z / CoordinateMax;
 
-    float intPart;
-    float wave = 3*t1_wave + x*r1 + y*r2 + z*r3;
-    wave = modff(wave, &intPart);
-
+    float wave = Math::fraction(3*t1_wave + x*r1 + y*r2 + z*r3);
     float v = Waveform::triangle(wave);
     v = v*v*v*v*v;
 
-    byte hb = min((float)255, 255 * t1);
-    byte sb = v < .8 ? 255 : 0;
-    byte vb = min((float)255, 255 * v);
-    context.hsv(CHSV(hb, sb, vb));
+    float h = t1;
+    float s = v < .8 ? 1 : 0;
+    context.hsv(CHSV(255 * h, 255 * s, 255 * v));
   }
 }}
