@@ -1,19 +1,21 @@
 #include "CubeFire.h"
 
-#include "Algorithm/Signal.h"
+#include "System/Clock.h"
+#include "Algorithm/Waveform.h"
 
+using namespace System;
 using namespace Algorithm;
 
 namespace Animations { namespace Spatial {
   void CubeFire::renderFrame() {
-    t1 = Signal::time(.1/speed);
-    t2 = Signal::time(.13/speed);
-    t3 = Signal::time(.085/speed);
-    scale = (.5 + Signal::wave(Signal::time(.1)))/2;
+    t1 = Clock::time(.1/speed);
+    t2 = Clock::time(.13/speed);
+    t3 = Clock::time(.085/speed);
+    scale = (.5 + Waveform::sine(Clock::time(.1)))/2;
 
-    t1_wave = Signal::wave(t1);
-    t2_wave = Signal::wave(t2);
-    t3_wave = Signal::wave(t3);
+    t1_wave = Waveform::sine(t1);
+    t2_wave = Waveform::sine(t2);
+    t3_wave = Waveform::sine(t3);
 
     SpatialAnimation::renderFrame();
   }
@@ -25,7 +27,7 @@ namespace Animations { namespace Spatial {
 
     float h = t1 + x*.25 + y*.25 + z*.25;
     float s = 1;
-    float v = (Signal::wave(z*scale + t1_wave) * Signal::wave(y*scale + t2_wave) * Signal::wave(x*scale + t3_wave))*10;
+    float v = (Waveform::sine(z*scale + t1_wave) * Waveform::sine(y*scale + t2_wave) * Waveform::sine(x*scale + t3_wave))*10;
     s = v-1;
     v = v*v*v;
   
