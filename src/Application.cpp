@@ -7,6 +7,7 @@
 #include "Animations/Colorloop.h"
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
+#include "Animations/Spatial/Binary.h"
 #include "Animations/Spatial/CubeFire.h"
 #include "Animations/Spatial/Pulse.h"
 #include "Animations/Spatial/RainbowPlane.h"
@@ -44,6 +45,7 @@ Application::Application() {
   ledDriver.addAnimation(new Animations::Colorloop(ledDriver));
   ledDriver.addAnimation(new Animations::Rainbow(ledDriver));
   ledDriver.addAnimation(new Animations::Solid(ledDriver));
+  ledDriver.addAnimation(new Animations::Spatial::Binary(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::CubeFire(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::Pulse(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::RainbowPlane(ledDriver));
