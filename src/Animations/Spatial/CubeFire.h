@@ -26,10 +26,10 @@ namespace Animations { namespace Spatial {
     private:
       float speed = 1; // How fast the spheres travel through 3D space
       float t1; // x offset
-      float t2; // y offset
-      float t3; // z offset
-      float scale;
 
-      float t1_wave, t2_wave, t3_wave;
+      float t1_wave; // x sine
+      float t2_wave; // y sine
+      float t3_wave; // z sine
+      float scale;
   };
 }}

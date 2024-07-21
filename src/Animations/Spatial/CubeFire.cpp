@@ -9,13 +9,14 @@ using namespace Algorithm;
 namespace Animations { namespace Spatial {
   void CubeFire::renderFrame() {
     t1 = Clock::time(.1/speed);
-    t2 = Clock::time(.13/speed);
-    t3 = Clock::time(.085/speed);
-    scale = (.5 + Waveform::sine(Clock::time(.1)))/2;
+    float t2 = Clock::time(.13/speed);
+    float t3 = Clock::time(.085/speed);
 
     t1_wave = Waveform::sine(t1);
     t2_wave = Waveform::sine(t2);
     t3_wave = Waveform::sine(t3);
+
+    scale = (.5 + Waveform::sine(Clock::time(.1)))/2;
 
     SpatialAnimation::renderFrame();
   }
@@ -26,18 +27,11 @@ namespace Animations { namespace Spatial {
     float z = (float)coordinate.z / CoordinateMax;
 
     float h = t1 + x*.25 + y*.25 + z*.25;
-    float s = 1;
     float v = (Waveform::sine(z*scale + t1_wave) * Waveform::sine(y*scale + t2_wave) * Waveform::sine(x*scale + t3_wave))*10;
-    s = v-1;
+    float s = Math::fraction(v-1);
     v = v*v*v;
   
-    if (v < 0.05) {
-      context.rgb(CRGB(0,0,0));
-    } else {
-      byte hb = min((float)255,h*255);
-      byte sb = min((float)255,s*255);
-      byte vb = min((float)255,v*255);
-      context.hsv(CHSV(hb,sb,vb));
-    }
+    h = Math::fraction(h);
+    context.hsv(CHSV(255 * h, 255 * s, 255 * v));
   }
 }}
