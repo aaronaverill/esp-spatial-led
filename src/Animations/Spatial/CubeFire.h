@@ -29,5 +29,7 @@ namespace Animations { namespace Spatial {
       float t2; // y offset
       float t3; // z offset
       float scale;
+
+      float t1_wave, t2_wave, t3_wave;
   };
 }}
