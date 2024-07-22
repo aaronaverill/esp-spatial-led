@@ -78,3 +78,5 @@ function() {
   return coords
 }
 ```
+
+![led mapping][./doc/led-layout-cube.png]
