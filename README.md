@@ -79,4 +79,4 @@ function() {
 }
 ```
 
-![led mapping][./doc/led-layout-cube.png]
+![led mapping](./doc/led-layout-cube.png)
