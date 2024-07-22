@@ -40,7 +40,7 @@ namespace Animations { namespace Spatial {
   }
 
   void Binary::renderLed(int index, const Coordinate& coordinate) {
-    float x= (float)coordinate.x / CoordinateMax;
+    float x = (float)coordinate.x / CoordinateMax;
     float y = (float)coordinate.y / CoordinateMax;
     float z = (float)coordinate.z / CoordinateMax;
 
