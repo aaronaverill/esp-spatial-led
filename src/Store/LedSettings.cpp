@@ -21,10 +21,16 @@ namespace Store {
     if (ledCount) {
       leds.setLedCount(ledCount);
     }
+
     JsonVariant brightness = doc["play"]["brightness"];
     if (brightness) {
       leds.setBrightness(brightness);
     }
+    JsonVariant animationIndex = doc["play"]["index"];
+    if (animationIndex) {
+      leds.setCurrentAnimationIndex(animationIndex);
+    }
+
     std::vector<CRGB> colors;
     JsonVariant jsonColors = doc["colors"];
     if (jsonColors) {
@@ -56,6 +62,7 @@ namespace Store {
     JsonDocument doc;
     doc["ledCount"] = leds.getLedCount();
     doc["play"]["brightness"] = leds.getBrightness();
+    doc["play"]["index"] = leds.getCurrentAnimationIndex();
 
     JsonArray jsonColors = doc["colors"].to<JsonArray>();
     for(CRGB rgb:leds.getColors()) {

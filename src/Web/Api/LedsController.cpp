@@ -72,6 +72,7 @@ namespace Web { namespace Api {
   void LedsController::setPlayIndex(AsyncWebServerRequest *request) {
     uint index = request->getParam("index")->value().toInt();
     leds.setCurrentAnimationIndex(index);
+    Store::LedSettings::write(fs, leds);
     request->send(200, "text/plain", "OK");
   }
 
