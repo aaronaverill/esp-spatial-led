@@ -1,6 +1,7 @@
 #pragma once
-#include <FastLED.h>
 #include "Coordinate.h"
+
+#include <FastLED.h>
 
 namespace Services {
   /**
@@ -31,11 +32,11 @@ namespace Services {
       /**
        * Set the current led's color by HSV
        */
-      virtual void hsv(const CHSV& hsv) = 0;
+      virtual void hsv(uint8_t h, uint8_t s, uint8_t v) = 0;
       /**
        * Set the current led's color by RGB
        */
-      virtual void rgb(const CRGB& rgb) = 0;
+      virtual void rgb(uint8_t r, uint8_t g, uint8_t b) = 0;
       /**
        * Get the list of system colors
        */

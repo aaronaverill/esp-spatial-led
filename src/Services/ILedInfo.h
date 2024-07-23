@@ -1,5 +1,4 @@
 #pragma once
-#include <FastLED.h>
 
 namespace Services {
   /**

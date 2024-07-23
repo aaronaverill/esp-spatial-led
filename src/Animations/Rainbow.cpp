@@ -39,7 +39,7 @@ namespace Animations {
 
   void Rainbow::renderLed(int index) {
     byte offset = (float)index*256/context.getRenderLedCount()*repeat6/6;
-    context.hsv(CHSV(hue+offset, 255, 255));
+    context.hsv(hue+offset, 255, 255);
   }
 
   void Rainbow::setBpm(byte bpm) {

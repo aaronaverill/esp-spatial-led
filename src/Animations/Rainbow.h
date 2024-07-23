@@ -3,8 +3,6 @@
 
 #include "Services/ILedDriverAnimationContext.h"
 
-#include <FastLED.h>
-
 namespace Animations {
   class Rainbow: public Animation {
     public:

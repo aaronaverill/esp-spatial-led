@@ -55,6 +55,6 @@ namespace Animations { namespace Spatial {
     h = Math::fraction(Waveform::triangle(h)/5 + (x + y + z)/3 + t1_saw);
     v = v * v * v;
 
-    context.hsv(CHSV(255 * h, 255, 255 * v));
+    context.hsv(255 * h, 255, 255 * v);
   }
 }}

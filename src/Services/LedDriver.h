@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <FS.h>
+#include <FastLED.h>
 #include "IService.h"
 #include "ILedInfo.h"
 #include "Services/Led/INeoPixelBus.h"
@@ -57,11 +58,11 @@ namespace Services {
       /**
        * Set the current led's color by HSV
        */
-      void hsv(const CHSV& hsv);
+      void hsv(uint8_t h, uint8_t s, uint8_t v);
       /**
        * Set the current led's color by RGB
        */
-      void rgb(const CRGB& rgb);
+      void rgb(uint8_t r, uint8_t g, uint8_t b);
       
       /**
        * Set the led coordinate map

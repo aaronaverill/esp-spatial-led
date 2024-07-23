@@ -1,6 +1,8 @@
 #include "RainbowPlane.h"
 #include "Algorithm/Matrix3D.h"
 
+#include <FastLED.h>
+
 namespace Animations { namespace Spatial {
   RainbowPlane::RainbowPlane(Services::ILedDriverAnimationContext& context):
     SpatialAnimation(context, "Rainbow Plane") {
@@ -67,7 +69,7 @@ namespace Animations { namespace Spatial {
     rotationMatrix.multiplyVec(point, transformedPoint);
 
     byte offset = transformedPoint[0]*256*repeat6/CoordinateMax;
-    context.hsv(CHSV(hue+offset, 255, 255));
+    context.hsv(hue+offset, 255, 255);
   }
 
   void RainbowPlane::setBpm(byte bpm) {

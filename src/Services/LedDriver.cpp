@@ -68,12 +68,12 @@ namespace Services {
     this->brightness = brightness;
   }
 
-  void LedDriver::hsv(const CHSV& hsv) {
-    strip->setPixelColorHSV(this, currentLed, hsv.h, hsv.s, hsv.v);
+  void LedDriver::hsv(uint8_t h, uint8_t s, uint8_t v) {
+    strip->setPixelColorHSV(this, currentLed, h, s, v);
   }
 
-  void LedDriver::rgb(const CRGB& rgb) {
-    strip->setPixelColorRGB(this, currentLed, rgb.r, rgb.g, rgb.b);
+  void LedDriver::rgb(uint8_t r, uint8_t g, uint8_t b) {
+    strip->setPixelColorRGB(this, currentLed, r, g, b);
   }
 
   void LedDriver::addAnimation(Animations::Animation* animation) {

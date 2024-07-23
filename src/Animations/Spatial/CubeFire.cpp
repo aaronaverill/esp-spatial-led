@@ -32,6 +32,6 @@ namespace Animations { namespace Spatial {
     v = v*v*v;
   
     h = Math::fraction(h);
-    context.hsv(CHSV(255 * h, 255 * s, 255 * v));
+    context.hsv(255 * h, 255 * s, 255 * v);
   }
 }}

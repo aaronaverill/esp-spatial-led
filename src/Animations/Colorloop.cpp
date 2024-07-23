@@ -29,7 +29,7 @@ namespace Animations {
   }
 
   void Colorloop::renderLed(int index) {
-    context.hsv(CHSV(hue,255,255));
+    context.hsv(hue,255,255);
   }
 
   void Colorloop::setBpm(byte bpm) {

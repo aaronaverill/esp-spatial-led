@@ -3,8 +3,6 @@
 
 #include "Services/ILedDriverAnimationContext.h"
 
-#include <FastLED.h>
-
 namespace Animations {
   class Colorloop: public Animation {
     public:

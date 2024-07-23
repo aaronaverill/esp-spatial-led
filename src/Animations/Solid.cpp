@@ -1,5 +1,7 @@
 #include "Solid.h"
 
+#include <FastLED.h>
+
 namespace Animations {
   void Solid::getFields(Web::UI::FieldsInfo& fields) {
     fields.addColorChooser("color", "Color");
@@ -33,9 +35,10 @@ namespace Animations {
 
   void Solid::renderLed(int index) {
     if (color.number > 0 && color.number <= context.getColors().size()) {
-      context.rgb(context.getColors()[color.number-1]);
+      CRGB rgb = context.getColors()[color.number-1];
+      context.rgb(rgb.r, rgb.g, rgb.b);
     } else {
-      context.rgb(color.rgb);
+      context.rgb(color.rgb.r, color.rgb.g, color.rgb.b);
     }
   }
 }

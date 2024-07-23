@@ -44,6 +44,6 @@ namespace Animations { namespace Spatial {
 
     float h = t1;
     float s = v < .8 ? 1 : 0;
-    context.hsv(CHSV(255 * h, 255 * s, 255 * v));
+    context.hsv(255 * h, 255 * s, 255 * v);
   }
 }}
