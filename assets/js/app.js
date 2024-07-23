@@ -473,10 +473,11 @@ export default class App {
    */
   #refreshLibrary() {
     let html = ''
-    for (let i = 0; i < this.#info.leds.animations.length; i++) {
+    this.#info.leds.animations.forEach((animation, i) => {
       const selected = i == this.#info.leds.play.index ? ' selected' : ''
-      html += '<div class="item selectable pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + this.#info.leds.animations[i].name + '</div></div>'
-    }
+      const tags = animation.tags?.split(',')?.map(v => `<div class="img img-tag-${v}"></div>`)?.join('') || ''
+      html += '<div class="item selectable d-flex pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + animation.name + '</div>' + tags + '</div>'
+    })
     document.getElementById('animations').innerHTML = html
   }
 
