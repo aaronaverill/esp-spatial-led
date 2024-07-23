@@ -1,12 +1,8 @@
 #include "LedDriver.h"
 
-#include <FastLED.h>
+#include "Services/Led/NeoPixelBusFactory.h"
 #include "Store/LedSettings.h"
 #include "Store/LedLayout.h"
-
-#define DATA_PIN D4
-#define CHIPSET WS2812B
-#define RGB_ORDER GRB
 
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
@@ -60,25 +56,24 @@ namespace Services {
   }
 
   const Coordinate& LedDriver::getLedCoordinate(uint index) const {
-    if (index < renderLedCount && index < ledCoordinates.size()) {
+    if (index < strip->pixelCount() && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {
-      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = (index+0.5)/renderLedCount;
+      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = (index+0.5)/strip->pixelCount();
       return autoCoordinate;
     }
   }
 
   void LedDriver::setBrightness(uint8_t brightness) {
     this->brightness = brightness;
-    FastLED.setBrightness(brightness);
   }
 
   void LedDriver::hsv(const CHSV& hsv) {
-    leds[currentLed] = hsv;
+    strip->setPixelColorHSV(this, currentLed, hsv.h, hsv.s, hsv.v);
   }
 
   void LedDriver::rgb(const CRGB& rgb) {
-    leds[currentLed] = rgb;
+    strip->setPixelColorRGB(this, currentLed, rgb.r, rgb.g, rgb.b);
   }
 
   void LedDriver::addAnimation(Animations::Animation* animation) {
@@ -100,23 +95,19 @@ namespace Services {
     Store::LedSettings::read(fs, *this);
     setLedCoordinates(Store::LedLayout::readCoordinates(fs).c_str());
     
-    controller = new CHIPSET<DATA_PIN, RGB_ORDER>();
-    renderLedCount = ledCount;
-    leds = new CRGB[renderLedCount];
-    FastLED.addLeds(controller, leds, renderLedCount, 0);
-    FastLED.setBrightness(brightness);
+    strip = createController();
   }
 
   void LedDriver::loop() {
-    if (ledCount != renderLedCount) {
-      if (ledCount < renderLedCount) {
-        FastLED.clear();
-        FastLED.show();
+    if (ledCount != strip->pixelCount() || 
+      chipset != strip->getChipset() ||
+      colorOrder != strip->getColorOrder()) {
+      if (ledCount < strip->pixelCount()) {
+        strip->clear();
+        strip->show();
       }
-      renderLedCount = ledCount;
-      delete leds;
-      leds = new CRGB[renderLedCount];
-      controller->setLeds(leds, renderLedCount);
+      delete strip;
+      strip = createController();
     }
     if (currentAnimation) {
       if (fps == -1) {
@@ -132,9 +123,19 @@ namespace Services {
         fpsFrames = 0;
       }
     } else {
-      FastLED.clear();
-      FastLED.show();
+      strip->clear();
+      strip->show();
     }
   }
 
+  Led::INeoPixelBus* LedDriver::createController() const {
+    Led::INeoPixelBus *controller = Led::NeoPixelBusFactory::create(chipset, colorOrder, ledCount);
+
+    if (controller) {
+      controller->begin();
+      controller->show();
+    }
+       
+    return controller;
+  }
 }

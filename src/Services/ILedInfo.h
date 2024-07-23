@@ -14,6 +14,11 @@ namespace Services {
       /**
        * Get the led array
        */
-      virtual CRGB* getLeds() const = 0;
+      virtual const uint8_t *getLeds() const = 0;
+
+      /**
+       * Get the current brightness setting
+       */
+      virtual uint8_t getBrightness() const = 0;
   };
 }

@@ -1,9 +1,9 @@
 #pragma once
 #include <Arduino.h>
 #include <FS.h>
-#include <FastLED.h>
 #include "IService.h"
 #include "ILedInfo.h"
+#include "Services/Led/INeoPixelBus.h"
 #include "Animations/Animation.h"
 #include "Color.h"
 
@@ -28,7 +28,7 @@ namespace Services {
       /**
        * Get the total number of leds being rendered
        */
-      uint getRenderLedCount() const { return renderLedCount; }
+      uint getRenderLedCount() const { return strip->pixelCount(); }
       /**
        * Set the number of leds
        */
@@ -41,7 +41,7 @@ namespace Services {
       /**
        * Get the led array
        */
-      CRGB* getLeds() const { return leds; }
+      const uint8_t *getLeds() const { return strip->getPixelData(); }
       /**
        * Get the coordinate of an led by index
        */
@@ -115,21 +115,25 @@ namespace Services {
        */
       float getFramesPerSecond() const { return fps; }
 
+      void show() { strip->show(); }
       /**
        * Methods for the arduino processing loop
        */
       void setup();
       void loop();
 
+
     private:
+      Led::INeoPixelBus* createController() const;
+
       LedDriver(FS& fs);
       static LedDriver *instance;
       FS& fs;
 
-      CLEDController* controller;
-      uint renderLedCount;
+      Led::Chipset chipset = Led::Chipset::WS2813;
+      Led::ColorOrder colorOrder = Led::ColorOrder::GRB;
+      Led::INeoPixelBus *strip;
       uint ledCount = 1;
-      CRGB *leds = nullptr;
 
       std::vector<Coordinate> ledCoordinates;
       uint8_t brightness = 128;

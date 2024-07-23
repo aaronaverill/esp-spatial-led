@@ -85,7 +85,11 @@ namespace Web { namespace Api {
 
     JsonVariant brightness = doc["brightness"];
     if (brightness) {
-      leds.setBrightness(brightness);
+      if (brightness >= 253) {
+        leds.setBrightness(255);
+      } else {
+        leds.setBrightness(brightness);
+      }
       Store::LedSettings::write(fs, leds);
     }
     request->send(200, "text/plain", "OK");

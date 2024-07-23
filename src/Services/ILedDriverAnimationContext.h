@@ -15,7 +15,7 @@ namespace Services {
       /**
        * Get the led array
        */
-      virtual CRGB* getLeds() const = 0;
+      virtual const uint8_t *getLeds() const = 0;
       /**
        * Get the coordinate of an led by index
        */
@@ -40,5 +40,9 @@ namespace Services {
        * Get the list of system colors
        */
       virtual const std::vector<CRGB>& getColors() const = 0;
+      /**
+       * Show the strip
+       */
+      virtual void show() = 0;
   };
 }

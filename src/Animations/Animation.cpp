@@ -12,6 +12,6 @@ namespace Animations {
       renderLed(currentLed);
       currentLed++;
     }
-    FastLED.show();
+    context.show();
   }
 }

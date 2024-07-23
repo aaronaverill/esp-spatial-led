@@ -52,7 +52,7 @@ void BmpFile::writeLedData(AsyncWebServerRequest *request,  const Services::ILed
     // and when the memcpy() occurs where the buffer could have been resized and recreated
     // but this is a vanishingly rare occurrence, and worst case it means garbage in the bitmap
     // for a single request.
-    uint8_t* rgbData = (uint8_t*)leds->getLeds();
+    const uint8_t* rgbData = leds->getLeds();
     size_t ledCount = leds->getRenderLedCount();
     size_t rgbSize = ledCount * 3;
 
