@@ -7,7 +7,7 @@ namespace Animations { namespace Spatial {
       /**
        * Construct the animation with a context and name
        */
-      SpatialAnimation(Services::ILedDriverAnimationContext& context, const char *name) : Animation(context, name) {}
+      SpatialAnimation(Services::ILedDriverAnimationContext& context, const char *name, const char *tags = "3") : Animation(context, name, tags) {}
 
       /**
        * Render a specific led by index

@@ -33,6 +33,7 @@ namespace Web { namespace Api {
       for (Animations::Animation *animation:animations) {
         JsonObject jsonAnimation = jsonAnimations.add<JsonObject>();
         jsonAnimation["name"] = animation->name;
+        jsonAnimation["tags"] = animation->tags;
         JsonArray jsonAnimationFields = jsonAnimation["fields"].to<JsonArray>();
         Web::UI::FieldsInfo fields(jsonAnimationFields);
         animation->getFields(fields);
