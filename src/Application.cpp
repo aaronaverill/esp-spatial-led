@@ -13,6 +13,7 @@
 #include "Animations/Spatial/RainbowPlane.h"
 
 #include "Services/WebServer.h"
+#include "Web/Api/SystemController.h"
 #include "Web/Api/InfoController.h"
 #include "Web/Api/LedsController.h"
 #include "Web/UI/HomePage.h"
@@ -55,6 +56,13 @@ Application::Application() {
   // Create the WebServer service and add request handlers
   WebServer& webServer = WebServer::create();
 
+  // Add HTTP request handlers for the system API
+  Web::Api::SystemController systemController(ledDriver);
+  webServer.addRequestHandler("/api/system", HTTP_GET, 
+    [systemController](AsyncWebServerRequest *request) mutable {
+    systemController.get(request);
+  });
+
   // Add HTTP request handlers for the info API
   Web::Api::InfoController infoController(fs, ledDriver);
   webServer.addRequestHandler("/api/info", HTTP_GET, 
@@ -75,10 +83,6 @@ Application::Application() {
   webServer.addRequestHandler("/api/leds/play/settings", HTTP_PATCH, 
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setPlaySetting(request, data, len, index, total);
-  });
-  webServer.addRequestHandler("/api/leds/play/fps", HTTP_GET, 
-    [ledsController](AsyncWebServerRequest *request) {
-    ledsController.getFps(request);
   });
   webServer.addRequestHandler("/api/leds/play/rgb", HTTP_GET, 
     [ledsController](AsyncWebServerRequest *request) {

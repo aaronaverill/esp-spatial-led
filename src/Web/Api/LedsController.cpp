@@ -95,10 +95,6 @@ namespace Web { namespace Api {
     request->send(200, "text/plain", "OK");
   }
 
-  void LedsController::getFps(AsyncWebServerRequest *request) const {
-    request->send(200, "text/plain", String(leds.getFramesPerSecond()));
-  }
-
   void LedsController::getRgb(AsyncWebServerRequest *request) const {
     BmpFile::writeLedData(request, &leds);
   }

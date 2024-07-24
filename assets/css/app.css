@@ -25,6 +25,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 /* Display */
 .d-block { display: block; }
 .d-flex { display: flex; }
+.d-grid { display: grid; }
 .d-none { display: none; }
 
 /* Flex */
@@ -74,6 +75,9 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 /* Text */
 .text-center {
   text-align: center;
+}
+.text-right {
+  text-align: right;
 }
 .text-truncate {
   overflow: hidden;

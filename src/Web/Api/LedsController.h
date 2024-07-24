@@ -32,10 +32,6 @@ namespace Web { namespace Api {
        */
       void setPlaySetting(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
       /**
-       * Get the current playing frames per second
-       */
-      void getFps(AsyncWebServerRequest *request) const;
-      /**
        * Get the current playing r,g,b data
        */
       void getRgb(AsyncWebServerRequest *request) const;
