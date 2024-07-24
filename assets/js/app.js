@@ -824,27 +824,38 @@ export default class App {
   // -----------------------------------------------------------------------------
 
   /**
-   * Show the about page and start a timer to update the frames per second periodically from the server
+   * Show the about page and start a timer to update thesystem info periodically from the server
    */
   showAbout() {
     app.showPage('pAbout')
-    this.#refreshInterval = setInterval(this.#updateFps, 2000)
-    this.#updateFps()
+    this.#refreshInterval = setInterval(this.#updateSystemInfo, 2000)
+    this.#updateSystemInfo()
   }
 
   /**
-   * Query the server for the current frames per second, update the UI, and set a timer to check again in 2 seconds
+   * Query the server for the system info, update the UI, and set a timer to check again in 2 seconds
    */
-  async #updateFps() {
+  async #updateSystemInfo() {
     let response = { ok: false }
     try {
-      response = await fetch('/api/leds/play/fps')
+      response = await fetch('/api/system')
     } catch {}
     if (response.ok) {
-      const fps = await response.text()
-      document.getElementById('fps').innerText = `${fps} fps`
+      const systemInfo = await response.json()
+      let html = ''
+      for (const [sectionName, sectionValue] of Object.entries(systemInfo)) {
+        let sectionHtml = ''
+        for (let [key, value] of Object.entries(sectionValue)) {
+          if (!isNaN(value)) {
+            value = Math.round(value).toLocaleString()
+          }
+          sectionHtml += '<div>' + key + '</div><div class="text-right">' + value + '</div>'
+        }
+        html += '<h2>' + sectionName + '</h2><div class="d-grid w-100" style="grid-template-columns: 1fr 1fr;gap: 12px">' + sectionHtml + '</div>'
+      }
+      document.querySelector('#pAbout .page').innerHTML = html
     } else {
-      document.getElementById('fps').innerText = 'fps unavailable'
+      document.querySelector('#pAbout .page').innerText = 'unavailable'
       clearInterval(this.#refreshInterval)
       this.#refreshInterval = 0
     }
@@ -940,7 +951,7 @@ export default class App {
    */
   #playRefreshInterval
   /**
-   * A javascript interval id for periodically freshing a UI element from the server (such as fps)
+   * A javascript interval id for periodically freshing a UI element from the server (such as system info)
    */
   #refreshInterval
   /**
