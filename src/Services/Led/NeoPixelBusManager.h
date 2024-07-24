@@ -6,6 +6,9 @@
 #include "Services/ILedInfo.h"
 
 namespace Services { namespace Led {
+  /**
+   * Facade class for the concrete NeoPixelBus instances that inherit from a common interface we can use to access it generically.
+   */
   template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBusManager : public INeoPixelBus, public NeoPixelBus<T_COLOR_FEATURE, T_METHOD> {
     public:
       NeoPixelBusManager(Chipset chipset, ColorOrder colorOrder, uint16_t countPixels):

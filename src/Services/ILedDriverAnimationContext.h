@@ -14,7 +14,7 @@ namespace Services {
        */
       virtual uint getRenderLedCount() const = 0;
       /**
-       * Get the led array
+       * Get the raw led array, in the native color order and format (possibly including bytes for led strips that support white)
        */
       virtual const uint8_t *getLeds() const = 0;
       /**

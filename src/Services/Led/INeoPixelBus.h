@@ -3,8 +3,14 @@
 #include "Services/ILedInfo.h"
 
 namespace Services { namespace Led {
+
   enum Chipset { WS2812, WS2813 };
+  
   enum ColorOrder { RGB, RBG, GBR, GRB, BGR, BRG };
+
+  /**
+   * An interface allowing generic access to the common functions in concrete NeoPixelBus classes.
+   */
   class INeoPixelBus {
     public:
       virtual ~INeoPixelBus() {};

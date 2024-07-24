@@ -1,6 +1,14 @@
 #include "Services/Led/NeoPixelBusFactory.h"
 #include "Services/Led/NeoPixelBusManager.h"
 
+/**
+ * Implementation remarks.
+ * NeoPixelBus has a huge array of classes that can be used that are specific to different microcontroller and
+ * LED chipset configurations. This is abstracted through user settings to specify the chipset, color order and
+ * pins at runtime, configurable through the web UI.
+ * 
+ * You can customize this to add new strip types if needed, or remove types you wont use to save a small bit of space.
+ */
 namespace Services { namespace Led {
 
   /**
@@ -65,10 +73,10 @@ namespace Services { namespace Led {
   /**
    * Create a controller for SK6812 led strips
    */
-  // NeoSk6812Method
+  // Use the NeoSk6812Method class
 
   /**
    * Create a controller for APA106 led strips
    */
-  // NeoApa106Method
+  // Use the NeoApa106Method class
 }}
