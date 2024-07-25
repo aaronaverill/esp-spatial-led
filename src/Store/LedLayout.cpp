@@ -24,13 +24,13 @@ namespace Store {
   void LedLayout::write(FS& fs, const char *layout, const char *coordinates) {
     File file = fs.open(layoutFile, "w");
     if (layout) {
-      file.write(layout);
+      file.write((const uint8_t*)layout, strlen(layout));
     }
     file.close();
 
     file = fs.open(coordinatesFile, "w");
     if (coordinates) {
-      file.write(coordinates);
+      file.write((const uint8_t*)coordinates, strlen(coordinates));
     }
     file.close();
   }
