@@ -4,7 +4,6 @@
 #include "Animations/Animation.h"
 #include "Store/LedLayout.h"
 #include "Store/LedSettings.h"
-#include "BmpFile.h"
 
 using namespace Services;
 
@@ -93,10 +92,6 @@ namespace Web { namespace Api {
       Store::LedSettings::write(fs, leds);
     }
     request->send(200, "text/plain", "OK");
-  }
-
-  void LedsController::getRgb(AsyncWebServerRequest *request) const {
-    BmpFile::writeLedData(request, &leds);
   }
 
   void LedsController::getPlayBuffer(AsyncWebServerRequest *request) const {

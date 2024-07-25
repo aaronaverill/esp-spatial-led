@@ -84,10 +84,6 @@ Application::Application() {
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setPlaySetting(request, data, len, index, total);
   });
-  webServer.addRequestHandler("/api/leds/play/rgb", HTTP_GET, 
-    [ledsController](AsyncWebServerRequest *request) {
-    ledsController.getRgb(request);
-  });
   webServer.addRequestHandler("/api/leds/play/buffer", HTTP_GET, 
     [ledsController](AsyncWebServerRequest *request) {
     ledsController.getPlayBuffer(request);
