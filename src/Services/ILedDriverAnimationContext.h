@@ -3,6 +3,8 @@
 
 #include <FastLED.h>
 
+#include <vector>
+
 namespace Services {
   /**
    * Adapter class for animation rendering context
