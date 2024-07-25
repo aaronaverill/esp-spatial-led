@@ -13,6 +13,9 @@ namespace Services { namespace Led {
     public:
       NeoPixelBusManager(Chipset chipset, ColorOrder colorOrder, uint16_t countPixels):
         NeoPixelBus<T_COLOR_FEATURE, T_METHOD>(countPixels), _chipset(chipset), _colorOrder(colorOrder) { }
+      
+      NeoPixelBusManager(Chipset chipset, ColorOrder colorOrder, uint16_t countPixels, uint8_t pin):
+        NeoPixelBus<T_COLOR_FEATURE, T_METHOD>(countPixels, pin), _chipset(chipset), _colorOrder(colorOrder) { }
 
       ~NeoPixelBusManager() { }
 

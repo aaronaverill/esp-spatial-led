@@ -1,6 +1,12 @@
 #include "Services/Led/NeoPixelBusFactory.h"
 #include "Services/Led/NeoPixelBusManager.h"
 
+#ifdef ESP8266
+#define DATA_PIN D4
+#elif ESP32
+#define DATA_PIN GPIO_NUM_4
+#endif
+
 /**
  * Implementation remarks.
  * NeoPixelBus has a huge array of classes that can be used that are specific to different microcontroller and
@@ -32,17 +38,17 @@ namespace Services { namespace Led {
   INeoPixelBus *NeoPixelBusFactory::createWs2812Controller(Chipset chipset, ColorOrder colorOrder, uint16_t ledCount) {
     switch (colorOrder) {
       case ColorOrder::RGB:
-        return new NeoPixelBusManager<NeoRgbFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoRgbFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::RBG:
-        return new NeoPixelBusManager<NeoRbgFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoRbgFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::GBR:
-        return new NeoPixelBusManager<NeoGbrFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoGbrFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::GRB:
-        return new NeoPixelBusManager<NeoGrbFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoGrbFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::BGR:
-        return new NeoPixelBusManager<NeoBgrFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoBgrFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::BRG:
-        return new NeoPixelBusManager<NeoBrgFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoBrgFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
       default:
         return nullptr;
     }
@@ -54,17 +60,17 @@ namespace Services { namespace Led {
   INeoPixelBus *NeoPixelBusFactory::createWs2813Controller(Chipset chipset, ColorOrder colorOrder, uint16_t ledCount) {
     switch (colorOrder) {
       case ColorOrder::RGB:
-        return new NeoPixelBusManager<NeoRgbFeature, NeoWs2813Method>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoRgbFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::RBG:
-        return new NeoPixelBusManager<NeoRbgFeature, NeoWs2813Method>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoRbgFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::GBR:
-        return new NeoPixelBusManager<NeoGbrFeature, NeoWs2813Method>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoGbrFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::GRB:
-        return new NeoPixelBusManager<NeoGrbFeature, NeoWs2813Method>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoGrbFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::BGR:
-        return new NeoPixelBusManager<NeoBgrFeature, NeoWs2813Method>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoBgrFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
       case ColorOrder::BRG:
-        return new NeoPixelBusManager<NeoBrgFeature, NeoWs2813Method>(chipset, colorOrder, ledCount);
+        return new NeoPixelBusManager<NeoBrgFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
       default:
         return nullptr;
     }
