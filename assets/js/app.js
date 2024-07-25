@@ -32,6 +32,7 @@ export default class App {
     }
     this.#refreshPlay()
     this.#refreshLibrary()
+    this.#refreshLedStrip()
     this.#refreshColors()
   
     this.#playRefreshInterval = setInterval(() => {this.#refreshPlayPreview()}, 500)
@@ -506,6 +507,42 @@ export default class App {
       html += '<div class="item selectable d-flex pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + animation.name + '</div>' + tags + '</div>'
     })
     document.getElementById('animations').innerHTML = html
+  }
+
+  // -----------------------------------------------------------------------------
+  // Settings > Led Strip page
+  // -----------------------------------------------------------------------------
+
+  /**
+   * Handle save
+   */
+  async onStripSave() {
+    const patch = {};
+    ['chipset', 'colorOrder'].forEach(id => {
+      const value = Number(document.getElementById(`ledStrip_${id}`).value)
+      patch[id] = value
+      this.#info.leds[id] = value
+    })
+    await fetch('/api/leds/settings',{
+      method:'PATCH',
+      body:JSON.stringify(patch)
+    })
+    this.showPage('pSettings')
+  }
+
+  /**
+   * Refresh the led strip details
+   */
+  #refreshLedStrip() {
+    ['chipset', 'colorOrder'].forEach(id => {
+      let html = ''
+      this.#info.leds[`${id}s`].forEach((option, index) => {
+        html += `<option value="${index}">${option}</option>`
+      })
+      const element = document.getElementById(`ledStrip_${id}`)
+      element.innerHTML = html
+      element.value = this.#info.leds[id]
+    })
   }
 
   // -----------------------------------------------------------------------------

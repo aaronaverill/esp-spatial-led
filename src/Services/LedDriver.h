@@ -27,9 +27,33 @@ namespace Services {
       }
 
       /**
+       * Get chipset
+       */
+      Led::Chipset getChipset() const { return strip->getChipset(); }
+      /**
+       * Set chipset
+       */
+      void setChipset(Led::Chipset chipset) { this->chipset = chipset; }
+      /**
+       * Get list of chipset options
+       */
+      std::vector<String> getChipsetOptions() const {
+        return std::vector<String> {"WS2812", "WS2813"};
+      }
+      /**
        * Get the color order
        */
       Led::ColorOrder getColorOrder() const { return strip->getColorOrder(); }
+      /**
+       * Set color order
+       */
+      void setColorOrder(Led::ColorOrder colorOrder) { this->colorOrder = colorOrder; }
+      /**
+       * Get list of color order
+       */
+      std::vector<String> getColorOrderOptions() const {
+        return std::vector<String> {"RGB", "RBG", "GBR", "GRB", "BGR", "BRG"};
+      }
       /**
        * Get the total number of leds being rendered
        */

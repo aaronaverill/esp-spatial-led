@@ -52,6 +52,16 @@ namespace Web { namespace Api {
     }
 
     bool writeSettings = false;
+    JsonVariant chipset = doc["chipset"];
+    if (!chipset.isNull()) {
+      leds.setChipset(chipset);
+      writeSettings = true;
+    }
+    JsonVariant colorOrder = doc["colorOrder"];
+    if (!colorOrder.isNull()) {
+      leds.setColorOrder(colorOrder);
+      writeSettings = true;
+    }
     JsonVariant count = doc["count"];
     if (count) {
       leds.setLedCount(count);

@@ -20,6 +20,7 @@
         <div class="title"><div class="img img-vlg img-led ma-2"></div><div class="pa-3">Settings</div></div>
         <div class="page">
           <div class="list">
+            <div onclick="app.showPage('pLedStrip')" class="item selectable d-flex align-center pa-3"><div class="text mr-3">LED Strip</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="app.showLedLayout()" class="item selectable d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="app.showPage('pColors')" class="item selectable d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="app.showAbout()" class="item selectable d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
@@ -79,7 +80,21 @@
           </div>
         </div>
       </div>
-      <!-- Settings > LED Layout page -->
+      <!-- Settings > LED Strip page -->
+      <div id="pLedStrip" class="d-none flex-column h-100">
+        <div class="title">
+          <div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-close"></div></div>
+          <div class="pa-3 mr-auto">LED Strip</div>
+          <div class="mr-3"><button id="saveLayout" onclick="app.onStripSave()" class="btn tonal primary">Save</button></div>
+        </div>
+        <div class="page d-flex flex-column pa-4">
+          <div>Chipset</div>
+          <select id="ledStrip_chipset" class="w-100 my-2"></select>
+          <div>Color Order</div>
+          <select id="ledStrip_colorOrder" class="w-100 my-2"></select>
+        </div>
+      </div>
+        <!-- Settings > LED Layout page -->
       <div id="pLedLayout" class="d-none flex-column h-100">
         <div class="title">
           <div onclick="app.showPage('pSettings')" class="btn pa-4"><div class="img img-close"></div></div>

@@ -12,6 +12,15 @@ namespace Web { namespace Api {
     JsonDocument doc;
     JsonObject jsonLeds = doc["leds"].to<JsonObject>();
     jsonLeds["count"] = leds.getLedCount();
+    jsonLeds["chipset"] = leds.getChipset();
+    for(String option:leds.getChipsetOptions()) {
+      jsonLeds["chipsets"].add(option);
+    }
+    jsonLeds["colorOrder"] = leds.getColorOrder();
+    for(String option:leds.getColorOrderOptions()) {
+      jsonLeds["colorOrders"].add(option);
+    }
+
     jsonLeds["layout"] = Store::LedLayout::readLayout(fs);
 
     JsonArray jsonColors = jsonLeds["colors"].to<JsonArray>();
