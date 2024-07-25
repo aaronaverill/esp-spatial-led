@@ -57,6 +57,8 @@ namespace Store {
   }
 
   void LedSettings::write(FS& fs, LedDriver& leds) {
+    fs.mkdir("/led");
+
     const std::vector<Animations::Animation*>& animations = leds.getAnimations();
 
     JsonDocument doc;

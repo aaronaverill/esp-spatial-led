@@ -22,6 +22,8 @@ namespace Store {
   }
 
   void LedLayout::write(FS& fs, const char *layout, const char *coordinates) {
+    fs.mkdir("/led");
+    
     File file = fs.open(layoutFile, "w");
     if (layout) {
       file.write((const uint8_t*)layout, strlen(layout));
