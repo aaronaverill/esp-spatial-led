@@ -28,15 +28,20 @@ Application::Application() {
   // Mount the file system which stores configuration files
   FS& fs = LittleFS;
   bool mounted = LittleFS.begin();
-  FSInfo fs_info;
-  if (mounted && LittleFS.info(fs_info)) {
-    Serial.println("LittleFS mounted:");
-    Serial.println("  totalBytes=" + String(fs_info.totalBytes));
-    Serial.println("  usedBytes=" + String(fs_info.usedBytes));
-    Serial.println("  blockSize=" + String(fs_info.blockSize));
-    Serial.println("  pageSize=" + String(fs_info.pageSize));
-    Serial.println("  maxOpenFiles=" + String(fs_info.maxOpenFiles));
-    Serial.println("  maxPathLength=" + String(fs_info.maxPathLength));
+
+  if (mounted) {
+    #ifdef ESP8266
+    FSInfo fs_info;
+    if (LittleFS.info(fs_info)) {
+      Serial.println("LittleFS mounted:");
+      Serial.println("  totalBytes=" + String(fs_info.totalBytes));
+      Serial.println("  usedBytes=" + String(fs_info.usedBytes));
+      Serial.println("  blockSize=" + String(fs_info.blockSize));
+      Serial.println("  pageSize=" + String(fs_info.pageSize));
+      Serial.println("  maxOpenFiles=" + String(fs_info.maxOpenFiles));
+      Serial.println("  maxPathLength=" + String(fs_info.maxPathLength));
+    }
+    #endif
   } else {
     Serial.println("LittleFS not mounted.");
   }
