@@ -59,6 +59,10 @@ namespace Services { namespace Led {
         return NeoPixelBus<T_COLOR_FEATURE, T_METHOD>::PixelCount();
       }
 
+      size_t pixelSize() const {
+        return NeoPixelBus<T_COLOR_FEATURE, T_METHOD>::PixelSize();
+      }
+      
       const uint8_t * getPixelData() const {
         return NeoPixelBus<T_COLOR_FEATURE, T_METHOD>::_pixels();
       }

@@ -98,4 +98,74 @@ namespace Web { namespace Api {
   void LedsController::getRgb(AsyncWebServerRequest *request) const {
     BmpFile::writeLedData(request, &leds);
   }
+
+  void LedsController::getPlayBuffer(AsyncWebServerRequest *request) const {
+    size_t ledSize = leds.getLedSize();
+    size_t ledCount = leds.getRenderLedCount();
+
+    size_t headerSize = 1 + ledSize;
+    size_t bufferSize = ledCount * ledSize;
+
+    // Compiler gives unused-but-set-variable warning even though we are using this in the closure below
+    //__attribute__((unused))
+    uint8_t header[headerSize];
+    memset(header, 0xFF, headerSize);
+    header[0] = ledSize;
+    // This is a bit messy and should probably be encapsulated into INeoPixelBus to accomodate RGBW
+    uint8_t layouts[][3] = {
+      {0x00, 0x01, 0x02}, // RGB
+      {0x00, 0x02, 0x01}, // RBG
+      {0x01, 0x02, 0x00}, // GBR
+      {0x01, 0x00, 0x02}, // GRB
+      {0x02, 0x01, 0x00}, // BGR
+      {0x02, 0x00, 0x01} // BRG
+    };
+    memcpy(header + 1, layouts[leds.getColorOrder()], 3);
+    uint8_t *headerPtr = header;
+
+    size_t size = headerSize + bufferSize;
+
+    LedDriver* ledDriver = &leds;
+
+    AsyncWebServerResponse *response = request->beginResponse("application/octet-stream", size, 
+      [ledDriver, ledSize, headerPtr, headerSize, size] (uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
+      // Fetch the CRGB data pointer and size within each request to fulfill a buffer chunk from 
+      // ESPAsyncWebServer in case  the number of LEDs has been changed and the buffer has been
+      // reallocated or resized during the time between when the data is requested and when a 
+      // response can be fulfilled. If the number of LEDs has decreased, a bitmap will be created sized
+      // to a the width of the original number of LED padded with black at the end.
+      // Technically speaking there is a very small window between when the LED buffer is requested
+      // and when the memcpy() occurs where the buffer could have been resized and recreated
+      // but this is a vanishingly rare occurrence, and worst case it means garbage in the bitmap
+      // for a single request.
+      const uint8_t* bufferData = ledDriver->getLeds();
+      size_t ledCount = ledDriver->getRenderLedCount();
+      size_t bufferSize = ledCount * ledSize;
+
+      size_t bytesSent = 0;
+      while (index < size && bytesSent < maxLen) {
+        size_t chunkSize;
+        if (index < headerSize) {
+          size_t headerRemaining = headerSize - index;
+          chunkSize = min(maxLen - bytesSent, headerRemaining);
+          memcpy(buffer + bytesSent, headerPtr + index, chunkSize);
+
+        } else if (index < (headerSize + bufferSize)) {
+          size_t rgbRemaining = headerSize + bufferSize - index;
+          chunkSize = min(maxLen - bytesSent, rgbRemaining);
+          memcpy(buffer + bytesSent, bufferData + index - headerSize, chunkSize);
+
+        } else {
+          chunkSize = maxLen - bytesSent;
+          memset(buffer + bytesSent, 0, chunkSize);
+
+        }
+        index += chunkSize;
+        bytesSent += chunkSize;
+      }
+      return bytesSent; 
+    });
+
+    request->send(response);
+  }
 }}

@@ -27,6 +27,10 @@ namespace Services {
       }
 
       /**
+       * Get the color order
+       */
+      Led::ColorOrder getColorOrder() const { return strip->getColorOrder(); }
+      /**
        * Get the total number of leds being rendered
        */
       uint getRenderLedCount() const { return strip->pixelCount(); }
@@ -43,6 +47,10 @@ namespace Services {
        * Get the led array
        */
       const uint8_t *getLeds() const { return strip->getPixelData(); }
+      /**
+       * Get the size in bytes of a single led in the buffer
+       */
+      size_t getLedSize() const { return strip->pixelSize(); }
       /**
        * Get the coordinate of an led by index
        */

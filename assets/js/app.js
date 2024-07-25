@@ -34,7 +34,7 @@ export default class App {
     this.#refreshLibrary()
     this.#refreshColors()
   
-    this.#playRefreshInterval = setInterval(this.#refreshPlayPreview, 500)
+    this.#playRefreshInterval = setInterval(() => {this.#refreshPlayPreview()}, 500)
     this.#refreshPlayPreview()
   }
 
@@ -65,30 +65,57 @@ export default class App {
   async #refreshPlayPreview() {
     let response = { ok: false }
     try {
-      response = await fetch('/api/leds/play/rgb')
+      response = await fetch('/api/leds/play/buffer')
     } catch { }
     if (response.ok) {
-      const rgbBmpData = await response.arrayBuffer()
+      const ledBuffer = await response.arrayBuffer()
+      const bufferView = new Uint8Array(ledBuffer)
+      if (bufferView.length < 4) {
+        return
+      }
 
-      // Get the header size from the BMP data starting at byte 10 stored in little endian
-      const headerSize = new DataView(rgbBmpData).getUint32(10, true)
-      // Update the layout preview component with the color data
-      document.getElementById('layoutPreview').colorArray = rgbBmpData.slice(headerSize)
+      const pixelSize = bufferView[0];
+      const indexes = [1, 2, 3].map(index => bufferView[index])
+      const ledCount = (bufferView.length - pixelSize - 1) / pixelSize
+      const rgbBrightness = 255/this.#info.leds.play.settings.brightness
 
-      // To display the R,G,B data as a bitmap it must be convered from R,G,B to B,G,R which
-      // is the correct bitmap file format pixel order. Dumb.
-      const bmpData = new ArrayBuffer(rgbBmpData.byteLength)
-      const rgbView = new Uint8Array(rgbBmpData)
+      // Copy the buffer data into an rgb array for the layout preview
+      const rgbData = new ArrayBuffer(ledCount * 3)
+      const rgbView = new Uint8Array(rgbData)
+      let p = 0
+      for(let i = 0; i < rgbView.length; i++) {
+        rgbView[p + indexes[i%3]] = bufferView[1 + pixelSize + i] * rgbBrightness
+        if (i%3 == 2) {
+          p += 3
+        }
+      }
+      document.getElementById('layoutPreview').colorArray = rgbData
+
+      // Copy the buffer data into a bitmap - green, red, blue with a header
+      const rgbSize = ledCount * 3
+      const rowSize = Math.ceil(rgbSize / 4) * 4
+      const bmpHeaderSize = 54
+      const bmpSize = bmpHeaderSize + rowSize
+
+      const bmpData = new ArrayBuffer(ledCount * 3 + 54)
       const bmpView = new Uint8Array(bmpData)
 
-      // Copy the header bytes as is
-      bmpView.set(rgbView.slice(0, headerSize), 0)
-
+      // Construct the header
+      bmpView.set([0x42, 0x4D], 0) // "BM"
+      bmpView.set([bmpSize & 0xFF, (bmpSize >> 8) & 0xFF], 2) // Size of bitmap file, little endian
+      bmpView[10] = bmpHeaderSize // Start of bitmap data, after headers
+      bmpView[14] = 40 // Size of hedaer
+      bmpView.set([ledCount & 0xFF, (ledCount >> 8) & 0xFF], 18) // Width in pixels
+      bmpView[22] = 1 // Height in pixel
+      bmpView[26] = 1 // Number of color planes
+      bmpView[28] = 24 // Bits per pixel
+      bmpView.set([rowSize & 0xFF, (rowSize >> 8) & 0xFF], 34) // Row size
+      
       // Reorder the remaining bytes from RGB to BGR
-      for (let i = headerSize; i < rgbView.length; i += 3) {
-        bmpView[i] = rgbView[i + 2] // Blue
-        bmpView[i + 1] = rgbView[i + 1] // Green
-        bmpView[i + 2] = rgbView[i] // Red
+      for (let i = 0; i < rgbView.length; i += 3) {
+        bmpView[bmpHeaderSize + i] = rgbView[i + 2] // Blue
+        bmpView[bmpHeaderSize + i + 1] = rgbView[i + 1] // Green
+        bmpView[bmpHeaderSize + i + 2] = rgbView[i] // Red
       }
 
       // Read the data into a URL we can use to set the src attribute of the preview img element

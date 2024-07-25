@@ -22,6 +22,7 @@ namespace Services { namespace Led {
       virtual void setPixelColorRGB(ILedInfo *leds, uint16_t index, uint8_t r, uint8_t g, uint8_t b) = 0;
       virtual void setPixelColorHSV(ILedInfo *leds, uint16_t index, uint8_t h, uint8_t s, uint8_t v) = 0;
       virtual uint16_t pixelCount() const = 0;
+      virtual size_t pixelSize() const = 0;
       virtual const uint8_t * getPixelData() const = 0;
   };
 }}
