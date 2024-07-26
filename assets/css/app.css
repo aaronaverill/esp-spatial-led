@@ -240,6 +240,9 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .img-tag-3 {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='none' fill='white'><path d='M 6,0 1.28,2.79 6,5.46 10.72,2.73 Z M 0.8,3.54 V 9 l 4.72,2.73 V 6.27 Z m 10.39,0 -4.72,2.73 V 11.73 L 11.2,9 Z' /></svg>");
 }
+.img-tag-P {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' stroke='none' fill='white'><path d='M6.5 0 L6.5 2 C8.3 2.3 9.7 3.7 10 5.5 L12 5.5 A6 6 0 0 0 6.5 0 zM5.5 0 A 6 6 0 0 0 0 5.5 L2 5.5 C2.3 3.7 3.7 2.3 5.5 2 L5.5 0 zM5.5 3 C4.2 3.3 3.3 4.2 3 5.5 L5.5 5.5 L5.5 3 zM6.5 3 L6.5 5.5 L9 5.5 C8.7 4.2 7.8 3.3 6.5 3 zM0 6.5 A6 6 0 0 0 5.5 12 L5.5 10 C3.7 9.7 2.3 8.3 2 6.5 L0 6.5 zM3 6.5 C3.3 7.8 4.2 8.8 5.5 9 L5.5 6.5 L3 6.5 zM6.5 6.5 L6.5 9 C7.8 8.8 8.8 7.8 9 6.5 L6.5 6.5 zM10 6.5 C9.7 8.3 8.3 9.7 6.5 10 L6.5 12 A6 6 0 0 0 12 6.5 L10 6.5 z' /></svg>");
+}
 .rainbow {
   background-image: linear-gradient(90deg,#F00,#FF0,#0F0,#0FF,#00F,#F0F,#F00);
 }
