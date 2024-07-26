@@ -98,7 +98,7 @@ export default class App {
       const bmpHeaderSize = 54
       const bmpSize = bmpHeaderSize + rowSize
 
-      const bmpData = new ArrayBuffer(ledCount * 3 + 54)
+      const bmpData = new ArrayBuffer(bmpSize)
       const bmpView = new Uint8Array(bmpData)
 
       // Construct the header
