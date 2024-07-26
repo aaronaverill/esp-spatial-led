@@ -1,5 +1,6 @@
 #pragma once
 #include "Coordinate.h"
+#include "PolarCoordinate.h"
 
 #include <FastLED.h>
 
@@ -23,6 +24,10 @@ namespace Services {
        * Get the coordinate of an led by index
        */
       virtual const Coordinate& getLedCoordinate(uint index) const = 0;
+      /**
+       * Get the polar coordinate of an led by index
+       */
+      virtual const PolarCoordinate& getLedPolarCoordinate(uint index) const = 0;
       /**
        * Within a rendering context, the current led which is being rendered
        */

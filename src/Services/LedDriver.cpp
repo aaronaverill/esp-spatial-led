@@ -12,6 +12,7 @@ namespace Services {
     colors.push_back(CRGB(0xFF, 0xFF, 0x00)); // Yellow
     colors.push_back(CRGB(0x00, 0xFF, 0x90)); // Green
     colors.push_back(CRGB(0x90, 0x00, 0xFF)); // Purple
+    autoPolarCoordinate.distance = PolarCoordinateMax;
   }
 
   std::vector<String> LedDriver::getChipsetOptions() const {
@@ -33,7 +34,7 @@ namespace Services {
 
   void LedDriver::setLedCoordinates(const char *coordinates) {
     ledCoordinates = std::vector<Coordinate>();
-    byte pos = 0;
+    CoordinateType pos = 0;
     char *err, *p =(char *)coordinates;
     CoordinateType parts[3];
     while (*p) {
@@ -55,6 +56,9 @@ namespace Services {
         }
       }
     }
+    // Force polar coordinates to be recalculated the next time they are requested
+    delete ledPolarCoordinates;
+    ledPolarCoordinates = nullptr;
   }
 
   void LedDriver::setColor(int index, byte r, byte g, byte b) {
@@ -67,8 +71,24 @@ namespace Services {
     if (index < strip->pixelCount() && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {
-      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = (index+0.5)/strip->pixelCount();
+      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = ((float)index+0.5f)/strip->pixelCount() * CoordinateMax;
       return autoCoordinate;
+    }
+  }
+
+  const PolarCoordinate& LedDriver::getLedPolarCoordinate(uint index) const {
+    if (ledPolarCoordinates == nullptr) {
+      // Lazy calculate polar coordinates when first requested
+      ledPolarCoordinates = new std::vector<PolarCoordinate>();
+      for(uint i = 0; i < ledCoordinates.size(); i++) {
+        ledPolarCoordinates->push_back(PolarCoordinate(ledCoordinates[i]));
+      }
+    }
+    if (index < strip->pixelCount() && index < ledCoordinates.size()) {
+      return (*ledPolarCoordinates)[index];
+    } else {
+      autoPolarCoordinate.angle = ((float)index+0.5f)/strip->pixelCount() * CoordinateMax;
+      return autoPolarCoordinate;
     }
   }
 

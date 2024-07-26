@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#define PI2 PI*2
+#define PI2 6.283185307
 
 namespace Algorithm {
   /**

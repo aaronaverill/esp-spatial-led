@@ -76,6 +76,10 @@ namespace Services {
        */
       const Coordinate& getLedCoordinate(uint index) const;
       /**
+       * Get the polar coordinate of an led by index
+       */
+      const PolarCoordinate& getLedPolarCoordinate(uint index) const;
+      /**
        * Within a rendering context, the current led which is being rendered
        */
       uint getCurrentLed() const { return currentLed; }
@@ -165,6 +169,7 @@ namespace Services {
       uint ledCount = 1;
 
       std::vector<Coordinate> ledCoordinates;
+      mutable std::vector<PolarCoordinate> *ledPolarCoordinates = nullptr;
       uint8_t brightness = 128;
 
       std::vector<CRGB> colors;
@@ -179,5 +184,6 @@ namespace Services {
 
       uint currentLed = 0;
       mutable Coordinate autoCoordinate;
+      mutable PolarCoordinate autoPolarCoordinate;
   };
 }
