@@ -84,7 +84,7 @@ namespace Services {
         ledPolarCoordinates->push_back(PolarCoordinate(ledCoordinates[i]));
       }
     }
-    if (index < strip->pixelCount() && index < ledCoordinates.size()) {
+    if (index < strip->pixelCount() && index < ledPolarCoordinates->size()) {
       return (*ledPolarCoordinates)[index];
     } else {
       autoPolarCoordinate.angle = ((float)index+0.5f)/strip->pixelCount() * CoordinateMax;

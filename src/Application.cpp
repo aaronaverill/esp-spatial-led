@@ -11,6 +11,7 @@
 #include "Animations/Spatial/CubeFire.h"
 #include "Animations/Spatial/Pulse.h"
 #include "Animations/Spatial/RainbowPlane.h"
+#include "Animations/Polar/RainbowSpin.h"
 
 #include "Services/WebServer.h"
 #include "Web/Api/SystemController.h"
@@ -46,6 +47,7 @@ Application::Application() {
   ledDriver.addAnimation(new Animations::Spatial::CubeFire(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::Pulse(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::RainbowPlane(ledDriver));
+  ledDriver.addAnimation(new Animations::Polar::RainbowSpin(ledDriver));
   
   addService(&ledDriver);
 
