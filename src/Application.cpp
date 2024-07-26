@@ -4,12 +4,14 @@
 #include <LittleFS.h>
 
 #include "Services/LedDriver.h"
+#include "Animations/Spatial/Test.h"
 #include "Animations/Colorloop.h"
 #include "Animations/Rainbow.h"
 #include "Animations/Solid.h"
 #include "Animations/Spatial/Binary.h"
 #include "Animations/Spatial/CubeFire.h"
 #include "Animations/Spatial/Pulse.h"
+#include "Animations/Spatial/Rain.h"
 #include "Animations/Spatial/RainbowPlane.h"
 
 #include "Services/WebServer.h"
@@ -39,12 +41,14 @@ Application::Application() {
 
   // Create the LedDriver service and add animations
   LedDriver& ledDriver = LedDriver::create(fs);
+  ledDriver.addAnimation(new Animations::Spatial::Test(ledDriver));
   ledDriver.addAnimation(new Animations::Colorloop(ledDriver));
   ledDriver.addAnimation(new Animations::Rainbow(ledDriver));
   ledDriver.addAnimation(new Animations::Solid(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::Binary(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::CubeFire(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::Pulse(ledDriver));
+  ledDriver.addAnimation(new Animations::Spatial::Rain(ledDriver));
   ledDriver.addAnimation(new Animations::Spatial::RainbowPlane(ledDriver));
   
   addService(&ledDriver);
