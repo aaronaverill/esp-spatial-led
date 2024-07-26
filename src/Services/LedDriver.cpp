@@ -14,6 +14,14 @@ namespace Services {
     colors.push_back(CRGB(0x90, 0x00, 0xFF)); // Purple
   }
 
+  std::vector<String> LedDriver::getChipsetOptions() const {
+    return Led::NeoPixelBusFactory::getChipsetOptions();
+  }
+  
+  std::vector<String> LedDriver::getColorOrderOptions() const {
+    return Led::NeoPixelBusFactory::getColorOrderOptions();
+  }
+
   void LedDriver::setLedCount(uint count) {
     // Set the pending led count which will be updated in the next cycle of the loop()
     // The CRGB buffer is updated in the loop() later rather than here immediatey because

@@ -18,6 +18,20 @@
 namespace Services { namespace Led {
 
   /**
+   * Return a list of led strip chip types that the user can select from
+   */
+  std::vector<String> NeoPixelBusFactory::getChipsetOptions() {
+    return std::vector<String> {"WS2812", "WS2813"};
+  }
+  
+  /**
+   * Return a list of color order optoins that the user can select from
+   */
+  std::vector<String> NeoPixelBusFactory::getColorOrderOptions() {
+    return std::vector<String> {"RGB", "RBG", "GBR", "GRB", "BGR", "BRG"};
+  }
+
+  /**
    * Create the appropriate NeoPixelBus object.
    * https://github.com/Makuna/NeoPixelBus/wiki/T_METHOD
    */

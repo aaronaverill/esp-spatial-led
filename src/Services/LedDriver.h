@@ -37,9 +37,7 @@ namespace Services {
       /**
        * Get list of chipset options
        */
-      std::vector<String> getChipsetOptions() const {
-        return std::vector<String> {"WS2812", "WS2813"};
-      }
+      std::vector<String> getChipsetOptions() const;
       /**
        * Get the color order
        */
@@ -51,9 +49,7 @@ namespace Services {
       /**
        * Get list of color order
        */
-      std::vector<String> getColorOrderOptions() const {
-        return std::vector<String> {"RGB", "RBG", "GBR", "GRB", "BGR", "BRG"};
-      }
+      std::vector<String> getColorOrderOptions() const;
       /**
        * Get the total number of leds being rendered
        */

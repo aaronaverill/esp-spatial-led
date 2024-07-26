@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Services/Led/INeoPixelBus.h"
+#include <vector>
 
 namespace Services { namespace Led {
   /**
@@ -10,6 +11,9 @@ namespace Services { namespace Led {
   class NeoPixelBusFactory {
     public:
       static INeoPixelBus *create(Chipset chipset, ColorOrder colorOrder, uint16_t ledCount);
+
+      static std::vector<String> getChipsetOptions();
+      static std::vector<String> getColorOrderOptions();
 
     private:
       static INeoPixelBus *createWs2812Controller(Chipset chipset, ColorOrder colorOrder, uint16_t ledCount);
