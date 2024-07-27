@@ -4,8 +4,8 @@
 #include "Algorithm/Math.h"
 #include "Algorithm/Waveform.h"
 
-using namespace System;
 using namespace Algorithm;
+using namespace System;
 
 namespace Animations { namespace Spatial {
 
@@ -40,9 +40,9 @@ namespace Animations { namespace Spatial {
   }
 
   void Binary::renderLed(int index, const Algorithm::Point3D& point) {
-    float x = (float)point.x / CoordinateMax;
-    float y = (float)point.y / CoordinateMax;
-    float z = (float)point.z / CoordinateMax;
+    float x = Point3D::coordinatePercent(point.x);
+    float y = Point3D::coordinatePercent(point.y);
+    float z = Point3D::coordinatePercent(point.z);
 
     // Value range from [-0.08 to 0.06]
     float xyzGradient = (float)((int)(5*(x - 0.5)) ^ (int)(5 * (y - 0.5)) ^ (int)(5 * (z - 0.5))) * 0.02;

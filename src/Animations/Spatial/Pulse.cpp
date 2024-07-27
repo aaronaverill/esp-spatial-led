@@ -38,7 +38,7 @@ namespace Animations { namespace Spatial {
     float y = (float)point.y;
     float z = (float)point.z;
 
-    float wave = (3*t1_wave + (x*r1 + y*r2 + z*r3) / CoordinateMax);
+    float wave = Point3D::coordinatePercent(3*t1_wave + (x*r1 + y*r2 + z*r3));
     float v = Waveform::triangle(wave);
     v = v*v*v*v*v;
 

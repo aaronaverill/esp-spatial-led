@@ -2,6 +2,8 @@
 
 #include <FastLED.h>
 
+using namespace Algorithm;
+
 namespace Animations { namespace Spatial {
   RainbowPlane::RainbowPlane(Services::ILedDriverAnimationContext& context):
     SpatialAnimation(context, "Rainbow Plane") {
@@ -38,8 +40,8 @@ namespace Animations { namespace Spatial {
   }
 
 
-  void RainbowPlane::renderLed(int index, const Algorithm::Point3D& point) {
-    byte offset = 255.f * ((float) point.z / CoordinateMax) * ((float)repeat6 / 6.f);
+  void RainbowPlane::renderLed(int index, const Point3D& point) {
+    byte offset = 255.f * Point3D::coordinatePercent(point.z) * ((float)repeat6 / 6.f);
     context.hsv(beat.value+offset, 255, 255);
   }
 }}

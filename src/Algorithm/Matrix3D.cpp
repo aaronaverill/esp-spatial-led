@@ -1,5 +1,6 @@
 #include "Matrix3D.h"
 #include <Arduino.h>
+#include "Algorithm/Math.h"
 
 namespace Algorithm {
   Matrix3D::Matrix3D() {
@@ -23,14 +24,16 @@ namespace Algorithm {
   }
 
   Matrix3D Matrix3D::rotation(CoordinateType ax, CoordinateType ay, CoordinateType az) {
-    float pi2 = 6.28318530718;
     Matrix3D result;
-    CoordinateType cx = std::cos(((float)ax)/CoordinateMax * pi2);
-    CoordinateType sx = std::sin(((float)ax)/CoordinateMax * pi2);
-    CoordinateType cy = std::cos(((float)ay)/CoordinateMax * pi2);
-    CoordinateType sy = std::sin(((float)ay)/CoordinateMax * pi2);
-    CoordinateType cz = std::cos(((float)az)/CoordinateMax * pi2);
-    CoordinateType sz = std::sin(((float)az)/CoordinateMax * pi2);
+    float xRadians = Point3D::coordinatePercent(ax) * PI2;
+    float yRadians = Point3D::coordinatePercent(ay) * PI2;
+    float zRadians = Point3D::coordinatePercent(az) * PI2;
+    CoordinateType cx = std::cos(xRadians);
+    CoordinateType sx = std::sin(xRadians);
+    CoordinateType cy = std::cos(yRadians);
+    CoordinateType sy = std::sin(yRadians);
+    CoordinateType cz = std::cos(zRadians);
+    CoordinateType sz = std::sin(zRadians);
 
     result.matrix[0][0] = cy * cz;
     result.matrix[0][1] = -cy * sz;

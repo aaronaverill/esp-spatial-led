@@ -14,7 +14,7 @@ namespace Services {
     colors.push_back(CRGB(0xFF, 0xFF, 0x00)); // Yellow
     colors.push_back(CRGB(0x00, 0xFF, 0x90)); // Green
     colors.push_back(CRGB(0x90, 0x00, 0xFF)); // Purple
-    autoPolarCoordinate.distance = CoordinateMax;
+    autoPolarCoordinate.distance = Point3D::percentToCoordinate(1);
   }
 
   std::vector<String> LedDriver::getChipsetOptions() const {
@@ -40,7 +40,7 @@ namespace Services {
     char *err, *p =(char *)coordinates;
     CoordinateType parts[3];
     while (*p) {
-      parts[pos] = strtof(p, &err) * CoordinateMax;
+      parts[pos] = Point3D::percentToCoordinate(strtof(p, &err));
       if (p == err) {
         p++;
       } else {
@@ -73,7 +73,7 @@ namespace Services {
     if (index < strip->pixelCount() && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {
-      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = ((float)index+0.5f)/strip->pixelCount() * CoordinateMax;
+      autoCoordinate.x = autoCoordinate.y = autoCoordinate.z = Point3D::percentToCoordinate(((float)index+0.5f)/strip->pixelCount());
       return autoCoordinate;
     }
   }
@@ -89,7 +89,7 @@ namespace Services {
     if (index < strip->pixelCount() && index < ledPolarCoordinates->size()) {
       return (*ledPolarCoordinates)[index];
     } else {
-      autoPolarCoordinate.angle = ((float)index+0.5f)/strip->pixelCount() * CoordinateMax;
+      autoPolarCoordinate.angle = Point3D::percentToCoordinate(((float)index+0.5f)/strip->pixelCount());
       return autoPolarCoordinate;
     }
   }

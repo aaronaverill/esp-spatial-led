@@ -3,8 +3,8 @@
 #include "System/Clock.h"
 #include "Algorithm/Waveform.h"
 
-using namespace System;
 using namespace Algorithm;
+using namespace System;
 
 namespace Animations { namespace Spatial {
   void CubeFire::renderFrame() {
@@ -22,9 +22,9 @@ namespace Animations { namespace Spatial {
   }
 
   void CubeFire::renderLed(int index, const Algorithm::Point3D& point) {
-    float x = (float)point.x / CoordinateMax;
-    float y = (float)point.y / CoordinateMax;
-    float z = (float)point.z / CoordinateMax;
+    float x = Point3D::coordinatePercent(point.x);
+    float y = Point3D::coordinatePercent(point.y);
+    float z = Point3D::coordinatePercent(point.z);
 
     float h = t1 + x*.25 + y*.25 + z*.25;
     float v = (Waveform::sine(z*scale + t1_wave) * Waveform::sine(y*scale + t2_wave) * Waveform::sine(x*scale + t3_wave))*10;
