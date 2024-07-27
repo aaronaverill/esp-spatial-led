@@ -5,9 +5,9 @@
 #include "Animations/Beat.h"
 
 namespace Animations {
-  class Rainbow: public Animation {
+  class RainbowChase: public Animation {
     public:
-      Rainbow(Services::ILedDriverAnimationContext& context);
+      RainbowChase(Services::ILedDriverAnimationContext& context);
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings) const;
       void setSettings(const JsonObject& settings);

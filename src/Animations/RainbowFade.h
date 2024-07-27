@@ -5,9 +5,9 @@
 #include "Animations/Beat.h"
 
 namespace Animations {
-  class Colorloop: public Animation {
+  class RainbowFade: public Animation {
     public:
-      Colorloop(Services::ILedDriverAnimationContext& context);
+      RainbowFade(Services::ILedDriverAnimationContext& context);
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings) const;
       void setSettings(const JsonObject& settings);
