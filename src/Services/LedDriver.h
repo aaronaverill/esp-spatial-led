@@ -5,7 +5,7 @@
 #include <FS.h>
 
 #include "Animations/Animation.h"
-#include "Color.h"
+#include "ColorChoice.h"
 #include "Services/ILedInfo.h"
 #include "Services/IService.h"
 #include "Services/Led/INeoPixelBus.h"

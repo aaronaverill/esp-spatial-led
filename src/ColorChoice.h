@@ -6,7 +6,7 @@
 /**
  * Represents a color that is either a numbered global color or an rgb
  */
-struct Color {
+struct ColorChoice {
   uint16_t number = 0;
   CRGB rgb;
 };

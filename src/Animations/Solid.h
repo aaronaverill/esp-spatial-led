@@ -2,7 +2,7 @@
 #include "Animation.h"
 
 #include "Services/ILedDriverAnimationContext.h"
-#include "Color.h"
+#include "ColorChoice.h"
 
 namespace Animations {
   class Solid: public Animation {
@@ -13,6 +13,6 @@ namespace Animations {
       void setSettings(const JsonObject& settings);
       void renderLed(int index);
     private:
-      Color color;
+      ColorChoice color;
   };
 }
