@@ -5,3 +5,4 @@
 .vscode/ipch
 node_modules
 src/Web/UI/Content
+/.vscode
