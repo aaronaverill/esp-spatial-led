@@ -4,7 +4,7 @@
 
 namespace Animations {
   Rainbow::Rainbow(Services::ILedDriverAnimationContext& context): Animation(context, "Rainbow") {
-    setBpm(bpm);
+    beat.setBpm(bpm);
   }
 
   void Rainbow::getFields(Web::UI::FieldsInfo& fields) {
@@ -20,7 +20,8 @@ namespace Animations {
 
   void Rainbow::setSettings(const JsonObject& settings) {
     if (settings["speed"]) {
-      setBpm(settings["speed"]);
+      bpm = settings["speed"];
+      beat.setBpm(bpm);
     }
     if (settings["repeat"]) {
       repeat6 = settings["repeat"];
@@ -31,26 +32,12 @@ namespace Animations {
   }
 
   void Rainbow::renderFrame() {
-    EVERY_N_MILLIS_I(beat,everyMillis) {
-      hue += hueIncrement;
-    }
+    beat.tick();
     Animation::renderFrame();
   }
 
   void Rainbow::renderLed(int index) {
     byte offset = (float)index*256/context.getRenderLedCount()*repeat6/6;
-    context.hsv(hue+offset, 255, 255);
-  }
-
-  void Rainbow::setBpm(byte bpm) {
-    this->bpm = bpm;
-    hueIncrement = 1;
-    float timeBetween = 234.375/bpm;
-    // Don't update more than once every 20 milliseconds
-    if (timeBetween < 20) {
-      hueIncrement = 20/timeBetween;
-      timeBetween *= hueIncrement;
-    }
-    everyMillis = timeBetween;
+    context.hsv(beat.value+offset, 255, 255);
   }
 }

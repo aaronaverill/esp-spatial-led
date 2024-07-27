@@ -4,7 +4,7 @@
 
 namespace Animations {
   Colorloop::Colorloop(Services::ILedDriverAnimationContext& context): Animation(context, "Colorloop") {
-    setBpm(bpm);
+    beat.setBpm(bpm);
   }
 
   void Colorloop::getFields(Web::UI::FieldsInfo& fields) {
@@ -17,30 +17,17 @@ namespace Animations {
 
   void Colorloop::setSettings(const JsonObject& settings) {
     if (settings["speed"]) {
-      setBpm(settings["speed"]);
+      bpm = settings["speed"];
+      beat.setBpm(bpm);
     }
   }
 
   void Colorloop::renderFrame() {
-    EVERY_N_MILLIS_I(beat,everyMillis) {
-      hue += hueIncrement;
-    }
+    beat.tick();
     Animation::renderFrame();
   }
 
   void Colorloop::renderLed(int index) {
-    context.hsv(hue,255,255);
-  }
-
-  void Colorloop::setBpm(byte bpm) {
-    this->bpm = bpm;
-    hueIncrement = 1;
-    float timeBetween = 234.375/bpm;
-    // Don't update more than once every 20 milliseconds
-    if (timeBetween < 20) {
-      hueIncrement = 20/timeBetween;
-      timeBetween *= hueIncrement;
-    }
-    everyMillis = timeBetween;
+    context.hsv(beat.value,255,255);
   }
 }

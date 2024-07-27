@@ -2,6 +2,7 @@
 #include "Animation.h"
 
 #include "Services/ILedDriverAnimationContext.h"
+#include "Animations/Beat.h"
 
 namespace Animations {
   class Rainbow: public Animation {
@@ -15,9 +16,7 @@ namespace Animations {
     private:
       void setBpm(byte bpm);
       byte bpm = 10;
-      uint32_t everyMillis;
-      byte hueIncrement;
-      byte hue;
+      Beat beat;
       byte repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
   };
 }

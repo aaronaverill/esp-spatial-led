@@ -2,6 +2,7 @@
 #include "Animation.h"
 
 #include "Services/ILedDriverAnimationContext.h"
+#include "Animations/Beat.h"
 
 namespace Animations {
   class Colorloop: public Animation {
@@ -13,10 +14,7 @@ namespace Animations {
       void renderFrame();
       void renderLed(int index);
     private:
-      void setBpm(byte bpm);
       byte bpm = 10;
-      uint32_t everyMillis;
-      byte hueIncrement;
-      byte hue;
+      Beat beat;
   };
 }
