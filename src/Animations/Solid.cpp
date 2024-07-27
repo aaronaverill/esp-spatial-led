@@ -29,10 +29,6 @@ namespace Animations {
     }
   }
 
-  void Solid::renderFrame() {
-    Animation::renderFrame();
-  }
-
   void Solid::renderLed(int index) {
     if (color.number > 0 && color.number <= context.getColors().size()) {
       CRGB rgb = context.getColors()[color.number-1];

@@ -11,7 +11,6 @@ namespace Animations {
       void getFields(Web::UI::FieldsInfo& fields);
       void getSettings(JsonObject& settings) const;
       void setSettings(const JsonObject& settings);
-      void renderFrame();
       void renderLed(int index);
     private:
       Color color;
