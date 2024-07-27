@@ -161,7 +161,7 @@ export default class App {
     const itemElement = element.closest('.item')
     const id = itemElement.dataset.field
     const field = this.#optionsField(id)
-    const val = element.value
+    const val = new Number(element.value)
     let modelVal = val
     if (field.factor) {
       modelVal *= field.factor
