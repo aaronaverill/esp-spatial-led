@@ -28,15 +28,6 @@ Application Application::instance = Application();
 Application::Application() {
   // Mount the file system which stores configuration files
   FS& fs = LittleFS;
-#ifdef ESP8266
-  bool mounted = LittleFS.begin();
-#else
-  bool mounted = LittleFS.begin(true);
-#endif
-
-  if (!mounted) {
-    Serial.println("LittleFS not mounted. No settings will be stored");
-  }
 
   // Create the LedDriver service and add animations
   LedDriver& ledDriver = LedDriver::create(fs);
@@ -106,6 +97,16 @@ void Application::addService(IService* service) {
 }
 
 void Application::setup() {
+#ifdef ESP8266
+  bool mounted = LittleFS.begin();
+#else
+  bool mounted = LittleFS.begin(true);
+#endif
+
+  if (!mounted) {
+    Serial.println("LittleFS not mounted. No settings will be stored");
+  }
+
   for (IService *service:services) {
     service->setup();
   }
