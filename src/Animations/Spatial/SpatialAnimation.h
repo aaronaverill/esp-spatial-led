@@ -13,10 +13,10 @@ namespace Animations { namespace Spatial {
        * Render a specific led by index
        */
       void renderLed(int index) {
-        const Coordinate& coordinate = context.getLedCoordinate(index);
-        renderLed(index, coordinate);
+        const Algorithm::Point3D& point = context.getLedCoordinate(index);
+        renderLed(index, point);
       }
 
-      virtual void renderLed(int index, const Coordinate& coordinate) {}
+      virtual void renderLed(int index, const Algorithm::Point3D& point) {}
   };
 }}

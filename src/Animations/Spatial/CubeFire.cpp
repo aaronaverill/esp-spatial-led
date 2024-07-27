@@ -21,10 +21,10 @@ namespace Animations { namespace Spatial {
     SpatialAnimation::renderFrame();
   }
 
-  void CubeFire::renderLed(int index, const Coordinate& coordinate) {
-    float x = (float)coordinate.x * .00001525;
-    float y = (float)coordinate.y * .00001525;
-    float z = (float)coordinate.z * .00001525;
+  void CubeFire::renderLed(int index, const Algorithm::Point3D& point) {
+    float x = (float)point.x / CoordinateMax;
+    float y = (float)point.y / CoordinateMax;
+    float z = (float)point.z / CoordinateMax;
 
     float h = t1 + x*.25 + y*.25 + z*.25;
     float v = (Waveform::sine(z*scale + t1_wave) * Waveform::sine(y*scale + t2_wave) * Waveform::sine(x*scale + t3_wave))*10;

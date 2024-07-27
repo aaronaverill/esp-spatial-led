@@ -22,7 +22,7 @@ namespace Animations { namespace Spatial {
     public:
       CubeFire(Services::ILedDriverAnimationContext& context): SpatialAnimation(context, "Cube Fire") {}
       void renderFrame();
-      void renderLed(int index, const Coordinate& coordinate);
+      void renderLed(int index, const Algorithm::Point3D& point);
     private:
       float speed = 1; // How fast the spheres travel through 3D space
       float t1; // x offset

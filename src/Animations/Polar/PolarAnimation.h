@@ -1,6 +1,6 @@
 #pragma once
 #include "Animations/Animation.h"
-#include "PolarCoordinate.h"
+#include "Algorithm/PointPolar.h"
 
 namespace Animations { namespace Polar {
   class PolarAnimation: public Animation {
@@ -14,11 +14,11 @@ namespace Animations { namespace Polar {
        * Render a specific led by index
        */
       void renderLed(int index) {
-        const Coordinate& coordinate = context.getLedCoordinate(index);
-        const PolarCoordinate& polar = context.getLedPolarCoordinate(index);
-        renderLed(index, coordinate, polar);
+        const Algorithm::Point3D& point = context.getLedCoordinate(index);
+        const Algorithm::PointPolar& pointPolar = context.getLedPolarCoordinate(index);
+        renderLed(index, point, pointPolar);
       }
 
-      virtual void renderLed(int index, const Coordinate& coordinate, const PolarCoordinate& polar) {}
+      virtual void renderLed(int index, const Algorithm::Point3D& point, const Algorithm::PointPolar& pointPolar) {}
   };
 }}

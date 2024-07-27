@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coordinate.h"
+#include "Algorithm/Point3D.h"
 
 namespace Algorithm {
   /**

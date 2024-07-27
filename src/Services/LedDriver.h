@@ -1,14 +1,14 @@
 #pragma once
+#include <vector>
 #include <Arduino.h>
-#include <FS.h>
 #include <FastLED.h>
-#include "IService.h"
-#include "ILedInfo.h"
-#include "Services/Led/INeoPixelBus.h"
+#include <FS.h>
+
 #include "Animations/Animation.h"
 #include "Color.h"
-
-#include <vector>
+#include "Services/ILedInfo.h"
+#include "Services/IService.h"
+#include "Services/Led/INeoPixelBus.h"
 
 namespace Services {
   /**
@@ -74,11 +74,11 @@ namespace Services {
       /**
        * Get the coordinate of an led by index
        */
-      const Coordinate& getLedCoordinate(uint index) const;
+      const Algorithm::Point3D& getLedCoordinate(uint index) const;
       /**
        * Get the polar coordinate of an led by index
        */
-      const PolarCoordinate& getLedPolarCoordinate(uint index) const;
+      const Algorithm::PointPolar& getLedPolarCoordinate(uint index) const;
       /**
        * Within a rendering context, the current led which is being rendered
        */
@@ -168,8 +168,8 @@ namespace Services {
       Led::INeoPixelBus *strip;
       uint ledCount = 1;
 
-      std::vector<Coordinate> ledCoordinates;
-      mutable std::vector<PolarCoordinate> *ledPolarCoordinates = nullptr;
+      std::vector<Algorithm::Point3D> ledCoordinates;
+      mutable std::vector<Algorithm::PointPolar> *ledPolarCoordinates = nullptr;
       uint8_t brightness = 128;
 
       std::vector<CRGB> colors;
@@ -183,7 +183,7 @@ namespace Services {
       float fps = -1;
 
       uint currentLed = 0;
-      mutable Coordinate autoCoordinate;
-      mutable PolarCoordinate autoPolarCoordinate;
+      mutable Algorithm::Point3D autoCoordinate;
+      mutable Algorithm::PointPolar autoPolarCoordinate;
   };
 }

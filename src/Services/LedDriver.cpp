@@ -1,8 +1,10 @@
 #include "LedDriver.h"
 
 #include "Services/Led/NeoPixelBusFactory.h"
-#include "Store/LedSettings.h"
 #include "Store/LedLayout.h"
+#include "Store/LedSettings.h"
+
+using namespace Algorithm;
 
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
@@ -12,7 +14,7 @@ namespace Services {
     colors.push_back(CRGB(0xFF, 0xFF, 0x00)); // Yellow
     colors.push_back(CRGB(0x00, 0xFF, 0x90)); // Green
     colors.push_back(CRGB(0x90, 0x00, 0xFF)); // Purple
-    autoPolarCoordinate.distance = PolarCoordinateMax;
+    autoPolarCoordinate.distance = CoordinateMax;
   }
 
   std::vector<String> LedDriver::getChipsetOptions() const {
@@ -33,7 +35,7 @@ namespace Services {
   }
 
   void LedDriver::setLedCoordinates(const char *coordinates) {
-    ledCoordinates = std::vector<Coordinate>();
+    ledCoordinates = std::vector<Point3D>();
     CoordinateType pos = 0;
     char *err, *p =(char *)coordinates;
     CoordinateType parts[3];
@@ -43,7 +45,7 @@ namespace Services {
         p++;
       } else {
         if (pos == 2) {
-          ledCoordinates.push_back(Coordinate(parts[0], parts[1], parts[2]));
+          ledCoordinates.push_back(Point3D(parts[0], parts[1], parts[2]));
           pos = 0;
         } else {
           pos++;
@@ -67,7 +69,7 @@ namespace Services {
     colors[index].b = b;
   }
 
-  const Coordinate& LedDriver::getLedCoordinate(uint index) const {
+  const Point3D& LedDriver::getLedCoordinate(uint index) const {
     if (index < strip->pixelCount() && index < ledCoordinates.size()) {
       return ledCoordinates[index];
     } else {
@@ -76,12 +78,12 @@ namespace Services {
     }
   }
 
-  const PolarCoordinate& LedDriver::getLedPolarCoordinate(uint index) const {
+  const PointPolar& LedDriver::getLedPolarCoordinate(uint index) const {
     if (ledPolarCoordinates == nullptr) {
       // Lazy calculate polar coordinates when first requested
-      ledPolarCoordinates = new std::vector<PolarCoordinate>();
+      ledPolarCoordinates = new std::vector<PointPolar>();
       for(uint i = 0; i < ledCoordinates.size(); i++) {
-        ledPolarCoordinates->push_back(PolarCoordinate(ledCoordinates[i]));
+        ledPolarCoordinates->push_back(PointPolar(ledCoordinates[i]));
       }
     }
     if (index < strip->pixelCount() && index < ledPolarCoordinates->size()) {

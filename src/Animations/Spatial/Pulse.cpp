@@ -33,10 +33,10 @@ namespace Animations { namespace Spatial {
     SpatialAnimation::renderFrame();
   }
 
-  void Pulse::renderLed(int index, const Coordinate& coordinate) {
-    float x = (float)coordinate.x;
-    float y = (float)coordinate.y;
-    float z = (float)coordinate.z;
+  void Pulse::renderLed(int index, const Algorithm::Point3D& point) {
+    float x = (float)point.x;
+    float y = (float)point.y;
+    float z = (float)point.z;
 
     float wave = (3*t1_wave + (x*r1 + y*r2 + z*r3) / CoordinateMax);
     float v = Waveform::triangle(wave);

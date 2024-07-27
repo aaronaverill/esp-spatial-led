@@ -38,8 +38,8 @@ namespace Animations { namespace Spatial {
   }
 
 
-  void RainbowPlane::renderLed(int index, const Coordinate& coordinate) {
-    byte offset = 255.f * ((float) coordinate.z / CoordinateMax) * ((float)repeat6 / 6.f);
+  void RainbowPlane::renderLed(int index, const Algorithm::Point3D& point) {
+    byte offset = 255.f * ((float) point.z / CoordinateMax) * ((float)repeat6 / 6.f);
     context.hsv(beat.value+offset, 255, 255);
   }
 }}

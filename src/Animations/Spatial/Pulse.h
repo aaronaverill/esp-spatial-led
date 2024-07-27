@@ -11,7 +11,7 @@ namespace Animations { namespace Spatial {
       void getSettings(JsonObject& settings) const;
       void setSettings(const JsonObject& settings);
       void renderFrame();
-      void renderLed(int index, const Coordinate& coordinate);
+      void renderLed(int index, const Algorithm::Point3D& point);
     private:
       float speed = 60;
       float t1, t1_wave, r1, r2, r3;
