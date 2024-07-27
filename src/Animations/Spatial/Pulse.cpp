@@ -34,11 +34,11 @@ namespace Animations { namespace Spatial {
   }
 
   void Pulse::renderLed(int index, const Coordinate& coordinate) {
-    float x= (float)coordinate.x / CoordinateMax;
-    float y = (float)coordinate.y / CoordinateMax;
-    float z = (float)coordinate.z / CoordinateMax;
+    float x = (float)coordinate.x;
+    float y = (float)coordinate.y;
+    float z = (float)coordinate.z;
 
-    float wave = Math::fraction(3*t1_wave + x*r1 + y*r2 + z*r3);
+    float wave = (3*t1_wave + (x*r1 + y*r2 + z*r3) / CoordinateMax);
     float v = Waveform::triangle(wave);
     v = v*v*v*v*v;
 

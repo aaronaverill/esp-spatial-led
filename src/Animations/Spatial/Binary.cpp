@@ -40,19 +40,19 @@ namespace Animations { namespace Spatial {
   }
 
   void Binary::renderLed(int index, const Coordinate& coordinate) {
-    float x = (float)coordinate.x / CoordinateMax;
-    float y = (float)coordinate.y / CoordinateMax;
-    float z = (float)coordinate.z / CoordinateMax;
+    float x = (float)coordinate.x * .00001525;
+    float y = (float)coordinate.y * .00001525;
+    float z = (float)coordinate.z * .00001525;
 
     // Value range from [-0.08 to 0.06]
-    float xyzGradient = (float)((int)(5*(x - 0.5)) ^ (int)(5 * (y - 0.5)) ^ (int)(5 * (z - 0.5))) / 50;
+    float xyzGradient = (float)((int)(5*(x - 0.5)) ^ (int)(5 * (y - 0.5)) ^ (int)(5 * (z - 0.5))) * 0.02;
 
     float wave = Math::fraction((xyzGradient * (t3_triangle * 10 + 4 * t4_sin)) / t5_triangle);
     float h = t2_sin + Waveform::sine(wave);
 
     float v = Math::fraction(fabsf(h) + fabsf(t5_triangle) + t1_saw);
     v = Waveform::triangle(v*v);
-    h = Math::fraction(Waveform::triangle(h)/5 + (x + y + z)/3 + t1_saw);
+    h = Math::fraction(Waveform::triangle(h) * 0.2 + (x + y + z) * 0.333333 + t1_saw);
     v = v * v * v;
 
     context.hsv(255 * h, 255, 255 * v);
