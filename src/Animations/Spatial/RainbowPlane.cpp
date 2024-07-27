@@ -5,7 +5,7 @@
 namespace Animations { namespace Spatial {
   RainbowPlane::RainbowPlane(Services::ILedDriverAnimationContext& context):
     SpatialAnimation(context, "Rainbow Plane") {
-    setBpm(bpm);
+    beat.setBpm(bpm);
   }
 
   void RainbowPlane::getFields(Web::UI::FieldsInfo& fields) {
@@ -21,7 +21,8 @@ namespace Animations { namespace Spatial {
 
   void RainbowPlane::setSettings(const JsonObject& settings) {
     if (settings["speed"]) {
-      setBpm(settings["speed"]);
+      bpm = settings["speed"];
+      beat.setBpm(bpm);
     }
     if (settings["repeat"]) {
       repeat6 = settings["repeat"];
@@ -32,27 +33,13 @@ namespace Animations { namespace Spatial {
   }
 
   void RainbowPlane::renderFrame() {
-    EVERY_N_MILLIS_I(beat,everyMillis) {
-      hue += hueIncrement;
-    }
+    beat.tick();
     Animation::renderFrame();
   }
 
 
   void RainbowPlane::renderLed(int index, const Coordinate& coordinate) {
     byte offset = 255.f * ((float) coordinate.z / CoordinateMax) * ((float)repeat6 / 6.f);
-    context.hsv(hue+offset, 255, 255);
-  }
-
-  void RainbowPlane::setBpm(byte bpm) {
-    this->bpm = bpm;
-    hueIncrement = 1;
-    float timeBetween = 234.375/bpm;
-    // Don't update more than once every 20 milliseconds
-    if (timeBetween < 20) {
-      hueIncrement = 20/timeBetween;
-      timeBetween *= hueIncrement;
-    }
-    everyMillis = timeBetween;
+    context.hsv(beat.value+offset, 255, 255);
   }
 }}

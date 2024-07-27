@@ -14,7 +14,6 @@ namespace Animations {
       void renderFrame();
       void renderLed(int index);
     private:
-      void setBpm(byte bpm);
       byte bpm = 10;
       Beat beat;
       byte repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
