@@ -39,7 +39,7 @@ namespace Animations {
     protected:
       Services::ILedDriverAnimationContext& context;
 
-    public:
+    private:
       const char *name;
       const char *tags;
   };
