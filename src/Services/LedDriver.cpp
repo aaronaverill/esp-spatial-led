@@ -10,10 +10,20 @@ namespace Services {
   LedDriver *LedDriver::instance = nullptr;
 
   LedDriver::LedDriver(FS& fs): fs(fs) {
+    // Add default colors
     colors.push_back(CRGB(0xFF, 0x20, 0x00)); // Red
     colors.push_back(CRGB(0xFF, 0xFF, 0x00)); // Yellow
     colors.push_back(CRGB(0x00, 0xFF, 0x90)); // Green
     colors.push_back(CRGB(0x90, 0x00, 0xFF)); // Purple
+
+    // Add default palettes
+    Palette rainbow("Rainbow");
+    rainbow.addStop(0, 255, 0, 0);
+    rainbow.addStop(85, 0, 255, 0);
+    rainbow.addStop(170, 0, 0, 255);
+    rainbow.addStop(255, 255, 0, 0);
+    palettes.push_back(rainbow);
+
     autoPolarCoordinate.distance = Point3D::percentToCoordinate(1);
   }
 
