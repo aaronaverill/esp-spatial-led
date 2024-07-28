@@ -6,6 +6,7 @@
 
 #include "Animations/Animation.h"
 #include "ColorChoice.h"
+#include "Palette.h"
 #include "Services/ILedInfo.h"
 #include "Services/IService.h"
 #include "Services/Led/INeoPixelBus.h"
@@ -173,6 +174,7 @@ namespace Services {
       uint8_t brightness = 128;
 
       std::vector<CRGB> colors;
+      std::vector<Palette> palettes;
 
       std::vector<Animations::Animation*> animations;
 

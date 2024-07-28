@@ -36,11 +36,10 @@ namespace Animations {
        */
       virtual void renderLed(int index) {}
 
-    protected:
-      Services::ILedDriverAnimationContext& context;
-
-    private:
       const char *name;
       const char *tags;
+
+    protected:
+      Services::ILedDriverAnimationContext& context;
   };
 }
