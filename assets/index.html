@@ -247,16 +247,17 @@
 </div>
   </script>
 
-  <!-- Template for option controls for field type 'color' -->
+  <!-- Template for option controls for field type 'color' and 'palette' -->
   <script type="text/x-template" id="t_color">
 <div data-field="${id}" class="item pa-2">
   <div>${label}</div>
-  <div class="d-flex w-100">
-    <div class="flex-grow-1 pr-3">
+  <div class="color-controls d-flex w-100">
+    <div class="solid-color flex-grow-1 pr-3">
       <div><input type="range" oninput="app.onOptionColorHueChange(this)" min="0" max="255" class="w-100" /></div>
       <div class="rainbow" style="height:10px; margin:0 5px 0 9px"></div>
     </div>
-    <div onclick="app.showAnimationSelectColor(this)" class="value color flex-shrink-0 selectable"><div class="number"></div></div>
+    <div onclick="app.showAnimationSelectColor(this)" class="solid-color value color flex-shrink-0 selectable"><div class="number"></div></div>
+    <div data-palette class="palette-color color selectable flex-grow-1"><div class="name"></div></div>
   </div>
 </div>
   </script>

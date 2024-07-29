@@ -25,7 +25,8 @@ namespace Web { namespace UI {
   }
 
   void FieldsInfo::addPaletteChooser(const char *id, const char *label) {
-    addTypeChooser(id, "palette", label);
+    addTypeChooser(id, "color", label);
+    fields[fields.size()-1]["palette"] = true;
   }
 
   void FieldsInfo::addTypeChooser(const char *id, const char *type, const char *label) {

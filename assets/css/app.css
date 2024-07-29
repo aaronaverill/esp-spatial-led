@@ -160,6 +160,20 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   border: 1px solid #FFF;
 }
 
+.palette-color {
+  height: 80px;
+  font-weight: normal;
+  margin-top: 12px;
+}
+
+.palette-color .name {
+  background-color: rgba(0, 0, 0, .2);
+  border: none;
+  width: auto;
+  border-radius: 6px;
+  padding: 4px 24px;
+}
+
 /* Pages */
 .page {
   flex-grow: 1;

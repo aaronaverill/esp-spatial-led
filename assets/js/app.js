@@ -178,6 +178,7 @@ export default class App {
     const id = itemElement.dataset.field
     const hue = element.value
     const modelVal = {
+      palette: 0,
       color: 0,
       rgb: this.#hsv2rgb({h: hue, s: 255, v: 255})
     }
@@ -214,6 +215,7 @@ export default class App {
         index: this.#info.leds.play.index,
       }
       patch[this.#editing] = {
+        palette: 0,
         color: color,
         rgb: rgb
       }
@@ -436,11 +438,23 @@ export default class App {
         if (field.factor) val /= field.factor
         itemElement.querySelector('input').value = val
         break
-      case 'color':
-        const color = this.#animationColorValue(field.id)
-        const hsv = this.#rgb2hsv(color.rgb)
-        itemElement.querySelector('input').value = hsv.h
-        break
+      case 'color': {
+        const val = this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
+        itemElement.querySelectorAll('.color-controls > div').forEach(element => {
+          const isPaletteControl = element.dataset.palette !== undefined
+
+          element.style.display = isPaletteControl == Boolean(val.palette) ? '' : 'none'
+        })
+        if (val.palette) {
+          const palette = this.#info.leds.palettes[val.palette-1]
+          itemElement.querySelector('.palette-color').style.background = this.#backgroundGradient(palette)
+          itemElement.querySelector('.palette-color .name').innerText = palette.name
+        } else {
+          const color = this.#animationColorValue(field.id)
+          const hsv = this.#rgb2hsv(color.rgb)
+          itemElement.querySelector('input').value = hsv.h
+        }
+      }
     }
     this.#refreshOptionValue(itemElement, val, field)
   }
@@ -465,7 +479,7 @@ export default class App {
         break
       case 'hue':
         val *= (360/255)
-        element.querySelector('.value').style.backgroundColor = `hsl(${val},100%,50%)`
+        element.querySelector('.value').style.background = `hsl(${val},100%,50%)`
         break
       case 'color': {
         const valueElement = element.querySelector('.value')
@@ -479,6 +493,13 @@ export default class App {
         break
       }
     }
+  }
+
+  #backgroundGradient(palette) {
+    const stops = palette.stops
+      .map(stop => `rgb(${stop[1]},${stop[2]},${stop[3]}) ${Math.round(stop[0]/.255)/10}%`)
+      .join(',')
+    return`linear-gradient(90deg,${stops})`
   }
 
   // -----------------------------------------------------------------------------
