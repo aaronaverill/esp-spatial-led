@@ -32,10 +32,10 @@ namespace Web { namespace Api {
     }
 
     JsonArray jsonPalettes = jsonLeds["palettes"].to<JsonArray>();
-    for(size_t i = 1; i < leds.getPalettes().size(); i++) {
+    for(Palette palette:leds.getPalettes()) {
       JsonObject jsonPalette = jsonPalettes.add<JsonObject>();
-      jsonPalette["name"] = leds.getPalettes()[i].name;
-      for(Palette::GradientStop stop:leds.getPalettes()[i].getStops()) {
+      jsonPalette["name"] = palette.name;
+      for(Palette::GradientStop stop:palette.getStops()) {
         JsonArray jsonStop = jsonPalette["stops"].add<JsonArray>();
         jsonStop.add(stop.percent);
         jsonStop.add(stop.rgb.r);
