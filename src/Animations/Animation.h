@@ -14,7 +14,7 @@ namespace Animations {
        * Construct the animation with a context and name
        */
       Animation(Services::ILedDriverAnimationContext& context, const char *name, const char *tags = ""): 
-        context(context), name(name), tags(tags) {}
+        name(name), tags(tags), context(context) {}
       /**
        * Construct custom fields information
        */
