@@ -4,6 +4,7 @@
 
 #include "Algorithm/Point3D.h"
 #include "Algorithm/PointPolar.h"
+#include "Palette.h"
 
 namespace Services {
   /**
@@ -47,6 +48,10 @@ namespace Services {
        * Get the list of system colors
        */
       virtual const std::vector<CRGB>& getColors() const = 0;
+      /**
+       * Get the palettes
+       */
+      virtual const std::vector<Palette>& getPalettes() const = 0;
       /**
        * Show the strip
        */

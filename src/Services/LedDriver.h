@@ -123,6 +123,10 @@ namespace Services {
        * Set the system color
        */
       void setColor(int index, byte r, byte g, byte b);
+      /**
+       * Get the palettes
+       */
+      const std::vector<Palette>& getPalettes() const { return palettes; }
 
       /**
        * Add an animation to the sequencer
