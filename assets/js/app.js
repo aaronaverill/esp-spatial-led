@@ -319,7 +319,7 @@ export default class App {
         classes.push('mr-3')
       }
       const basis = index ? 15: 25
-      const label = index ? `<div>${index}</div>` : ''
+      const label = index ? `<div class="number">${index}</div>` : ''
       const styles = ['height:100px', `background-color:${this.#toHex(rgb)}`, `flex-basis:${basis}%`]
       html += `<div onclick="app.selectColorNumber(this)" class="${classes.join(' ')}" style="${styles.join(';')}">${label}</div>`
     })
@@ -471,7 +471,7 @@ export default class App {
         const valueElement = element.querySelector('.value')
         const color = this.#animationColorValue(field.id)
         if (color.color && color.color <= this.#info.leds.colors.length) {
-          valueElement.innerHTML = `<div>${color.color}</div>`
+          valueElement.innerHTML = `<div class="number">${color.color}</div>`
         } else {
           valueElement.innerHTML = ''
         }
@@ -854,7 +854,7 @@ export default class App {
     let index = 0
     this.#info.leds.colors.forEach(bg => {
       const bgHex = this.#toHex(bg)
-      html += `<div onclick="app.onColorClick(${index})" class="color font-huge selectable" style="background-color:${bgHex};height:100px"><div>${index+1}</div></div>`
+      html += `<div onclick="app.onColorClick(${index})" class="color font-huge selectable" style="background-color:${bgHex};height:100px"><div class="number">${index+1}</div></div>`
       index++
     })
     document.querySelector('#pColors .grid').innerHTML = html
