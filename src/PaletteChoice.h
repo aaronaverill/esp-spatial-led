@@ -9,8 +9,8 @@
 class PaletteChoice {
   public:
     void getSetting(JsonObject& json) const {
-      json["number"] = number;
-      json["colorNumber"] = color.number;
+      json["palette"] = number;
+      json["color"] = color.number;
       JsonArray jsonRgb = json["rgb"].to<JsonArray>();
       jsonRgb.add(color.rgb.r);
       jsonRgb.add(color.rgb.g);
@@ -18,8 +18,8 @@ class PaletteChoice {
     }
 
     void setSetting(const JsonVariant& json, const std::vector<CRGB>& colors, const std::vector<Palette>& palettes) {
-      number = json["number"];
-      color.number = json["colorNumber"];
+      number = json["palette"];
+      color.number = json["color"];
       if (color.number > 0 && color.number <= colors.size()) {
         color.rgb = colors[color.number-1];
       } else {

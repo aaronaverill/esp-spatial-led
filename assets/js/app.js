@@ -178,7 +178,7 @@ export default class App {
     const id = itemElement.dataset.field
     const hue = element.value
     const modelVal = {
-      number: 0,
+      color: 0,
       rgb: this.#hsv2rgb({h: hue, s: 255, v: 255})
     }
     await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
@@ -191,13 +191,13 @@ export default class App {
    */
   async onAnimationColorChange(element) {
     const rgb = this.#getColorHSVControlRGB('pAnimationColor')
-    const number = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].number
+    const color = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].color
 
     this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].rgb = [...rgb]
 
-    const isNumberedColor = number && number <= this.#info.leds.colors.length
+    const isNumberedColor = color && color <= this.#info.leds.colors.length
     if (isNumberedColor) {
-      this.#info.leds.colors[number-1] = [...rgb]
+      this.#info.leds.colors[color-1] = [...rgb]
     }
 
     this.#refreshSelectColor()
@@ -206,7 +206,7 @@ export default class App {
   
     if (isNumberedColor) {
       this.#throttledSaveColor({
-        index: number-1,
+        index: color-1,
         rgb: rgb
       })
     } else {
@@ -214,7 +214,7 @@ export default class App {
         index: this.#info.leds.play.index,
       }
       patch[this.#editing] = {
-        number: number,
+        color: color,
         rgb: rgb
       }
       this.#throttledSaveAnimationSettings(patch)
@@ -252,7 +252,7 @@ export default class App {
    */
   selectColorNumber(element) {
     const number = Array.from(element.parentNode.children).indexOf(element)
-    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].number = number
+    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].color = number
     const modelVal = this.#animationColorValue(this.#editing)
     this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].rgb = [...modelVal.rgb]
     this.#refreshSelectColor()
@@ -293,12 +293,12 @@ export default class App {
   /**
    * Get the color object associated with the current animation field
    * @param {string} id - Field id
-   * @returns An object {number, rgb}
+   * @returns An object {color, rgb}
    */
   #animationColorValue(id) {
     const val = structuredClone(this.#info.leds.animations[this.#info.leds.play.index].settings[id])
-    if (val.number && val.number <= this.#info.leds.colors.length) {
-      val.rgb = this.#info.leds.colors[val.number-1]
+    if (val.color && val.color <= this.#info.leds.colors.length) {
+      val.rgb = this.#info.leds.colors[val.color-1]
     }
     return val
   }
@@ -314,7 +314,7 @@ export default class App {
     let html = ''
     colors.forEach((rgb, index) => {
       const classes = ['color', 'font-huge', 'flex-grow-1']
-      classes.push(val.number == index ? 'selected' : ' selectable')
+      classes.push(val.color == index ? 'selected' : ' selectable')
       if (index < colors.length - 1) {
         classes.push('mr-3')
       }
@@ -334,7 +334,7 @@ export default class App {
    */
   #refreshSelectColorControls(field, val) {
     const pageElement = document.querySelector('#pAnimationColor')
-    const colorElement = pageElement.querySelectorAll('.color')[val.number]
+    const colorElement = pageElement.querySelectorAll('.color')[val.color]
     this.#refreshHSVControls(field, pageElement, colorElement, val.rgb)
   }
   
@@ -470,8 +470,8 @@ export default class App {
       case 'color': {
         const valueElement = element.querySelector('.value')
         const color = this.#animationColorValue(field.id)
-        if (color.number && color.number <= this.#info.leds.colors.length) {
-          valueElement.innerHTML = `<div>${color.number}</div>`
+        if (color.color && color.color <= this.#info.leds.colors.length) {
+          valueElement.innerHTML = `<div>${color.color}</div>`
         } else {
           valueElement.innerHTML = ''
         }

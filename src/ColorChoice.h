@@ -11,7 +11,7 @@ class ColorChoice {
     ColorChoice(uint16_t number = 0): number(number) {}
 
     void getSetting(JsonObject& json) const {
-      json["number"] = number;
+      json["color"] = number;
       JsonArray jsonRgb = json["rgb"].to<JsonArray>();
       jsonRgb.add(rgb.r);
       jsonRgb.add(rgb.g);
@@ -19,7 +19,7 @@ class ColorChoice {
     }
 
     void setSetting(const JsonVariant& json, const std::vector<CRGB>& colors) {
-      number = json["number"];
+      number = json["color"];
       if (number > 0 && number <= colors.size()) {
         rgb = colors[number-1];
       } else {
