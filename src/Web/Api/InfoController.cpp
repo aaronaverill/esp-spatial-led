@@ -31,6 +31,19 @@ namespace Web { namespace Api {
       jsonColor.add(rgb.b);
     }
 
+    JsonArray jsonPalettes = jsonLeds["palettes"].to<JsonArray>();
+    for(size_t i = 1; i < leds.getPalettes().size(); i++) {
+      JsonObject jsonPalette = jsonPalettes.add<JsonObject>();
+      jsonPalette["name"] = leds.getPalettes()[i].name;
+      for(Palette::GradientStop stop:leds.getPalettes()[i].getStops()) {
+        JsonArray jsonStop = jsonPalette["stops"].add<JsonArray>();
+        jsonStop.add(stop.percent);
+        jsonStop.add(stop.rgb.r);
+        jsonStop.add(stop.rgb.g);
+        jsonStop.add(stop.rgb.b);
+      }
+    }
+
     JsonObject jsonPlay = jsonLeds["play"].to<JsonObject>();
     JsonObject jsonSettings = jsonPlay["settings"].to<JsonObject>();
     jsonSettings["brightness"] = leds.getBrightness();

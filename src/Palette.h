@@ -18,8 +18,14 @@ class Palette {
 
     Palette(const char *name): name(name) {}
 
+    /**
+     * Get the list of gradient stops
+     */
     const std::vector<GradientStop>& getStops() const { return stops; }
 
+    /**
+     * Add a stop. If a stop at the specified percent exists it will be replaced
+     */
     void addStop(byte percent, byte r, byte g, byte b) {
       size_t insertAt = 0;
       while (insertAt < stops.size() && percent > stops[insertAt].percent) {
@@ -37,7 +43,8 @@ class Palette {
       }
     }
 
-  private:
     const char *name;
+
+  private:
     std::vector<GradientStop> stops;
 };
