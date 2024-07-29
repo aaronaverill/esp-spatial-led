@@ -22,13 +22,23 @@ namespace Web { namespace UI {
       /**
        * Add a color chooser field. Sets/gets a structure:
        * {
-       *   color: one based number of a global color or zero for a custom color
+       *   number: one based number of a global color or zero for a custom color
        *   rgb: [r, g, b]
        * }
        */
       void addColorChooser(const char *id, const char *label);
+      /**
+       * Add a palette chooser field. Sets/gets a structure:
+       * {
+       *   number: one based number of a global palette or zero for a custom color
+       *   colorNumber: one based number of a global color or zero for a custom color
+       *   rgb: [r, g, b]
+       * }
+       */
+      void addPaletteChooser(const char *id, const char *label);
 
     private:
+      void addTypeChooser(const char *id, const char *type, const char *label);
       JsonArray& fields;
   };
 }}

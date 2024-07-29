@@ -17,16 +17,21 @@ namespace Web { namespace UI {
   }
 
   void FieldsInfo::addHueChooser(const char *id, const char *label) {
-    JsonObject field = fields.add<JsonObject>();
-    field["id"] = id;
-    field["type"] = "hue";
-    field["label"] = label;
+    addTypeChooser(id, "hue", label);
   }
 
   void FieldsInfo::addColorChooser(const char *id, const char *label) {
+    addTypeChooser(id, "color", label);
+  }
+
+  void FieldsInfo::addPaletteChooser(const char *id, const char *label) {
+    addTypeChooser(id, "palette", label);
+  }
+
+  void FieldsInfo::addTypeChooser(const char *id, const char *type, const char *label) {
     JsonObject field = fields.add<JsonObject>();
     field["id"] = id;
-    field["type"] = "color";
+    field["type"] = type;
     field["label"] = label;
   }
 }}
