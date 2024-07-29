@@ -3,8 +3,6 @@
 #include <Arduino.h>
 #include "Algorithm/Math.h"
 
-#define PI2 PI*2
-
 namespace Algorithm {
   /**
    * Waveform algorithms
