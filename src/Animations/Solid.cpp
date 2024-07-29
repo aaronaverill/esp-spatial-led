@@ -8,24 +8,13 @@ namespace Animations {
   }
 
   void Solid::getSettings(JsonObject& settings) const {
-    settings["color"]["number"] = color.number;
-    JsonArray rgb = settings["color"]["rgb"].to<JsonArray>();
-    rgb.add(color.rgb.r);
-    rgb.add(color.rgb.g);
-    rgb.add(color.rgb.b);
+    JsonObject jsonColor = settings["color"].to<JsonObject>();
+    color.getSetting(jsonColor);
   }
 
   void Solid::setSettings(const JsonObject& settings) {
     if (settings["color"]) {
-      color.number = settings["color"]["number"];
-      if (color.number > 0 && color.number <= context.getColors().size()) {
-        color.rgb = context.getColors()[color.number-1];
-      } else {
-        JsonArray rgb = settings["color"]["rgb"].as<JsonArray>();
-        color.rgb.r = rgb[0];
-        color.rgb.g = rgb[1];
-        color.rgb.b = rgb[2];
-      }
+      color.setSetting(settings["color"], context.getColors());
     }
   }
 
