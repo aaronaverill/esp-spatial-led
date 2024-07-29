@@ -20,13 +20,13 @@ namespace Animations { namespace Polar {
       }
 
       void renderLed(int index, const Algorithm::Point3D& point, const Algorithm::PointPolar& pointPolar) {
-        byte hue = pointPolar.angle >> 8;
-        byte saturation = min(255, 300 - (point.z >> 8));
-        byte value = min(255, 127 + (pointPolar.distance >> 7));
+        uint8_t hue = pointPolar.angle >> 8;
+        uint8_t saturation = min(255, 300 - (point.z >> 8));
+        uint8_t value = min(255, 127 + (pointPolar.distance >> 7));
         context.hsv(hue + t1, saturation, value);
       }
 
-      byte t1;
+      uint8_t t1;
       unsigned long lastTime = 0;
   };
 }}

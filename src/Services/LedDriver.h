@@ -122,7 +122,7 @@ namespace Services {
       /**
        * Set the system color
        */
-      void setColor(int index, byte r, byte g, byte b);
+      void setColor(int index, uint8_t r, uint8_t g, uint8_t b);
       /**
        * Get the palettes
        */

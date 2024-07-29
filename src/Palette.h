@@ -10,9 +10,9 @@
 class Palette {
   public:
     struct GradientStop {
-      GradientStop(byte percent, byte r, byte g, byte b): percent(percent), rgb(r, g, b) {}
+      GradientStop(uint8_t percent, uint8_t r, uint8_t g, uint8_t b): percent(percent), rgb(r, g, b) {}
 
-      byte percent;
+      uint8_t percent;
       CRGB rgb;
     };
 
@@ -26,7 +26,7 @@ class Palette {
     /**
      * Add a stop. If a stop at the specified percent exists it will be replaced
      */
-    void addStop(byte percent, byte r, byte g, byte b) {
+    void addStop(uint8_t percent, uint8_t r, uint8_t g, uint8_t b) {
       size_t insertAt = 0;
       while (insertAt < stops.size() && percent > stops[insertAt].percent) {
         insertAt++;

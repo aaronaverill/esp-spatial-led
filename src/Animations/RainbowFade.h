@@ -14,7 +14,7 @@ namespace Animations {
       void renderFrame();
       void renderLed(int index);
     private:
-      byte bpm = 10;
+      uint8_t bpm = 10;
       Beat beat;
   };
 }

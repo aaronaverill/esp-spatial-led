@@ -41,11 +41,11 @@ namespace Animations {
       /**
        * The value
        */
-      byte value = 0;
+      uint8_t value = 0;
 
     private:
       uint32_t everyMillis;
-      byte stepIncrement;
+      uint8_t stepIncrement;
       ulong lastMillis = 0;
   };
 }

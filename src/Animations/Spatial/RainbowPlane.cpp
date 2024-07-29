@@ -41,7 +41,7 @@ namespace Animations { namespace Spatial {
 
 
   void RainbowPlane::renderLed(int index, const Point3D& point) {
-    byte offset = 255.f * Point3D::coordinatePercent(point.z) * ((float)repeat6 / 6.f);
+    uint8_t offset = 255.f * Point3D::coordinatePercent(point.z) * ((float)repeat6 / 6.f);
     context.hsv(beat.value+offset, 255, 255);
   }
 }}

@@ -73,7 +73,7 @@ namespace Services {
     ledPolarCoordinates = nullptr;
   }
 
-  void LedDriver::setColor(int index, byte r, byte g, byte b) {
+  void LedDriver::setColor(int index, uint8_t r, uint8_t g, uint8_t b) {
     colors[index].r = r;
     colors[index].g = g;
     colors[index].b = b;

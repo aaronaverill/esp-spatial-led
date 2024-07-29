@@ -37,7 +37,7 @@ namespace Animations {
   }
 
   void RainbowChase::renderLed(int index) {
-    byte offset = (float)index*256/context.getRenderLedCount()*repeat6/6;
+    uint8_t offset = (float)index*256/context.getRenderLedCount()*repeat6/6;
     context.hsv(beat.value+offset, 255, 255);
   }
 }

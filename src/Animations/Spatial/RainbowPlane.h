@@ -13,8 +13,8 @@ namespace Animations { namespace Spatial {
       void renderFrame();
       void renderLed(int index, const Algorithm::Point3D& point);
     private:
-      byte bpm = 10;
+      uint8_t bpm = 10;
       Beat beat;
-      byte repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
+      uint8_t repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
   };
 }}
