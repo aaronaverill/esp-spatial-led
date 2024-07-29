@@ -185,16 +185,16 @@ export default class App {
     await this.#setOptionModelAndSave(itemElement, id, modelVal, modelVal)
   }
 
-
   /**
    * Handle a control change
    * @param {HTMLElement} element - The element whose value is changing
    */
   async onAnimationColorChange(element) {
+    const setting = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing]
     const rgb = this.#getColorHSVControlRGB('pAnimationColor')
-    const color = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].color
+    const color = setting.color
 
-    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].rgb = [...rgb]
+    setting.rgb = [...rgb]
 
     const isNumberedColor = color && color <= this.#info.leds.colors.length
     if (isNumberedColor) {
@@ -236,16 +236,51 @@ export default class App {
   }
 
   /**
-   * Show the color selection page
+   * Show the palette/color selection page
    * @param {HTMLElement} element - The field's element which was clicked
    */
   showAnimationSelectColor(element) {
     const itemElement = element.closest('.item')
     this.#editing = itemElement.dataset.field
     const field = this.#optionsField(this.#editing)
+    let val = this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
+    this.#activeTab = val.palette ? 'palette' : 'color'
+
     document.querySelector('#pAnimationColor .title .text').innerText = `Select ${field.label}`
+    document.querySelector('#pAnimationColor .tabs').style.display = field.palette ? '' : 'none'
+    this.#refreshSelectColorActiveTab()
+    this.#refreshSelectPaletteList()
     this.#refreshSelectColor()
     this.showPage('pAnimationColor')
+  }
+
+  /**
+   * Set the active tab visible on the select color page
+   * @param {HTMLElement} element - The clicked tab
+   */
+  setColorActiveTab(element) {
+    this.#activeTab = element.dataset.tab
+    this.#refreshSelectColorActiveTab()
+  }
+
+  /**
+   * Handle a click on an animation palette
+   * @param {HTMLElement} element - The palette element
+   */
+  async selectPaletteNumber(element) {
+    const number = Array.from(element.parentNode.children).indexOf(element) + 1
+    const setting = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing]
+    setting.palette = number
+    setting.color = 0
+    this.#refreshSelectPaletteList()
+    this.#refreshSelectColor()
+    this.#refreshAnimationOptions()
+
+    const patch = {
+      index: this.#info.leds.play.index
+    }
+    patch[this.#editing] = setting
+    this.#throttledSaveAnimationSettings(patch)
   }
 
   /**
@@ -254,16 +289,19 @@ export default class App {
    */
   selectColorNumber(element) {
     const number = Array.from(element.parentNode.children).indexOf(element)
-    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].color = number
+    const setting = this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing]
     const modelVal = this.#animationColorValue(this.#editing)
-    this.#info.leds.animations[this.#info.leds.play.index].settings[this.#editing].rgb = [...modelVal.rgb]
+    setting.palette = 0
+    setting.color = number
+    setting.rgb = [...modelVal.rgb]
+    this.#refreshSelectPaletteList()
     this.#refreshSelectColor()
     this.#refreshAnimationOptions()
 
     const patch = {
       index: this.#info.leds.play.index
     }
-    patch[this.#editing] = modelVal
+    patch[this.#editing] = setting
     this.#throttledSaveAnimationSettings(patch)
   }
 
@@ -306,6 +344,39 @@ export default class App {
   }
 
   /**
+   * Refresh the active tab
+   */
+  #refreshSelectColorActiveTab() {
+    document.querySelectorAll('#pAnimationColor .tabs .tab').forEach(element => {
+      element.classList.remove('selected')
+      if (element.dataset.tab == this.#activeTab) {
+        element.classList.add('selected')
+      }
+    })
+    document.querySelectorAll('#pAnimationColor .page').forEach(element => {
+      element.style.display = element.dataset.page == this.#activeTab ? '' : 'none'
+    })
+  }
+
+  /**
+   * Refresh the page to select an animation palette
+   */
+  #refreshSelectPaletteList() {
+    const field = this.#optionsField(this.#editing)
+    const val = this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
+    let html = ''
+    let index = 0
+    this.#info.leds.palettes.forEach(palette => {
+      const classes = ['palette-color', 'color', 'flex-shrink-0']
+      classes.push(val.palette - 1 == index ? 'selected' : 'selectable')
+      const gradient = this.#backgroundGradient(palette)
+      html += `<div onclick="app.selectPaletteNumber(this)" class="${classes.join(' ')}" style="background:${gradient}"><div class="name">${palette.name}</div></div>`
+      index++
+    })
+    document.querySelector('#pAnimationColor .palettes').innerHTML = html
+  }
+
+  /**
    * Refresh the select color page with the field being currently edited
    */
   #refreshSelectColor() {
@@ -316,7 +387,7 @@ export default class App {
     let html = ''
     colors.forEach((rgb, index) => {
       const classes = ['color', 'font-huge', 'flex-grow-1']
-      classes.push(val.color == index ? 'selected' : ' selectable')
+      classes.push(!val.palette && val.color == index ? 'selected' : 'selectable')
       if (index < colors.length - 1) {
         classes.push('mr-3')
       }
@@ -336,7 +407,7 @@ export default class App {
    */
   #refreshSelectColorControls(field, val) {
     const pageElement = document.querySelector('#pAnimationColor')
-    const colorElement = pageElement.querySelectorAll('.color')[val.color]
+    const colorElement = pageElement.querySelectorAll('.colors .color')[val.color]
     this.#refreshHSVControls(field, pageElement, colorElement, val.rgb)
   }
   
@@ -1015,6 +1086,10 @@ export default class App {
    * Model object with all the information returned from the MCU about the system
    */
   #info
+  /**
+   * Active tab
+   */
+  #activeTab
   /**
    * Model object for data while it's being edited
    */

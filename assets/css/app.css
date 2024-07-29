@@ -97,6 +97,17 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .selectable, .btn { cursor: pointer; }
 .selectable:hover { background-color: #BBF2; }
 
+/* Tabs */
+.tabs .tab {
+  text-align: center;
+  padding: 8px 16px;
+}
+
+.tab.selected {
+  background-color: #5BF6;
+  border-bottom: 3px solid #5BF;
+}
+
 /* Buttons */
 .btn[disabled] {
   opacity: .5;

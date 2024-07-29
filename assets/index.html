@@ -43,9 +43,14 @@
           <div onclick="app.showPage('pPlayOptions')" class="btn pa-4"><div class="img img-arrow-back"></div></div>
           <div class="text pa-3"></div>
         </div>
-        <div class="page d-flex flex-column pa-4">
-          <div class="colors d-flex">
-          </div>
+        <div class="tabs pa-2 d-flex w-100">
+          <div data-tab="palette" onclick="app.setColorActiveTab(this)" class="tab selectable">Palette</div>
+          <div data-tab="color" onclick="app.setColorActiveTab(this)" class="tab selectable">Color</div>
+        </div>
+        <div data-page="palette" class="page palettes d-flex flex-column pa-4">
+        </div>
+        <div data-page="color" class="page d-flex flex-column pa-4">
+          <div class="colors d-flex"></div>
           <div class="list">
             <div class="item py-3">
               <div>Hue</div>
@@ -257,7 +262,7 @@
       <div class="rainbow" style="height:10px; margin:0 5px 0 9px"></div>
     </div>
     <div onclick="app.showAnimationSelectColor(this)" class="solid-color value color flex-shrink-0 selectable"><div class="number"></div></div>
-    <div data-palette class="palette-color color selectable flex-grow-1"><div class="name"></div></div>
+    <div data-palette onclick="app.showAnimationSelectColor(this)" class="palette-color color selectable flex-grow-1"><div class="name"></div></div>
   </div>
 </div>
   </script>
