@@ -163,6 +163,8 @@ namespace Services {
 
     private:
       Led::INeoPixelBus* createController() const;
+      void addDefaultColors();
+      void addDefaultPalettes();
 
       LedDriver(FS& fs);
       static LedDriver *instance;
