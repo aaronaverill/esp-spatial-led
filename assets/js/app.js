@@ -517,7 +517,8 @@ export default class App {
           element.style.display = isPaletteControl == Boolean(val.palette) ? '' : 'none'
         })
         if (val.palette) {
-          const palette = this.#info.leds.palettes[val.palette-1]
+          let number = val.palette <= this.#info.leds.palettes.length ? val.palette - 1 : 0
+          const palette = this.#info.leds.palettes[number]
           itemElement.querySelector('.palette-color').style.background = this.#backgroundGradient(palette)
           itemElement.querySelector('.palette-color .name').innerText = palette.name
         } else {
