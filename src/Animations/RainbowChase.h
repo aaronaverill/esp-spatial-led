@@ -3,6 +3,7 @@
 
 #include "Services/ILedDriverAnimationContext.h"
 #include "Animations/Beat.h"
+#include "PaletteChoice.h"
 
 namespace Animations {
   class RainbowChase: public Animation {
@@ -17,5 +18,6 @@ namespace Animations {
       uint8_t bpm = 10;
       Beat beat;
       uint8_t repeat6 = 6; // Number of times the rainbow repeats in 1/6ths
+      PaletteChoice palette;
   };
 }

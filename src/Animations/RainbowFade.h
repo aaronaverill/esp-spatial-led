@@ -3,6 +3,7 @@
 
 #include "Services/ILedDriverAnimationContext.h"
 #include "Animations/Beat.h"
+#include "PaletteChoice.h"
 
 namespace Animations {
   class RainbowFade: public Animation {
@@ -16,5 +17,6 @@ namespace Animations {
     private:
       uint8_t bpm = 10;
       Beat beat;
+      PaletteChoice palette;
   };
 }
