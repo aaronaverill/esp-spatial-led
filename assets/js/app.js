@@ -282,7 +282,6 @@ export default class App {
     setting.color = 0
     this.#refreshSelectPaletteList()
     this.#refreshSelectColor()
-    this.#refreshAnimationOptions()
 
     const patch = {
       index: this.#info.leds.play.index
@@ -304,7 +303,6 @@ export default class App {
     setting.rgb = [...modelVal.rgb]
     this.#refreshSelectPaletteList()
     this.#refreshSelectColor()
-    this.#refreshAnimationOptions()
 
     const patch = {
       index: this.#info.leds.play.index
