@@ -33,7 +33,6 @@ export default class App {
     this.#refreshPlay()
     this.#refreshLibrary()
     this.#refreshLedStrip()
-    this.#refreshColors()
   
     this.#playRefreshInterval = setInterval(() => {this.#refreshPlayPreview()}, 500)
     this.#refreshPlayPreview()
@@ -43,10 +42,28 @@ export default class App {
    * Set a page to visible
    * @param {string} id - Element id
    */
-  showPage(id) {
+  set page(id) {
     if (this.#refreshInterval) {
       clearInterval(this.#refreshInterval)
       this.#refreshInterval = 0
+    }
+    switch (id) {
+      case 'pPlayOptions':
+        this.#refreshAnimationOptions()
+        break
+      case 'pLedLayout':
+        this.#copyLedLayout()
+        this.#refreshLedLayout()
+        this.#refreshCodeInfo()
+        this.#refreshLayoutSave()
+        break
+      case 'pColors':
+        this.#refreshColors()
+        break
+      case 'pAbout':
+        this.#refreshInterval = setInterval(this.#updateSystemInfo, 2000)
+        this.#updateSystemInfo()
+        break
     }
     document.querySelectorAll('.nav > div').forEach(e => {
       e.classList.remove('selected')
@@ -75,7 +92,7 @@ export default class App {
         return
       }
 
-      const pixelSize = bufferView[0];
+      const pixelSize = bufferView[0]
       const indexes = [1, 2, 3].map(index => bufferView[index])
       const ledCount = (bufferView.length - pixelSize - 1) / pixelSize
       const rgbBrightness = 255/this.#info.leds.play.settings.brightness
@@ -146,14 +163,6 @@ export default class App {
   // -----------------------------------------------------------------------------
 
   /**
-   * Create the controls for the options page from the currently running animation and make the page visible
-   */
-  showOptions() {
-    this.#refreshAnimationOptions()
-    this.showPage('pPlayOptions')
-  }
-
-  /**
    * Handle the event when an option value changes
    * @param {HTMLElement} element - The element that is changing
    */
@@ -203,7 +212,6 @@ export default class App {
 
     this.#refreshSelectColor()
     this.#refreshAnimationOptions()
-    this.#refreshColors()
   
     if (isNumberedColor) {
       this.#throttledSaveColor({
@@ -251,7 +259,7 @@ export default class App {
     this.#refreshSelectColorActiveTab()
     this.#refreshSelectPaletteList()
     this.#refreshSelectColor()
-    this.showPage('pAnimationColor')
+    this.page = 'pAnimationColor'
   }
 
   /**
@@ -610,7 +618,7 @@ export default class App {
    * Handle save
    */
   async onStripSave() {
-    const patch = {};
+    const patch = {}
     ['chipset', 'colorOrder'].forEach(id => {
       const value = Number(document.getElementById(`ledStrip_${id}`).value)
       patch[id] = value
@@ -620,7 +628,7 @@ export default class App {
       method:'PATCH',
       body:JSON.stringify(patch)
     })
-    this.showPage('pSettings')
+    this.page = 'pSettings'
   }
 
   /**
@@ -643,22 +651,11 @@ export default class App {
   // -----------------------------------------------------------------------------
 
   /**
-   * Refresh the controls from the model and make the page visible
-   */
-  showLedLayout() {
-    this.#copyLedLayout()
-    this.showPage('pLedLayout')
-    this.#refreshLedLayout()
-    this.#refreshCodeInfo()
-    this.#refreshLayoutSave()
-  }
-
-  /**
    * Handle the save button click by saving the LED Layout to the server
    */
   async onLayoutSave() {
     await this.#saveLedLayout()
-    this.showPage('pSettings')
+    this.page = 'pSettings'
   }
 
   /**
@@ -878,7 +875,7 @@ export default class App {
     this.#editing = index
     document.querySelector('#pColorEdit .title .text').innerText = `Edit Color ${index+1}`
     this.#refreshColorEdit()
-    this.showPage('pColorEdit')
+    this.page = 'pColorEdit'
   }
 
   /**
@@ -890,7 +887,6 @@ export default class App {
 
     this.#info.leds.colors[this.#editing] = [...rgb]
     this.#refreshColorEdit(element.dataset.field)
-    this.#refreshColors()
     this.#throttledSaveColor({
       index: this.#editing,
       rgb: rgb
@@ -979,15 +975,6 @@ export default class App {
   // -----------------------------------------------------------------------------
   // About page
   // -----------------------------------------------------------------------------
-
-  /**
-   * Show the about page and start a timer to update thesystem info periodically from the server
-   */
-  showAbout() {
-    app.showPage('pAbout')
-    this.#refreshInterval = setInterval(this.#updateSystemInfo, 2000)
-    this.#updateSystemInfo()
-  }
 
   /**
    * Query the server for the system info, update the UI, and set a timer to check again in 2 seconds
