@@ -247,7 +247,7 @@ export default class App {
    * Show the palette/color selection page
    * @param {HTMLElement} element - The field's element which was clicked
    */
-  showAnimationSelectColor(element) {
+  onSelectAnimationColor(element) {
     const itemElement = element.closest('.item')
     this.#editing = itemElement.dataset.field
     const field = this.#optionsField(this.#editing)
