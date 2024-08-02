@@ -23,6 +23,7 @@
             <div onclick="app.page = 'pLedStrip'" class="item selectable d-flex align-center pa-3"><div class="text mr-3">LED Strip</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="app.page = 'pLedLayout'" class="item selectable d-flex align-center pa-3"><div class="text mr-3">LED Layout</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="app.page = 'pColors'" class="item selectable d-flex align-center pa-3"><div class="text mr-3">Colors</div><div class="img img-chevron-right flex-shrink-0"></div></div>
+            <div onclick="app.page = 'pPalettes'" class="item selectable d-flex align-center pa-3"><div class="text mr-3">Palettes</div><div class="img img-chevron-right flex-shrink-0"></div></div>
             <div onclick="app.page = 'pAbout'" class="item selectable d-flex align-center pa-3"><div class="text mr-3">About</div><div class="img img-chevron-right flex-shrink-0"></div></div>
           </div>
         </div>
@@ -90,7 +91,7 @@
         <div class="title">
           <div onclick="app.page = 'pSettings'" class="btn pa-4"><div class="img img-close"></div></div>
           <div class="pa-3 mr-auto">LED Strip</div>
-          <div class="mr-3"><button id="saveLayout" onclick="app.onStripSave()" class="btn tonal primary">Save</button></div>
+          <div class="flex-shrink-0 mr-3"><button id="saveLayout" onclick="app.onStripSave()" class="btn tonal primary">Save</button></div>
         </div>
         <div class="page d-flex flex-column pa-4">
           <div>Chipset</div>
@@ -104,7 +105,7 @@
         <div class="title">
           <div onclick="app.page = 'pSettings'" class="btn pa-4"><div class="img img-close"></div></div>
           <div class="pa-3 mr-auto">LED Layout</div>
-          <div class="mr-3"><button id="saveLayout" onclick="app.onLayoutSave()" class="btn tonal primary">Save</button></div>
+          <div class="flex-shrink-0 mr-3"><button id="saveLayout" onclick="app.onLayoutSave()" class="btn tonal primary">Save</button></div>
         </div>
         <div class="page d-flex flex-column pa-4">
           <div>Layout</div>
@@ -148,8 +149,7 @@
           <div class="pa-3">Colors</div>
         </div>
         <div class="page pa-4">
-          <div class="grid">
-          </div>
+          <div class="grid"></div>
         </div>
       </div>
       <!-- Settings > Colors > Edit page -->
@@ -165,7 +165,7 @@
               <div>Hue</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="h" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="h" type="range" oninput="app.onHsvChange(this)" min="0" max="255" class="w-100" /></div>
                   <div onclick="app.onColorHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
                 </div>
                 <div class="value flex-shrink-0 rounded"></div>
@@ -175,7 +175,7 @@
               <div>Saturation</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="s" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="s" type="range" oninput="app.onHsvChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
                 <div class="value flex-shrink-0"></div>
@@ -185,10 +185,86 @@
               <div>Value</div>
               <div class="d-flex w-100">
                 <div class="flex-grow-1 pr-3">
-                  <div><input data-type="hsv" data-field="v" type="range" oninput="app.onColorChange(this)" min="0" max="255" class="w-100" /></div>
+                  <div><input data-type="hsv" data-field="v" type="range" oninput="app.onHsvChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
                 <div class="value flex-shrink-0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Settings > Palettes page -->
+      <div id="pPalettes" class="d-none flex-column h-100">
+        <div class="title">
+          <div onclick="app.page = 'pSettings'" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+          <div class="pa-3">Palettes</div>
+          <!-- TODO: Add palette-->
+        </div>
+        <div class="page pa-4">
+        </div>
+      </div>
+      <!-- Settings > Palettes > Edit page -->
+      <div id="pPaletteEdit" class="d-none flex-column h-100">
+        <div class="title">
+          <div onclick="app.page = 'pPalettes'" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+          <div class="text pa-3 mr-auto"></div>
+          <div class="flex-shrink-0 mr-3"><button onclick="app.onPaleteDelete()" class="btn tonal error">Delete</button></div>
+        </div>
+        <div class="page d-flex flex-column overflow-hidden">
+          <div class="pa-4">
+            <div>Name</div>
+            <input oninput="app.onPaletteNameChange()" class="w-100 my-2" id="paletteName"></input>
+            <div id="paletteGradient" onclick="app.onAddStop(event)" class="palette-color color"></div>  
+          </div>
+          <div class="d-flex flex-column overflow-hidden">
+            <div id="stopName" class="title mb-2" style="border-bottom:1px solid #FFF6">
+              <div class="text flex-grow-1 text-center pa-3">Colors</div>
+              <div data-stop onclick="app.onEditStop(undefined)" class="btn pa-4"><div class="img img-arrow-back"></div></div>
+              <div data-stop class="text stop-color flex-grow-1 my-2"><div style="padding:4px 0">&nbsp;</div></div>
+              <div data-stop class="btn pa-4"><div class="img"></div></div>
+            </div>
+            <div id="stops" class="list overflow-y-auto"></div>
+            <div id="stop" data-stop class="list overflow-y-auto px-4">
+              <div class="item py-3">
+                <div>Position</div>
+                <div class="d-flex w-100">
+                  <div class="flex-grow-1 pr-3">
+                    <div><input data-field="percent" type="range" oninput="app.onStopPercentChange(this)" min="0" max="255" class="w-100" /></div>
+                    <div class="d-flex justify-between font-micro"><div>0</div><div>255</div></div>
+                  </div>
+                  <div class="value flex-shrink-0"></div>
+                </div>
+              </div>
+              <div class="item py-3">
+                <div>Hue</div>
+                <div class="d-flex w-100">
+                  <div class="flex-grow-1 pr-3">
+                    <div><input data-type="hsv" data-field="h" type="range" oninput="app.onStopHsvChange(this)" min="0" max="255" class="w-100" /></div>
+                    <div onclick="app.onStopHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
+                  </div>
+                  <div class="value flex-shrink-0 rounded"></div>
+                </div>
+              </div>
+              <div class="item py-3">
+                <div>Saturation</div>
+                <div class="d-flex w-100">
+                  <div class="flex-grow-1 pr-3">
+                    <div><input data-type="hsv" data-field="s" type="range" oninput="app.onStopHsvChange(this)" min="0" max="255" class="w-100" /></div>
+                    <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
+                  </div>
+                  <div class="value flex-shrink-0"></div>
+                </div>
+              </div>
+              <div class="item py-3">
+                <div>Value</div>
+                <div class="d-flex w-100">
+                  <div class="flex-grow-1 pr-3">
+                    <div><input data-type="hsv" data-field="v" type="range" oninput="app.onStopHsvChange(this)" min="0" max="255" class="w-100" /></div>
+                    <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
+                  </div>
+                  <div class="value flex-shrink-0"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -200,8 +276,7 @@
           <div onclick="app.page = 'pSettings'" class="btn pa-4"><div class="img img-arrow-back"></div></div>
           <div class="pa-3">About</div>
         </div>
-        <div class="page pa-4">
-        </div>
+        <div class="page pa-4"></div>
       </div>
     </div>
     <!-- Current animation playback -->

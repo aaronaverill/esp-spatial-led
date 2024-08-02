@@ -60,6 +60,9 @@ export default class App {
       case 'pColors':
         this.#refreshColors()
         break
+      case 'pPalettes':
+        this.#refreshPalettes()
+        break
       case 'pAbout':
         this.#refreshInterval = setInterval(this.#updateSystemInfo, 2000)
         this.#updateSystemInfo()
@@ -371,13 +374,11 @@ export default class App {
     const field = this.#optionsField(this.#editing)
     const val = this.#info.leds.animations[this.#info.leds.play.index].settings[field.id]
     let html = ''
-    let index = 0
-    this.#info.leds.palettes.forEach(palette => {
+    this.#info.leds.palettes.forEach((palette, index) => {
       const classes = ['palette-color', 'color', 'flex-shrink-0']
       classes.push(val.palette - 1 == index ? 'selected' : 'selectable')
       const gradient = this.#backgroundGradient(palette)
-      html += `<div onclick="app.selectPaletteNumber(this)" class="${classes.join(' ')}" style="background:${gradient}"><div class="name">${palette.name}</div></div>`
-      index++
+      html += `<div onclick="app.selectPaletteNumber(this)" class="${classes.join(' ')}" style="background:${gradient}"><div class="name text-center">${palette.name}</div></div>`
     })
     document.querySelector('#pAnimationColor .palettes').innerHTML = html
   }
@@ -600,10 +601,10 @@ export default class App {
    */
   #refreshLibrary() {
     let html = ''
-    this.#info.leds.animations.forEach((animation, i) => {
-      const selected = i == this.#info.leds.play.index ? ' selected' : ''
+    this.#info.leds.animations.forEach((animation, index) => {
+      const selected = index == this.#info.leds.play.index ? ' selected' : ''
       const tags = animation.tags?.split(',')?.map(v => `<div class="img img-tag-${v}"></div>`)?.join('') || ''
-      html += '<div class="item selectable d-flex pa-3' + selected + '" onclick="app.onAnimationClick(' + i + ')"><div class="text">' + animation.name + '</div>' + tags + '</div>'
+      html += '<div class="item selectable d-flex pa-3' + selected + '" onclick="app.onAnimationClick(' + index + ')"><div class="text">' + animation.name + '</div>' + tags + '</div>'
     })
     document.getElementById('animations').innerHTML = html
   }
@@ -869,9 +870,9 @@ export default class App {
    * Handle click to edit a color
    * @param index 
    */
-  onColorClick(index) {
+  onEditColor(index) {
     this.#editing = index
-    document.querySelector('#pColorEdit .title .text').innerText = `Edit Color ${index+1}`
+    document.querySelector('#pColorEdit .title .text').innerText = `Color #${index+1}`
     this.#refreshColorEdit()
     this.page = 'pColorEdit'
   }
@@ -938,11 +939,9 @@ export default class App {
    */
   #refreshColors() {
     let html = ''
-    let index = 0
-    this.#info.leds.colors.forEach(bg => {
+    this.#info.leds.colors.forEach((bg, index) => {
       const bgHex = this.#toHex(bg)
-      html += `<div onclick="app.onColorClick(${index})" class="color font-huge selectable" style="background-color:${bgHex};height:100px"><div class="number">${index+1}</div></div>`
-      index++
+      html += `<div onclick="app.onEditColor(${index})" class="color font-huge selectable" style="background-color:${bgHex};height:100px"><div class="number">${index+1}</div></div>`
     })
     document.querySelector('#pColors .grid').innerHTML = html
   }
@@ -968,6 +967,107 @@ export default class App {
       method:'PUT',
       body:JSON.stringify(patch)
     })
+  }
+
+  // -----------------------------------------------------------------------------
+  // Settings > Palettes page
+  // -----------------------------------------------------------------------------
+
+  /**
+   * Handle click to edit a palette
+   * @param index 
+   */
+  onEditPalette(index) {
+    this.#editing = {
+      palette: index
+    }
+    document.querySelector('#pPaletteEdit .title .text').innerText = this.#info.leds.palettes[index].name
+    this.#refreshPaletteEdit()
+    this.page = 'pPaletteEdit'
+    document.getElementById('paletteName').focus();
+  }
+  
+  /**
+   * Delete the selected palette
+   */
+  onPaleteDelete() {
+    // TODO: Implement delete palette
+  }
+
+  /**
+   * Handle name change events
+   */
+  onPaletteNameChange() {
+    const name = document.getElementById('paletteName').value
+    document.querySelector('#pPaletteEdit .title .text').innerText = name
+    this.#info.leds.palettes[this.#editing.palette].name = name
+    // TODO: Throttled save of palette number this.#editing.palette
+  }
+
+  /**
+   * Add a stop
+   */
+  onAddStop() {
+    // TODO: Implement add stop
+  }
+
+  /**
+   * Edit the stop
+   * @param {number|undefined} index - The stop index to edit
+   */
+  onEditStop(index) {
+    this.#editing.stop = index
+    this.#refreshPaletteStops()
+  }
+
+  /**
+   * Refresh the palette edit page
+   */
+  #refreshPaletteEdit() {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    document.getElementById('paletteName').value = palette.name
+    document.getElementById('paletteGradient').style.background = this.#backgroundGradient(palette)
+    this.#refreshPaletteStops()
+  }
+
+  /**
+   * Refresh the stops panel
+   */
+  #refreshPaletteStops() {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    const stop = this.#editing.stop == undefined ? undefined : palette.stops[this.#editing.stop]
+
+    const stopsElement = document.getElementById('stops')
+    const stopElement = document.getElementById('stop')
+    const showHide = Array.from(document.querySelector('#stopName').children).concat([stopsElement, stopElement])
+    showHide.forEach(element => {
+      element.style.display = (stop && 'stop' in element.dataset) || (!stop && !('stop' in element.dataset)) ? '' : 'none'
+    })
+
+    if (stop) {
+      document.querySelector('#stopName .stop-color').style.backgroundColor = this.#toHex([stop[1], stop[2], stop[3]])
+    } else {
+      let html = ''
+      palette.stops.forEach((stop, index) => {
+        const position = String(stop[0]).padStart(3, '0')
+        const rgb = this.#toHex([stop[1], stop[2], stop[3]])
+        // TODO: Delete stop button
+        html += `<div onclick="app.onEditStop(${index})" class="item selectable align-center d-flex pa-2"><div class="pr-3">${position}</div><div class="flex-grow-1 stop-color mr-3" style="background-color:${rgb}"></div></div>`
+      })
+      stopsElement.innerHTML = html  
+    }
+  }
+
+  /**
+   * Refresh the palettes page
+   */
+  #refreshPalettes() {
+    let html = ''
+    this.#info.leds.palettes.forEach((palette, index) => {
+      const gradient = this.#backgroundGradient(palette)
+      html += `<div onclick="app.onEditPalette(${index})" class="palette-color color selectable" style="background:${gradient}"><div class="name text-center">${palette.name}</div></div>`
+    })
+    document.querySelector('#pPalettes .page').innerHTML = html
   }
 
   // -----------------------------------------------------------------------------

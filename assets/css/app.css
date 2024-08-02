@@ -62,6 +62,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .pa-2 { padding: 8px; }
 .pa-3 { padding: 12px; }
 .pa-4 { padding: 16px; }
+.px-4 { padding-left: 16px; padding-right: 16px; }
 .py-3 { padding-top: 12px; padding-bottom: 12px; }
 .pr-3 { padding-right: 12px; }
 
@@ -131,6 +132,12 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .btn.primary:hover:not([disabled]) {
   background-color: #05B571;
 }
+.btn.error {
+  background-color: #B00020;
+}
+.btn.error:hover:not([disabled]) {
+  background-color: #BC0022;
+}
 
 /* Lists */
 .list .item {
@@ -179,7 +186,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .palette-color .name {
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, .4);
   border: none;
   width: auto;
   border-radius: 6px;
@@ -287,4 +294,23 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   min-width: 4rem;
   width: 10%;
   text-align: right;
+}
+
+#pPalettes .page > div:first-child {
+  margin-top: 0;
+}
+
+#paletteGradient {
+  cursor: pointer;
+  height: 60px;
+  margin-top: 0;
+}
+
+#stops {
+  padding-top: 6px;
+}
+
+#stops .item .stop-color {
+  border-radius: 4px;
+  height: 40px;
 }
