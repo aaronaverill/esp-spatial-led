@@ -881,7 +881,7 @@ export default class App {
    * Handle a control change
    * @param {HTMLElement} element - The element whose value is changing
    */
-  async onColorChange(element) {
+  async onHsvChange(element) {
     const rgb = this.#getColorHSVControlRGB('pColorEdit')
 
     this.#info.leds.colors[this.#editing] = [...rgb]
@@ -901,7 +901,7 @@ export default class App {
     var hue = Math.floor(event.offsetX/element.clientWidth*255)
     var inputElement = element.closest('.item').querySelector('input')
     inputElement.value = hue
-    this.onColorChange(inputElement)
+    this.onHsvChange(inputElement)
   }
 
   /**
@@ -1016,8 +1016,53 @@ export default class App {
    * @param {number|undefined} index - The stop index to edit
    */
   onEditStop(index) {
-    this.#editing.stop = index
+    this.#editing.stop = this.#info.leds.palettes[this.#editing.palette].stops[index]
     this.#refreshPaletteStops()
+  }
+
+  /**
+   * Handle the stop percent slider change
+   * @param {HTMLElement} element The element
+   */
+  onStopPercentChange(element) {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    this.#editing.stop[0] = parseInt(element.value)
+    palette.stops.sort((a, b) => a[0] - b[0])
+
+    this.#refreshGradient()
+    this.#refreshPaletteStops()
+    // TODO: Save palette
+  }
+
+  /**
+   * Handle a stop HSV slider change
+   * @param {HTMLElement} element The element whose value is changing
+   */
+  onStopHsvChange(element) {
+    const rgb = this.#getColorHSVControlRGB('pPaletteEdit')
+
+    for(let i = 0; i < 3; i++) {
+      this.#editing.stop[i+1] = rgb[i]
+    }
+    this.#refreshGradient()
+    this.#refreshPaletteStops(element.dataset.field)
+    // TODO: Save palette
+    //this.#throttledSaveColor({
+    //  index: this.#editing,
+    //  rgb: rgb
+    //})
+  }
+
+  /**
+   * Handle a click in the rainbow strip below the hue slider to pick a hue for a palette
+   * @param {HTMLElement} element 
+   * @param {PointerEvent} event 
+   */
+  async onStopHueClick(element, event) {
+    var hue = Math.floor(event.offsetX/element.clientWidth*255)
+    var inputElement = element.closest('.item').querySelector('input')
+    inputElement.value = hue
+    this.onStopHsvChange(inputElement)
   }
 
   /**
@@ -1025,17 +1070,26 @@ export default class App {
    */
   #refreshPaletteEdit() {
     const palette = this.#info.leds.palettes[this.#editing.palette]
+    document.querySelector('#pPaletteEdit .btn-delete').style.display = this.#editing.palette ? '' : 'none'
     document.getElementById('paletteName').value = palette.name
-    document.getElementById('paletteGradient').style.background = this.#backgroundGradient(palette)
+    this.#refreshGradient()
     this.#refreshPaletteStops()
+  }
+
+  /**
+   * Refresh the palette gradient
+   */
+  #refreshGradient() {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    document.getElementById('paletteGradient').style.background = this.#backgroundGradient(palette)
   }
 
   /**
    * Refresh the stops panel
    */
-  #refreshPaletteStops() {
+  #refreshPaletteStops(field) {
     const palette = this.#info.leds.palettes[this.#editing.palette]
-    const stop = this.#editing.stop == undefined ? undefined : palette.stops[this.#editing.stop]
+    const stop = this.#editing.stop
 
     const stopsElement = document.getElementById('stops')
     const stopElement = document.getElementById('stop')
@@ -1045,7 +1099,17 @@ export default class App {
     })
 
     if (stop) {
-      document.querySelector('#stopName .stop-color').style.backgroundColor = this.#toHex([stop[1], stop[2], stop[3]])
+      const rgb = [stop[1], stop[2], stop[3]]
+      document.querySelector('#stopName .stop-color').style.backgroundColor = this.#toHex(rgb)
+      if (field != 'percent') {
+        document.querySelector('#stop [data-field="percent').value = stop[0]
+      }
+      const hsv = this.#rgb2hsv(rgb)
+      document.querySelectorAll('#stop [data-type="hsv"]').forEach(element => {
+        if (element.dataset.field != field) {
+          element.value = hsv[element.dataset.field]
+        }
+      })
     } else {
       let html = ''
       palette.stops.forEach((stop, index) => {
