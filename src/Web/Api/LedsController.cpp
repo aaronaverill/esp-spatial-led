@@ -87,6 +87,21 @@ namespace Web { namespace Api {
     request->send(200, "text/plain", "OK");
   }
 
+  void LedsController::deletePalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, data);
+    if (error) {
+      request->send(500);
+    }
+
+    JsonVariant paletteIndex = doc["index"];
+    if (!paletteIndex.isNull()) {
+      leds.deletePalette(paletteIndex.as<int>());
+      Store::LedSettings::write(fs, leds);
+    }
+    request->send(200, "text/plain", "OK");
+  }
+
   void LedsController::setSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, data);

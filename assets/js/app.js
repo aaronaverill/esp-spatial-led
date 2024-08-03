@@ -1013,7 +1013,23 @@ export default class App {
    * Delete the selected palette
    */
   onPaleteDelete() {
-    // TODO: Implement delete palette
+    const index = this.#editing.palette
+    this.#info.leds.palettes.splice(index, 1)
+    this.#info.leds.animations.forEach(animation => {
+      animation.fields?.forEach(field => {
+        if (field.type == 'color' && animation.settings[field.id].palette > index) {
+          console.log(`decrease animation ${animation.name} field ${field.label} from ${animation.settings[field.id].palette}`)
+          animation.settings[field.id].palette --
+        }
+      })
+    })
+    fetch('/api/leds/palettes', {
+      method:'DELETE',
+      body:JSON.stringify({
+        index: index
+      })
+    })
+    this.page = 'pPalettes'
   }
 
   /**

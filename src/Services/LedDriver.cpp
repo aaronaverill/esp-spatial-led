@@ -80,6 +80,13 @@ namespace Services {
     palettes[index].setStops(stops);
   }
 
+  void LedDriver::deletePalette(int index) {
+    palettes.erase(palettes.begin() + index);
+    for(Animations::Animation *animation:animations) {
+      animation->paletteDeleted(index);
+    }
+  }
+
   const Point3D& LedDriver::getLedCoordinate(uint index) const {
     if (index < strip->pixelCount() && index < ledCoordinates.size()) {
       return ledCoordinates[index];

@@ -28,6 +28,12 @@ namespace Animations {
     }
   }
 
+  void RainbowFade::paletteDeleted(int index) {
+    if (palette.number > index) {
+      palette.number --;
+    }
+  }
+
   void RainbowFade::renderFrame() {
     beat.tick();
     Animation::renderFrame();

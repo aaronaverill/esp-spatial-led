@@ -28,6 +28,10 @@ namespace Web { namespace Api {
        */
       void setPalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
       /**
+       * Delete palette
+       */
+      void deletePalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+      /**
        * Set the led settings
        */
       void setSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);

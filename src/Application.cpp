@@ -77,6 +77,10 @@ Application::Application() {
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setPalette(request, data, len, index, total);
   });
+  webServer.addRequestHandler("/api/leds/palettes", HTTP_DELETE,
+    [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
+    ledsController.deletePalette(request, data, len, index, total);
+  });
   webServer.addRequestHandler("/api/leds/play/settings", HTTP_PATCH, 
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setPlaySetting(request, data, len, index, total);

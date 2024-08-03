@@ -28,6 +28,10 @@ namespace Animations {
        */
       virtual void setSettings(const JsonObject& settings) {}
       /**
+       * Override to handle a user deleting a palette this animation is referencing
+       */
+      virtual void paletteDeleted(int index) {}
+      /**
        * Render the animation frame
        */
       virtual void renderFrame();

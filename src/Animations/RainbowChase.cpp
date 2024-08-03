@@ -37,6 +37,12 @@ namespace Animations {
     }
   }
 
+  void RainbowChase::paletteDeleted(int index) {
+    if (palette.number > index) {
+      palette.number --;
+    }
+  }
+
   void RainbowChase::renderFrame() {
     beat.tick();
     Animation::renderFrame();

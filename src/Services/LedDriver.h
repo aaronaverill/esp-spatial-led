@@ -135,6 +135,10 @@ namespace Services {
        * Set the system palette
        */
       void setPalette(int index, String name, const std::vector<Palette::GradientStop>& stops);
+      /**
+       * Delete a system palette
+       */
+      void deletePalette(int index);
 
       /**
        * Add an animation to the sequencer
