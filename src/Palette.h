@@ -16,12 +16,16 @@ class Palette {
       CRGB rgb;
     };
 
-    Palette(const char *name): name(name) {}
+    Palette(const String& name): name(name) {}
 
     /**
      * Get the list of gradient stops
      */
     const std::vector<GradientStop>& getStops() const { return stops; }
+    /**
+     * Set the list of gradient stops
+     */
+    void setStops(std::vector<GradientStop>& stops) { this->stops = stops; }
 
     /**
      * Add a stop. If a stop at the specified percent exists it will be replaced
@@ -82,7 +86,7 @@ class Palette {
       }
     }
 
-    const char *name;
+    String name;
 
   private:
     std::vector<GradientStop> stops;

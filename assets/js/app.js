@@ -17,6 +17,11 @@ export default class App {
     this.#throttledSaveColor = throttle((patch) => {
       this.#saveColor(patch)
     }, 1000)
+
+    // Update palette info once per second
+    this.#throttledSavePalette = throttle((patch) => {
+      this.#savePalette(patch)
+    }, 1000)
   }
 
   /**
@@ -998,10 +1003,15 @@ export default class App {
    * Handle name change events
    */
   onPaletteNameChange() {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
     const name = document.getElementById('paletteName').value
     document.querySelector('#pPaletteEdit .title .text').innerText = name
-    this.#info.leds.palettes[this.#editing.palette].name = name
-    // TODO: Throttled save of palette number this.#editing.palette
+    palette.name = name
+    this.#throttledSavePalette({
+      index: this.#editing.palette,
+      name: palette.name,
+      stops: palette.stops
+    })
   }
 
   /**
@@ -1031,7 +1041,11 @@ export default class App {
 
     this.#refreshGradient()
     this.#refreshPaletteStops()
-    // TODO: Save palette
+    this.#throttledSavePalette({
+      index: this.#editing.palette,
+      name: palette.name,
+      stops: palette.stops
+    })
   }
 
   /**
@@ -1039,6 +1053,7 @@ export default class App {
    * @param {HTMLElement} element The element whose value is changing
    */
   onStopHsvChange(element) {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
     const rgb = this.#getColorHSVControlRGB('pPaletteEdit')
 
     for(let i = 0; i < 3; i++) {
@@ -1046,11 +1061,11 @@ export default class App {
     }
     this.#refreshGradient()
     this.#refreshPaletteStops(element.dataset.field)
-    // TODO: Save palette
-    //this.#throttledSaveColor({
-    //  index: this.#editing,
-    //  rgb: rgb
-    //})
+    this.#throttledSavePalette({
+      index: this.#editing.palette,
+      name: palette.name,
+      stops: palette.stops
+    })
   }
 
   /**
@@ -1132,6 +1147,13 @@ export default class App {
       html += `<div onclick="app.onEditPalette(${index})" class="palette-color color selectable" style="background:${gradient}"><div class="name text-center">${palette.name}</div></div>`
     })
     document.querySelector('#pPalettes .page').innerHTML = html
+  }
+
+  #savePalette(patch) {
+    fetch('/api/leds/palettes', {
+      method:'PUT',
+      body:JSON.stringify(patch)
+    })
   }
 
   // -----------------------------------------------------------------------------
@@ -1256,6 +1278,10 @@ export default class App {
    * A throttled save color function. This prevents sliders in the UI from calling the backend too frequently with updates
    */
   #throttledSaveColor
+  /**
+   * A throttled save palette function. This prevents sliders in the UI from calling the backend too frequently with updates
+   */
+  #throttledSavePalette
   /**
    * A javascript interval id for periodically freshing the play preview image
    */

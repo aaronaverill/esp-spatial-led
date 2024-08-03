@@ -1,5 +1,6 @@
 #include "LedDriver.h"
 
+#include "Palette.h"
 #include "Services/Led/NeoPixelBusFactory.h"
 #include "Store/LedLayout.h"
 #include "Store/LedSettings.h"
@@ -65,6 +66,15 @@ namespace Services {
     colors[index].r = r;
     colors[index].g = g;
     colors[index].b = b;
+  }
+
+  void LedDriver::setPalette(int index, JsonVariant name, JsonArray stops) {
+    palettes[index].name = name.as<String>();
+    std::vector<Palette::GradientStop> stopList;
+    for(size_t i = 0; i < stops.size(); i++) {
+      stopList.push_back(Palette::GradientStop(stops[i][0], stops[i][1], stops[i][2], stops[i][3]));
+    }
+    palettes[index].setStops(stopList);
   }
 
   const Point3D& LedDriver::getLedCoordinate(uint index) const {
