@@ -168,7 +168,6 @@
                   <div><input data-type="hsv" data-field="h" type="range" oninput="app.onHsvChange(this)" min="0" max="255" class="w-100" /></div>
                   <div onclick="app.onColorHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
                 </div>
-                <div class="value flex-shrink-0 rounded"></div>
               </div>
             </div>
             <div class="item py-3">
@@ -178,7 +177,6 @@
                   <div><input data-type="hsv" data-field="s" type="range" oninput="app.onHsvChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
-                <div class="value flex-shrink-0"></div>
               </div>
             </div>
             <div class="item py-3">
@@ -188,7 +186,6 @@
                   <div><input data-type="hsv" data-field="v" type="range" oninput="app.onHsvChange(this)" min="0" max="255" class="w-100" /></div>
                   <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                 </div>
-                <div class="value flex-shrink-0"></div>
               </div>
             </div>
           </div>
@@ -227,13 +224,15 @@
             <div id="stops" class="list overflow-y-auto"></div>
             <div id="stop" data-stop class="list overflow-y-auto px-4">
               <div class="item py-3">
-                <div>Position</div>
+                <div class="d-flex">
+                  <div class="mr-auto">Position</div>
+                  <div class="value flex-shrink-0 mr-3"></div>
+                </div>
                 <div class="d-flex w-100">
                   <div class="flex-grow-1 pr-3">
                     <div><input data-field="percent" type="range" oninput="app.onStopPercentChange(this)" min="0" max="255" class="w-100" /></div>
-                    <div class="d-flex justify-between font-micro"><div>0</div><div>255</div></div>
+                    <div class="d-flex justify-between font-micro"><div>000</div><div>255</div></div>
                   </div>
-                  <div class="value flex-shrink-0"></div>
                 </div>
               </div>
               <div class="item py-3">
@@ -243,7 +242,6 @@
                     <div><input data-type="hsv" data-field="h" type="range" oninput="app.onStopHsvChange(this)" min="0" max="255" class="w-100" /></div>
                     <div onclick="app.onStopHueClick(this, event)" class="rainbow" style="height:20px; margin:0 13px 0 17px"></div>
                   </div>
-                  <div class="value flex-shrink-0 rounded"></div>
                 </div>
               </div>
               <div class="item py-3">
@@ -253,7 +251,6 @@
                     <div><input data-type="hsv" data-field="s" type="range" oninput="app.onStopHsvChange(this)" min="0" max="255" class="w-100" /></div>
                     <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                   </div>
-                  <div class="value flex-shrink-0"></div>
                 </div>
               </div>
               <div class="item py-3">
@@ -263,7 +260,6 @@
                     <div><input data-type="hsv" data-field="v" type="range" oninput="app.onStopHsvChange(this)" min="0" max="255" class="w-100" /></div>
                     <div class="d-flex justify-between font-micro"><div>0%</div><div>100%</div></div>
                   </div>
-                  <div class="value flex-shrink-0"></div>
                 </div>
               </div>
             </div>
@@ -339,6 +335,15 @@
     <div onclick="app.onSelectAnimationColor(this)" class="solid-color value color flex-shrink-0 selectable"><div class="number"></div></div>
     <div data-palette onclick="app.onSelectAnimationColor(this)" class="palette-color color selectable flex-grow-1"><div class="name"></div></div>
   </div>
+</div>
+  </script>
+
+  <!-- Template for palette stop row -->
+  <script type="text/x-template" id="t_stop">
+<div onclick="app.onEditStop(${index})" class="item selectable align-center d-flex pa-2">
+  <div class="pr-3">${position}</div>
+  <div class="stop-color flex-grow-1 mr-3" style="background-color:${rgb}"></div>
+  <div class="flex-shrink-0" style="width:42px">${btn}</div>
 </div>
   </script>
 

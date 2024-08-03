@@ -1022,6 +1022,20 @@ export default class App {
   }
 
   /**
+   * Remove the stop at the specified index
+   * @param {PointerEvent} event The click event
+   * @param {number} index The index
+   */
+  onDeleteStop(event, index) {
+    event.stopPropagation()
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    palette.stops.splice(index, 1)
+    this.#refreshGradient()
+    this.#refreshPaletteStops()
+    this.#saveCurrentPalette()
+  }
+
+  /**
    * Edit the stop
    * @param {number|undefined} index - The stop index to edit
    */
@@ -1041,11 +1055,7 @@ export default class App {
 
     this.#refreshGradient()
     this.#refreshPaletteStops()
-    this.#throttledSavePalette({
-      index: this.#editing.palette,
-      name: palette.name,
-      stops: palette.stops
-    })
+    this.#saveCurrentPalette()
   }
 
   /**
@@ -1061,11 +1071,7 @@ export default class App {
     }
     this.#refreshGradient()
     this.#refreshPaletteStops(element.dataset.field)
-    this.#throttledSavePalette({
-      index: this.#editing.palette,
-      name: palette.name,
-      stops: palette.stops
-    })
+    this.#saveCurrentPalette()
   }
 
   /**
@@ -1116,9 +1122,11 @@ export default class App {
     if (stop) {
       const rgb = [stop[1], stop[2], stop[3]]
       document.querySelector('#stopName .stop-color').style.backgroundColor = this.#toHex(rgb)
+      const percentElement = document.querySelector('#stop [data-field="percent')
       if (field != 'percent') {
-        document.querySelector('#stop [data-field="percent').value = stop[0]
+        percentElement.value = stop[0]
       }
+      percentElement.closest('.item').querySelector('.value').innerText = String(this.#editing.stop[0]).padStart(3, '0')
       const hsv = this.#rgb2hsv(rgb)
       document.querySelectorAll('#stop [data-type="hsv"]').forEach(element => {
         if (element.dataset.field != field) {
@@ -1126,12 +1134,16 @@ export default class App {
         }
       })
     } else {
+      const template = document.getElementById('t_stop')
       let html = ''
       palette.stops.forEach((stop, index) => {
         const position = String(stop[0]).padStart(3, '0')
         const rgb = this.#toHex([stop[1], stop[2], stop[3]])
-        // TODO: Delete stop button
-        html += `<div onclick="app.onEditStop(${index})" class="item selectable align-center d-flex pa-2"><div class="pr-3">${position}</div><div class="flex-grow-1 stop-color mr-3" style="background-color:${rgb}"></div></div>`
+        let btn = ''
+        if (palette.stops.length > 2) {
+          btn = `<div onclick="app.onDeleteStop(event, ${index})" class="btn flex-shrink-0 rounded pa-3"><div class="img img-close"></div></div>`
+        }
+        html += eval('`' + template.innerHTML + '`', index, position, rgb, btn)    
       })
       stopsElement.innerHTML = html  
     }
@@ -1147,6 +1159,15 @@ export default class App {
       html += `<div onclick="app.onEditPalette(${index})" class="palette-color color selectable" style="background:${gradient}"><div class="name text-center">${palette.name}</div></div>`
     })
     document.querySelector('#pPalettes .page').innerHTML = html
+  }
+
+  #saveCurrentPalette() {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    this.#throttledSavePalette({
+      index: this.#editing.palette,
+      name: palette.name,
+      stops: palette.stops
+    })
   }
 
   #savePalette(patch) {
