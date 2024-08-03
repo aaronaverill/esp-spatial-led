@@ -3,6 +3,7 @@
 #include "Content/index_html.h"
 #include "Content/app_css.h"
 #include "Content/app_js.h"
+#include "Content/led3d_js.h"
 
 namespace Web { namespace UI {
   void sendGZipResponse(AsyncWebServerRequest *request, const char *contentType, const uint8_t *content, size_t length) {
@@ -30,6 +31,9 @@ namespace Web { namespace UI {
       return;
     } else if (request->url().equals("/js/app.js")) {
       sendGZipResponse(request, "text/javascript", app_js, app_js_length);
+      return;
+    } else if (request->url().equals("/js/Led3D.js")) {
+      sendGZipResponse(request, "text/javascript", led3d_js, led3d_js_length);
       return;
     }
     

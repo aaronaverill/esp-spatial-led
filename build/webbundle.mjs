@@ -20,6 +20,7 @@ if (!fs.existsSync(contentFolder)){
 bundleHtml(`${assetsFolder}/index.html`, `${contentFolder}/index_html.h`, 'index_html')
 bundleCss(`${assetsFolder}/css/app.css`, `${contentFolder}/app_css.h`, 'app_css')
 await bundleJs(`${assetsFolder}/js/app.js`, `${contentFolder}/app_js.h`, 'app_js')
+await bundleJs(`${assetsFolder}/js/Led3D.js`, `${contentFolder}/led3d_js.h`, 'led3d_js')
 
 process.exit(0)
 
@@ -80,6 +81,9 @@ async function bundleJs(source, destination, variableName) {
   console.info(`Processing ${source}`)
 
   const rollupOptions = {
+    external: [
+      './Led3D.js'
+    ],
     input: source,
     onwarn(warning, warn) {
       // suppress eval warnings

@@ -1,5 +1,4 @@
 import throttle from './throttle.js'
-import Led3D from './Led3D.js'
 
 export default class App {
   constructor() {
@@ -57,10 +56,14 @@ export default class App {
         this.#refreshAnimationOptions()
         break
       case 'pLedLayout':
-        this.#copyLedLayout()
-        this.#refreshLedLayout()
-        this.#refreshCodeInfo()
-        this.#refreshLayoutSave()
+        import('./Led3D.js')
+          .then(module => {
+            document.querySelector('#pLedLayout .preview').innerHTML = '<led-3d id="layoutPreview" class="d-block w-100 h-100"></led-3d>'
+            this.#copyLedLayout()
+            this.#refreshLedLayout()
+            this.#refreshCodeInfo()
+            this.#refreshLayoutSave()
+          })
         break
       case 'pColors':
         this.#refreshColors()
