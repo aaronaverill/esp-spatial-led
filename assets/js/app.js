@@ -118,7 +118,10 @@ export default class App {
           p += 3
         }
       }
-      document.getElementById('layoutPreview').colorArray = rgbData
+      const previewElement = document.getElementById('layoutPreview')
+      if (previewElement) {
+        previewElement.colorArray = rgbData
+      }
 
       // Copy the buffer data into a bitmap - green, red, blue with a header
       const rgbSize = ledCount * 3

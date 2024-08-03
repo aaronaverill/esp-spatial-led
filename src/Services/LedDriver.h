@@ -182,10 +182,10 @@ namespace Services {
       static LedDriver *instance;
       FS& fs;
 
-      Led::Chipset chipset = Led::Chipset::WS2813;
+      Led::Chipset chipset = Led::Chipset::WS2812;
       Led::ColorOrder colorOrder = Led::ColorOrder::GRB;
       Led::INeoPixelBus *strip;
-      uint ledCount = 1;
+      uint ledCount = 50;
 
       std::vector<Algorithm::Point3D> ledCoordinates;
       mutable std::vector<Algorithm::PointPolar> *ledPolarCoordinates = nullptr;
