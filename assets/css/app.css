@@ -304,6 +304,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   cursor: pointer;
   height: 60px;
   margin-top: 0;
+  box-shadow: none;
 }
 
 #stops {

@@ -1016,9 +1016,58 @@ export default class App {
 
   /**
    * Add a stop
+   * @param {HTMLElement} element The element
+   * @param {PointerEvent} event The click event
    */
-  onAddStop() {
-    // TODO: Implement add stop
+  onAddStop(element, event) {
+    const palette = this.#info.leds.palettes[this.#editing.palette]
+    var percent = Math.round(event.offsetX/element.clientWidth*255)
+    var insert = this.#getPaletteInsert(palette, percent)
+    
+    palette.stops.splice(insert.index, 0, insert.stop)
+    this.#editing.stop = insert.stop
+    this.#refreshGradient()
+    this.#refreshPaletteStops()
+    this.#saveCurrentPalette()
+  }
+
+  #getPaletteInsert(palette, percent) {
+    const stops = palette.stops
+
+    // Calculate the r,g,b at the percent position
+    let stopIndex = 0
+    while (stopIndex < stops.length && stops[stopIndex][0] < percent) {
+      stopIndex++
+    }
+
+    // If the percent is past the last stop return the last stop
+    if (stopIndex == stops.length) {
+      return {
+        index: stops.length,
+        stop: [percent, stops[stopIndex-1][1], stops[stopIndex-1][2], stops[stopIndex-1][3]]
+      }
+
+    // If the percent is before the first stop or exactly on a stop, return it
+    } else if (stopIndex == 0 || stops[stopIndex][0] == percent) {
+      return {
+        index: 0,
+        stop: [percent, stops[stopIndex][1], stops[stopIndex][2], stops[stopIndex][3]]
+      }
+
+    // Otherwise, interpolate between the points
+    } else {
+      const stopFrom = stops[stopIndex-1]
+      const stopTo = stops[stopIndex]
+      const range = stopTo[0] - stopFrom[0]
+      const percentOfRange = (percent - stopFrom[0]) / range
+      const rgb = [1,2,3].map(i => {
+        return stopTo[i] == stopFrom[i] || percentOfRange == 0 ? stopFrom[i] : Math.round(stopFrom[i] + (stopTo[i] - stopFrom[i]) * percentOfRange)
+      })
+      return {
+        index: stopIndex,
+        stop: [percent].concat(rgb)
+      }
+    } 
   }
 
   /**
