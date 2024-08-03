@@ -128,9 +128,13 @@ namespace Services {
        */
       const std::vector<Palette>& getPalettes() const { return palettes; }
       /**
+       * Add a system palette
+       */
+      void addPalette(String name, const std::vector<Palette::GradientStop>& stops);
+      /**
        * Set the system palette
        */
-      void setPalette(int index, JsonVariant name, JsonArray stops);
+      void setPalette(int index, String name, const std::vector<Palette::GradientStop>& stops);
 
       /**
        * Add an animation to the sequencer

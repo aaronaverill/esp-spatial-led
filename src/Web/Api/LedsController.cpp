@@ -44,6 +44,26 @@ namespace Web { namespace Api {
     request->send(200, "text/plain", "OK");
   }
 
+  void LedsController::addPalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, data);
+    if (error) {
+      request->send(500);
+    }
+    
+    JsonVariant name = doc["name"];
+    JsonVariant stopsArray = doc["stops"];
+    if (!name.isNull() && !stopsArray.isNull()) {
+      std::vector<Palette::GradientStop> stops;
+      for(size_t i = 0; i < stopsArray.size(); i++) {
+        stops.push_back(Palette::GradientStop(stopsArray[i][0], stopsArray[i][1], stopsArray[i][2], stopsArray[i][3]));
+      }
+      leds.addPalette(name.as<String>(), stops);
+      Store::LedSettings::write(fs, leds);
+    }
+    request->send(200, "text/plain", "OK");
+  }
+
   void LedsController::setPalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, data);
@@ -53,10 +73,14 @@ namespace Web { namespace Api {
 
     JsonVariant paletteIndex = doc["index"];
     JsonVariant name = doc["name"];
-    JsonVariant stops = doc["stops"];
-    if (!paletteIndex.isNull() && (!name.isNull() || !stops.isNull())) {
+    JsonVariant stopsArray = doc["stops"];
+    if (!paletteIndex.isNull() && (!name.isNull() || !stopsArray.isNull())) {
       if (paletteIndex < leds.getPalettes().size()) {
-        leds.setPalette(paletteIndex, name, stops);
+        std::vector<Palette::GradientStop> stops;
+        for(size_t i = 0; i < stopsArray.size(); i++) {
+          stops.push_back(Palette::GradientStop(stopsArray[i][0], stopsArray[i][1], stopsArray[i][2], stopsArray[i][3]));
+        }
+        leds.setPalette(paletteIndex, name.as<String>(), stops);
       }
       Store::LedSettings::write(fs, leds);
     }

@@ -979,6 +979,23 @@ export default class App {
   // -----------------------------------------------------------------------------
 
   /**
+   * Handle click to add a palette
+   */
+  onAddPalette() {
+    const index = this.#info.leds.palettes.length
+    const palette = {
+      name: `Palette #${index+1}`,
+      stops: [[0,255,255,0],[255,192,0,255]]
+    }
+    this.#info.leds.palettes.push(palette)
+    fetch('/api/leds/palettes', {
+      method:'POST',
+      body:JSON.stringify(palette)
+    })
+    this.onEditPalette(index)
+  }
+
+  /**
    * Handle click to edit a palette
    * @param index 
    */

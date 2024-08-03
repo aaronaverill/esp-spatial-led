@@ -20,6 +20,10 @@ namespace Web { namespace Api {
        */
       void setColor(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
       /**
+       * Add palette
+       */
+      void addPalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+      /**
        * Set palette
        */
       void setPalette(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);

@@ -25,7 +25,7 @@ class Palette {
     /**
      * Set the list of gradient stops
      */
-    void setStops(std::vector<GradientStop>& stops) { this->stops = stops; }
+    void setStops(const std::vector<GradientStop>& stops) { this->stops = stops; }
 
     /**
      * Add a stop. If a stop at the specified percent exists it will be replaced

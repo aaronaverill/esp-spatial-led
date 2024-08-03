@@ -69,6 +69,10 @@ Application::Application() {
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setColor(request, data, len, index, total);
   });
+  webServer.addRequestHandler("/api/leds/palettes", HTTP_POST,
+    [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
+    ledsController.addPalette(request, data, len, index, total);
+  });
   webServer.addRequestHandler("/api/leds/palettes", HTTP_PUT,
     [ledsController](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) mutable {
     ledsController.setPalette(request, data, len, index, total);

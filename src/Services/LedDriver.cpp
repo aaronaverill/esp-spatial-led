@@ -68,13 +68,16 @@ namespace Services {
     colors[index].b = b;
   }
 
-  void LedDriver::setPalette(int index, JsonVariant name, JsonArray stops) {
-    palettes[index].name = name.as<String>();
-    std::vector<Palette::GradientStop> stopList;
-    for(size_t i = 0; i < stops.size(); i++) {
-      stopList.push_back(Palette::GradientStop(stops[i][0], stops[i][1], stops[i][2], stops[i][3]));
-    }
-    palettes[index].setStops(stopList);
+
+  void LedDriver::addPalette(String name, const std::vector<Palette::GradientStop>& stops) {
+    Palette palette(name);
+    palette.setStops(stops);
+    palettes.push_back(palette);
+  }
+
+  void LedDriver::setPalette(int index, String name, const std::vector<Palette::GradientStop>& stops) {
+    palettes[index].name = name;
+    palettes[index].setStops(stops);
   }
 
   const Point3D& LedDriver::getLedCoordinate(uint index) const {
