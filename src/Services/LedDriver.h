@@ -132,6 +132,10 @@ namespace Services {
        */
       void addPalette(String name, const std::vector<Palette::GradientStop>& stops);
       /**
+       * Set the system palettes
+       */
+      void setPalettes(std::vector<Palette>& palettes) { this->palettes = palettes; }
+      /**
        * Set the system palette
        */
       void setPalette(int index, String name, const std::vector<Palette::GradientStop>& stops);

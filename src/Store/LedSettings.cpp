@@ -40,6 +40,21 @@ namespace Store {
     }
     leds.setColors(colors);
 
+    JsonVariant jsonPalettes = doc["palettes"];
+    if (!jsonPalettes.isNull()) {
+      std::vector<Palette> palettes;
+      for(JsonVariant jsonPalette:jsonPalettes.as<JsonArray>()) {
+        palettes.push_back(Palette(jsonPalette["name"].as<String>()));
+        JsonArray stopsArray = jsonPalette["stops"].as<JsonArray>();
+        std::vector<Palette::GradientStop> stops;
+        for(size_t i = 0; i < stopsArray.size(); i++) {
+          stops.push_back(Palette::GradientStop(stopsArray[i][0], stopsArray[i][1], stopsArray[i][2], stopsArray[i][3]));
+        }
+        palettes[palettes.size()-1].setStops(stops);
+      }
+      leds.setPalettes(palettes);
+    }
+
     JsonArray jsonAnimations = doc["animations"].as<JsonArray>();
     if (jsonAnimations) {
       uint index = 0;
@@ -67,11 +82,25 @@ namespace Store {
     doc["play"]["index"] = leds.getCurrentAnimationIndex();
 
     JsonArray jsonColors = doc["colors"].to<JsonArray>();
-    for(CRGB rgb:leds.getColors()) {
+    for(const CRGB& rgb:leds.getColors()) {
       JsonObject jsonColor = jsonColors.add<JsonObject>();
       jsonColor["r"] = rgb.red;
       jsonColor["g"] = rgb.green;
       jsonColor["b"] = rgb.blue;
+    }
+
+    JsonArray jsonPalettes = doc["palettes"].to<JsonArray>();
+    for(const Palette& palette:leds.getPalettes()) {
+      JsonObject jsonPalette = jsonPalettes.add<JsonObject>();
+      jsonPalette["name"] = palette.name;
+      JsonArray jsonStops = jsonPalette["stops"].to<JsonArray>();
+      for(const Palette::GradientStop& stop:palette.getStops()) {
+        JsonArray jsonStop = jsonStops.add<JsonArray>();
+        jsonStop[0] = stop.percent;
+        jsonStop[1] = stop.rgb.r;
+        jsonStop[2] = stop.rgb.g;
+        jsonStop[3] = stop.rgb.b;
+      }
     }
 
     JsonArray jsonAnimations = doc["animations"].to<JsonArray>();

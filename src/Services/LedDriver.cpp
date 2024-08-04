@@ -100,7 +100,7 @@ namespace Services {
     if (ledPolarCoordinates == nullptr) {
       // Lazy calculate polar coordinates when first requested
       ledPolarCoordinates = new std::vector<PointPolar>();
-      for(uint i = 0; i < ledCoordinates.size(); i++) {
+      for(uint8_t i = 0; i < ledCoordinates.size(); i++) {
         ledPolarCoordinates->push_back(PointPolar(ledCoordinates[i]));
       }
     }
