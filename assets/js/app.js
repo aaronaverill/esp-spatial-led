@@ -629,7 +629,8 @@ export default class App {
    */
   async onStripSave() {
     const patch = {}
-    ['chipset', 'colorOrder'].forEach(id => {
+    const props = ['chipset', 'colorOrder']
+    props.forEach(id => {
       const value = Number(document.getElementById(`ledStrip_${id}`).value)
       patch[id] = value
       this.#info.leds[id] = value
@@ -645,7 +646,8 @@ export default class App {
    * Refresh the led strip details
    */
   #refreshLedStrip() {
-    ['chipset', 'colorOrder'].forEach(id => {
+    const props = ['chipset', 'colorOrder']
+    props.forEach(id => {
       let html = ''
       this.#info.leds[`${id}s`].forEach((option, index) => {
         html += `<option value="${index}">${option}</option>`
