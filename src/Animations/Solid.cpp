@@ -19,11 +19,14 @@ namespace Animations {
   }
 
   void Solid::renderLed(int index) {
+    CRGB& rgb = color.rgb;
     if (color.number > 0 && color.number <= context.getColors().size()) {
-      CRGB rgb = context.getColors()[color.number-1];
-      context.rgb(rgb.r, rgb.g, rgb.b);
-    } else {
-      context.rgb(color.rgb.r, color.rgb.g, color.rgb.b);
+      rgb = context.getColors()[color.number-1];
     }
+    float* sound = context.getSoundVolumes();
+    sound += index + 1;
+    float factor = max(0.f ,min(((*sound) - 200) / 10000, 1.f));
+    Serial.println(String(*sound) + "," + String(factor));
+    context.rgb((float)color.rgb.r * factor, (float)color.rgb.g * factor, (float)color.rgb.b * factor);
   }
 }

@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 
+#include "Services/SoundInput.h"
+
 #include "Services/LedDriver.h"
 #include "Animations/RainbowChase.h"
 #include "Animations/RainbowFade.h"
@@ -29,8 +31,12 @@ Application::Application() {
   // Mount the file system which stores configuration files
   FS& fs = LittleFS;
 
+  // Create the sound input service
+  SoundInput& soundInput = SoundInput::create(fs);
+  addService(&soundInput);
+
   // Create the LedDriver service and add animations
-  LedDriver& ledDriver = LedDriver::create(fs);
+  LedDriver& ledDriver = LedDriver::create(soundInput, fs);
   ledDriver.addAnimation(new Animations::RainbowChase(ledDriver));
   ledDriver.addAnimation(new Animations::RainbowFade(ledDriver));
   ledDriver.addAnimation(new Animations::Solid(ledDriver));

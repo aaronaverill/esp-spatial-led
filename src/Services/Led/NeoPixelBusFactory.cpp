@@ -52,17 +52,41 @@ namespace Services { namespace Led {
   INeoPixelBus *NeoPixelBusFactory::createWs2812Controller(Chipset chipset, ColorOrder colorOrder, uint16_t ledCount) {
     switch (colorOrder) {
       case ColorOrder::RGB:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoRgbFeature, NeoEsp8266AsyncUart1Ws2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoRgbFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::RBG:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoRbgFeature, NeoEsp8266AsyncUart1Ws2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoRbgFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::GBR:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoGbrFeature, NeoEsp8266AsyncUart1Ws2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoGbrFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::GRB:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoGrbFeature, NeoEsp8266AsyncUart1Ws2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoGrbFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::BGR:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoBgrFeature, NeoEsp8266AsyncUart1Ws2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoBgrFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::BRG:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoBrgFeature, NeoEsp8266AsyncUart1Ws2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoBrgFeature, NeoWs2812xMethod>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       default:
         return nullptr;
     }
@@ -74,17 +98,41 @@ namespace Services { namespace Led {
   INeoPixelBus *NeoPixelBusFactory::createWs2813Controller(Chipset chipset, ColorOrder colorOrder, uint16_t ledCount) {
     switch (colorOrder) {
       case ColorOrder::RGB:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoRgbFeature, NeoEsp8266AsyncUart1Ws2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoRgbFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::RBG:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoRbgFeature, NeoEsp8266AsyncUart1Ws2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoRbgFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::GBR:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoGbrFeature, NeoEsp8266AsyncUart1Ws2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoGbrFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::GRB:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoGrbFeature, NeoEsp8266AsyncUart1Ws2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoGrbFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::BGR:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoBgrFeature, NeoEsp8266AsyncUart1Ws2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoBgrFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       case ColorOrder::BRG:
+#ifdef ESP8266
+        return new NeoPixelBusManager<NeoBrgFeature, NeoEsp8266AsyncUart1Ws2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#else
         return new NeoPixelBusManager<NeoBrgFeature, NeoWs2813Method>(chipset, colorOrder, ledCount, DATA_PIN);
+#endif
       default:
         return nullptr;
     }

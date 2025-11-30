@@ -57,6 +57,9 @@ namespace Animations {
     } else if (palette.color.number > 0 && palette.color.number <= context.getColors().size()) {
       rgb = context.getColors()[palette.color.number-1];
     }
-    context.rgb(rgb.r, rgb.g, rgb.b);
+    float* sound = context.getSoundVolumes();
+    sound += index + 3;
+    float factor = max(0.f ,min(((*sound) - 400) / 6000, 1.f));
+    context.rgb((float)rgb.r*factor, (float)rgb.g*factor, (float)rgb.b*factor);
   }
 }

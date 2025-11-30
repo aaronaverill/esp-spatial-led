@@ -9,6 +9,7 @@
 #include "Palette.h"
 #include "Services/ILedInfo.h"
 #include "Services/IService.h"
+#include "Services/SoundInput.h"
 #include "Services/Led/INeoPixelBus.h"
 
 namespace Services {
@@ -20,9 +21,9 @@ namespace Services {
       /**
        * Create singleton
        */
-      static LedDriver& create(FS& fs) {
+      static LedDriver& create(SoundInput& soundInput, FS& fs) {
         if (instance == NULL) {
-          instance = new LedDriver(fs);
+          instance = new LedDriver(soundInput, fs);
         }
         return *instance;
       }
@@ -176,14 +177,18 @@ namespace Services {
       void setup();
       void loop();
 
+      float* getSoundVolumes() {
+        return soundInput.getVolumeByFrequency();
+      }
 
     private:
       Led::INeoPixelBus* createController() const;
       void addDefaultColors();
       void addDefaultPalettes();
 
-      LedDriver(FS& fs);
+      LedDriver(SoundInput& soundInput, FS& fs);
       static LedDriver *instance;
+      SoundInput& soundInput;
       FS& fs;
 
       Led::Chipset chipset = Led::Chipset::WS2812;

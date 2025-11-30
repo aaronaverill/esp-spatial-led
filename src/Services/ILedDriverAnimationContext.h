@@ -52,6 +52,7 @@ namespace Services {
        * Get the palettes
        */
       virtual const std::vector<Palette>& getPalettes() const = 0;
+      virtual float* getSoundVolumes();
       /**
        * Show the strip
        */

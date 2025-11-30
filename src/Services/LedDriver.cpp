@@ -10,7 +10,7 @@ using namespace Algorithm;
 namespace Services {
   LedDriver *LedDriver::instance = nullptr;
 
-  LedDriver::LedDriver(FS& fs): fs(fs) {
+  LedDriver::LedDriver(SoundInput& soundInput, FS& fs): soundInput(soundInput), fs(fs) {
     addDefaultColors();
     addDefaultPalettes();
     autoPolarCoordinate.distance = Point3D::percentToCoordinate(1);
